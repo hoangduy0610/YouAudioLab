@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import os
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -15,6 +16,76 @@ class MediaPipelineError(Exception):
         super().__init__(message)
         self.code = code
         self.message = message
+
+
+class SourceDownloadLock:
+    """Exclusive lock so one source video is downloaded by a single worker."""
+
+    def __init__(self, path: Path) -> None:
+        self.path = path
+        self._handle = None
+
+    def __enter__(self) -> "SourceDownloadLock":
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        self._handle = self.path.open("a+b")
+        if os.name == "nt":
+            import msvcrt
+
+            self._handle.seek(0)
+            self._handle.write(b"\0")
+            self._handle.flush()
+            self._handle.seek(0)
+            msvcrt.locking(self._handle.fileno(), msvcrt.LK_LOCK, 1)
+        else:
+            import fcntl
+
+            fcntl.flock(self._handle.fileno(), fcntl.LOCK_EX)
+        return self
+
+    def __exit__(self, exc_type, exc, tb) -> None:
+        if self._handle is None:
+            return
+        try:
+            if os.name == "nt":
+                import msvcrt
+
+                self._handle.seek(0)
+                msvcrt.locking(self._handle.fileno(), msvcrt.LK_UNLCK, 1)
+            else:
+                import fcntl
+
+                fcntl.flock(self._handle.fileno(), fcntl.LOCK_UN)
+        finally:
+            self._handle.close()
+            self._handle = None
+
+
+def audio_file_readable(path: Path, ffmpeg_bin: str = "ffmpeg") -> bool:
+    """True when the container can open the media (rejects truncated m4a files)."""
+    probe = "ffprobe"
+    ffmpeg_path = Path(ffmpeg_bin)
+    if ffmpeg_path.name.lower().startswith("ffmpeg"):
+        probe = str(ffmpeg_path.with_name("ffprobe"))
+    try:
+        proc = subprocess.run(
+            [
+                probe,
+                "-v",
+                "error",
+                "-show_entries",
+                "format=duration",
+                "-of",
+                "csv=p=0",
+                str(path),
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=30,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return path.is_file() and path.stat().st_size > 0
+    return proc.returncode == 0 and bool((proc.stdout or "").strip())
 
 
 def find_cached_file(cache_dir: Path, video_id: str) -> Path | None:
@@ -84,8 +155,13 @@ def download_source_audio(
 
     cache_dir.mkdir(parents=True, exist_ok=True)
     existing = find_cached_file(cache_dir, video_id)
-    if existing is not None:
+    if existing is not None and audio_file_readable(existing):
         return existing
+    if existing is not None:
+        existing.unlink(missing_ok=True)
+    for leftover in cache_dir.glob(f"{video_id}.*"):
+        if leftover.suffix.lower() in {".part", ".ytdl"} and leftover.is_file():
+            leftover.unlink(missing_ok=True)
 
     outtmpl = str(cache_dir / f"{video_id}.%(ext)s")
     opts: dict[str, Any] = {

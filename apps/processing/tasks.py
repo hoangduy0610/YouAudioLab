@@ -10,10 +10,13 @@ from pathlib import Path
 
 from celery import shared_task
 from django.conf import settings
+from django.db import IntegrityError
 
 from apps.core.storage import get_storage
 from apps.processing.media import (
     MediaPipelineError,
+    SourceDownloadLock,
+    audio_file_readable,
     cut_segment_audio,
     download_source_audio,
     fetch_source_metadata as extract_metadata,
@@ -87,67 +90,88 @@ def extract_segment_audio(self, job_id: str) -> dict[str, str]:
         cache_dir = Path(settings.STORAGE_ROOT) / "cache" / "sources" / str(source.id)
         cache_dir.mkdir(parents=True, exist_ok=True)
 
-        media_cache = SourceMediaCache.objects.filter(source_id=source.id).first()
-        src_path: Path | None = None
-        if media_cache is not None:
-            candidate = Path(settings.STORAGE_ROOT) / media_cache.storage_key
-            if candidate.is_file() and candidate.stat().st_size > 0:
-                src_path = candidate
+        with SourceDownloadLock(cache_dir / ".download.lock"):
+            media_cache = SourceMediaCache.objects.filter(source_id=source.id).first()
+            src_path: Path | None = None
+            if media_cache is not None:
+                candidate = Path(settings.STORAGE_ROOT) / media_cache.storage_key
+                if (
+                    candidate.is_file()
+                    and candidate.stat().st_size > 0
+                    and audio_file_readable(candidate, settings.FFMPEG_BIN)
+                ):
+                    src_path = candidate
+                elif candidate.is_file():
+                    candidate.unlink(missing_ok=True)
 
-        if src_path is None:
-            try:
-                downloaded = download_source_audio(
-                    youtube_url=source.youtube_url,
-                    video_id=source.youtube_video_id,
-                    cache_dir=cache_dir,
-                    cookies_file=settings.YTDLP_COOKIES_FILE,
-                )
-            except MediaPipelineError as exc:
-                jobs.fail(jid, error_code=exc.code, error_message=exc.message)
-                return {"job_id": job_id, "status": "FAILED"}
+            if src_path is None:
+                try:
+                    downloaded = download_source_audio(
+                        youtube_url=source.youtube_url,
+                        video_id=source.youtube_video_id,
+                        cache_dir=cache_dir,
+                        cookies_file=settings.YTDLP_COOKIES_FILE,
+                    )
+                except MediaPipelineError as exc:
+                    jobs.fail(jid, error_code=exc.code, error_message=exc.message)
+                    return {"job_id": job_id, "status": "FAILED"}
 
-            ext = downloaded.suffix or ".m4a"
-            storage_key = f"{cache_rel}{ext}"
-            dest_cache = Path(settings.STORAGE_ROOT) / storage_key
-            dest_cache.parent.mkdir(parents=True, exist_ok=True)
-            if downloaded.resolve() != dest_cache.resolve():
-                shutil.copy2(downloaded, dest_cache)
-            src_path = dest_cache
+                ext = downloaded.suffix or ".m4a"
+                storage_key = f"{cache_rel}{ext}"
+                dest_cache = Path(settings.STORAGE_ROOT) / storage_key
+                dest_cache.parent.mkdir(parents=True, exist_ok=True)
+                if downloaded.resolve() != dest_cache.resolve():
+                    shutil.copy2(downloaded, dest_cache)
+                src_path = dest_cache
 
-            source_checksum = sha256_file(src_path)
-            source_size = src_path.stat().st_size
-            if media_cache is None:
-                media_cache = SourceMediaCache.objects.create(
-                    source=source,
-                    storage_key=storage_key,
-                    file_size_bytes=source_size,
-                    checksum=source_checksum,
-                )
+                source_checksum = sha256_file(src_path)
+                source_size = src_path.stat().st_size
+                if media_cache is None:
+                    try:
+                        media_cache = SourceMediaCache.objects.create(
+                            source=source,
+                            storage_key=storage_key,
+                            file_size_bytes=source_size,
+                            checksum=source_checksum,
+                        )
+                    except IntegrityError:
+                        media_cache = SourceMediaCache.objects.get(source_id=source.id)
+                        media_cache.storage_key = storage_key
+                        media_cache.file_size_bytes = source_size
+                        media_cache.checksum = source_checksum
+                        media_cache.save(
+                            update_fields=[
+                                "storage_key",
+                                "file_size_bytes",
+                                "checksum",
+                                "updated_at",
+                            ]
+                        )
+                else:
+                    media_cache.storage_key = storage_key
+                    media_cache.file_size_bytes = source_size
+                    media_cache.checksum = source_checksum
+                    media_cache.save(
+                        update_fields=[
+                            "storage_key",
+                            "file_size_bytes",
+                            "checksum",
+                            "updated_at",
+                        ]
+                    )
             else:
-                media_cache.storage_key = storage_key
-                media_cache.file_size_bytes = source_size
-                media_cache.checksum = source_checksum
-                media_cache.save(
-                    update_fields=[
-                        "storage_key",
-                        "file_size_bytes",
-                        "checksum",
-                        "updated_at",
-                    ]
-                )
-        else:
-            source_checksum = sha256_file(src_path)
-            source_size = src_path.stat().st_size
-            storage_key = media_cache.storage_key
-            if (
-                media_cache.checksum != source_checksum
-                or media_cache.file_size_bytes != source_size
-            ):
-                media_cache.checksum = source_checksum
-                media_cache.file_size_bytes = source_size
-                media_cache.save(
-                    update_fields=["checksum", "file_size_bytes", "updated_at"]
-                )
+                source_checksum = sha256_file(src_path)
+                source_size = src_path.stat().st_size
+                storage_key = media_cache.storage_key
+                if (
+                    media_cache.checksum != source_checksum
+                    or media_cache.file_size_bytes != source_size
+                ):
+                    media_cache.checksum = source_checksum
+                    media_cache.file_size_bytes = source_size
+                    media_cache.save(
+                        update_fields=["checksum", "file_size_bytes", "updated_at"]
+                    )
 
         ytdlp_version = None
         try:
