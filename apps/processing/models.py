@@ -205,6 +205,8 @@ class UserAsrPreferences(models.Model):
 
 class SystemAsrSettings(models.Model):
     id = models.IntegerField(primary_key=True, default=1)
+    # None inherits ASR_LOCAL_ENGINE_ENABLED (off). Admin checkbox stores True/False.
+    local_engine_enabled = models.BooleanField(null=True, blank=True)
     provider = models.CharField(max_length=32, null=True, blank=True)
     local_model = models.CharField(max_length=128, null=True, blank=True)
     local_device = models.CharField(max_length=16, null=True, blank=True)

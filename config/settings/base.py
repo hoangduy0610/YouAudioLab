@@ -233,12 +233,14 @@ AUTH_ALLOW_X_USER_ID = None if _auth_x is None else env_bool("AUTH_ALLOW_X_USER_
 
 # Phase 2 ASR (W2–W5 + W7 providers/prefs)
 ASR_ENGINE = env("ASR_ENGINE", "fake") or "fake"
+# Off until an admin enables it. Users cannot pick Local (server) while this is false.
+ASR_LOCAL_ENGINE_ENABLED = env_bool("ASR_LOCAL_ENGINE_ENABLED", False)
 ASR_DEFAULT_PROVIDER = env("ASR_DEFAULT_PROVIDER", "local") or "local"
 ASR_DEFAULT_MODEL_SIZE = env("ASR_DEFAULT_MODEL_SIZE", "base") or "base"
 ASR_LOCAL_MODEL = env("ASR_LOCAL_MODEL") or ASR_DEFAULT_MODEL_SIZE
 ASR_MODEL_ALLOWLIST = env(
-    "ASR_MODEL_ALLOWLIST", "tiny,base,small,medium,large-v3"
-) or "tiny,base,small,medium,large-v3"
+    "ASR_MODEL_ALLOWLIST", "tiny,base,small"
+) or "tiny,base,small"
 ASR_DEVICE = env("ASR_DEVICE", "cpu") or "cpu"
 ASR_COMPUTE_TYPE = env("ASR_COMPUTE_TYPE", "int8") or "int8"
 ASR_MAX_DURATION_SECONDS = env_int("ASR_MAX_DURATION_SECONDS", 1800)

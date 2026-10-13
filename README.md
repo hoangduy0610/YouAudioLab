@@ -56,7 +56,7 @@ rest. Project settings only choose which provider and model to inherit.
 Six layers: browser (projects, segment workspace with player/transcript/labels,
 members, export), Django pages and REST API over domain services, PostgreSQL,
 file store for source cache and checksummed WAVs, Redis as Celery broker only,
-and workers (yt-dlp, FFmpeg, local or OpenAI ASR, optional Ollama). 
+and workers (yt-dlp, FFmpeg, on-server or OpenAI ASR, optional Ollama on the same host). 
 Pages and the API share the same membership checks. Slow work — metadata,
 audio extract, transcription — runs in Celery. A job stores the segment
 revision it was started against. If the bounds change before publish, the job
@@ -68,8 +68,8 @@ becomes stale and does not replace the current artifact.
 | Database | PostgreSQL 16 |
 | Task queue | Celery with a Redis broker |
 | Media | yt-dlp + FFmpeg |
-| Speech draft | Local Whisper-style ASR, or OpenAI |
-| Assist | Ollama, optional and separate from ASR |
+| Speech draft | On-server Whisper-style ASR (`local`), or OpenAI. Annotators do not install a model. |
+| Assist | Ollama on the YouAudioLab host, optional and separate from ASR |
 | Frontend | Bootstrap 5 and vanilla JavaScript |
 | Languages | English and Vietnamese |
 | Local ports | HTTP **8001**, Postgres **5433**, Redis **6381** |
@@ -102,7 +102,7 @@ docker compose up -d db redis
 | `DJANGO_SECRET_KEY` | Signing key. Change it before any shared deployment. |
 | `JWT_SECRET` | Signs API Bearer tokens (HTML pages use the session cookie). |
 | `STORAGE_ROOT` | Local file store for source cache and checksummed WAVs. |
-| `ASR_ENGINE` | Local engine name (`fake` in `.env.example`; use `faster-whisper` when installed). |
+| `ASR_ENGINE` | On-server engine (`fake` in `.env.example`; use `faster-whisper` when installed on the YouAudioLab host). Not the annotator’s computer. |
 | `ASR_SECRETS_KEY` | Passphrase used to encrypt stored API keys. |
 | `ASR_ADMIN_USER_IDS` | User UUIDs allowed to edit system ASR. Empty in development means every signed-in user. |
 | `AI_ADMIN_USER_IDS` | Same rule for system AI. |

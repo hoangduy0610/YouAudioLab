@@ -9,7 +9,13 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 msgid "(you)"
-msgstr "(bạn)"
+msgstr ""
+
+msgid "+ Text"
+msgstr ""
+
+msgid "1–9 or click a label"
+msgstr ""
 
 msgid ""
 "<strong>No sources yet.</strong> Ask a project OWNER to import a YouTube "
@@ -23,13 +29,19 @@ msgid "AI"
 msgstr "AI"
 
 msgid "AI assist"
-msgstr "Trợ giúp AI"
+msgstr "Trợ lý AI"
+
+msgid "AI assist (this project)"
+msgstr ""
 
 msgid "AI assist applied."
 msgstr "Đã áp hỗ trợ AI."
 
 msgid "AI assist candidate ready."
 msgstr "Ứng viên hỗ trợ AI đã sẵn sàng."
+
+msgid "AI assist is off."
+msgstr "Trợ lý AI đang tắt."
 
 msgid "AI preferences"
 msgstr "Tuỳ chọn AI"
@@ -38,7 +50,7 @@ msgid "AI preferences saved."
 msgstr "Đã lưu tuỳ chọn AI."
 
 msgid "AI provider disabled."
-msgstr "Nhà cung cấp AI đang tắt."
+msgstr ""
 
 msgid "AI provider is disabled."
 msgstr "Nhà cung cấp AI đang tắt."
@@ -46,11 +58,17 @@ msgstr "Nhà cung cấp AI đang tắt."
 msgid "ASR"
 msgstr "ASR"
 
+msgid "ASR (this project)"
+msgstr ""
+
+msgid "ASR active"
+msgstr ""
+
+msgid "ASR draft"
+msgstr ""
+
 msgid "ASR job queued."
 msgstr "Đã xếp hàng ASR."
-
-msgid "ASR jobs"
-msgstr "Job ASR"
 
 msgid "ASR preferences"
 msgstr "Tuỳ chọn ASR"
@@ -58,14 +76,14 @@ msgstr "Tuỳ chọn ASR"
 msgid "ASR preferences saved."
 msgstr "Đã lưu tuỳ chọn ASR."
 
-msgid "ASR runs"
-msgstr "Lần chạy ASR"
-
 msgid "ASR text applied to transcript."
 msgstr "Đã áp văn bản ASR vào bản chép."
 
-msgid "ASR transcript"
-msgstr "Bản ghi ASR"
+msgid "ASR:"
+msgstr ""
+
+msgid "Account"
+msgstr ""
 
 msgid "Account AI preferences"
 msgstr "Tuỳ chọn AI tài khoản"
@@ -76,31 +94,83 @@ msgstr "Tuỳ chọn ASR tài khoản"
 msgid "Account created."
 msgstr "Đã tạo tài khoản."
 
+msgid "Account profile and ASR / AI provider configuration."
+msgstr ""
+
+msgid "Account settings"
+msgstr ""
+
+msgid "Action required"
+msgstr ""
+
+msgid "Actions"
+msgstr ""
+
 msgid "Activate"
-msgstr "Kích hoạt"
+msgstr ""
 
 msgid "Active"
-msgstr "Hoạt động"
+msgstr "Đang dùng"
+
+msgid "Active (queued/running)"
+msgstr ""
+
+msgid "Active annotation episodes"
+msgstr ""
+
+msgid "Active assignments"
+msgstr ""
+
+msgid "Active jobs"
+msgstr ""
+
+msgid "Active members"
+msgstr ""
 
 msgid ""
 "Active membership. Add people by existing user UUID (Identity / ops "
 "bootstrap)."
 msgstr "Thành viên đang hoạt động. Thêm bằng UUID người dùng đã có."
 
+msgid ""
+"Active membership. Add people by login identifier (or paste a user id if "
+"needed)."
+msgstr ""
+
+msgid "Add"
+msgstr ""
+
 msgid "Add & fetch"
 msgstr "Thêm & lấy"
 
-msgid "Add annotation"
-msgstr "Thêm chú thích"
+msgid "Add ANNOTATOR members first."
+msgstr ""
+
+msgid "Add YouTube source"
+msgstr ""
 
 msgid "Add member"
-msgstr "Thêm thành viên"
+msgstr ""
+
+msgid "Add new label"
+msgstr ""
+
+msgid "Add project labels first."
+msgstr ""
 
 msgid "Add source"
 msgstr "Thêm nguồn"
 
+msgid "Add transcript"
+msgstr ""
+
 msgid "Admin"
 msgstr "Quản trị"
+
+msgid ""
+"Admin defaults applied when a user chooses “Use system defaults” on the ASR "
+"tab (Gate W7.3)."
+msgstr ""
 
 msgid "Admin defaults for Ollama assists (Gate W8.1)."
 msgstr "Mặc định quản trị cho hỗ trợ Ollama (Gate W8.1)."
@@ -108,65 +178,187 @@ msgstr "Mặc định quản trị cho hỗ trợ Ollama (Gate W8.1)."
 msgid "Admin defaults for “system defaults” users (Gate W7.3)."
 msgstr "Mặc định quản trị cho người dùng “system defaults” (Gate W7.3)."
 
+msgid "Adopt majority"
+msgstr ""
+
+msgid "Advanced tools (artifact details, extract job history)"
+msgstr ""
+
+msgid "Agreement"
+msgstr ""
+
 msgid "All"
 msgstr "Tất cả"
+
+msgid ""
+"All active catalog labels are already in this project, or your catalog is "
+"empty."
+msgstr ""
+
+msgid "All annotators"
+msgstr ""
+
+msgid "All assignments"
+msgstr ""
+
+msgid "All matching"
+msgstr ""
+
+msgid "All segments"
+msgstr ""
+
+msgid "All sources"
+msgstr ""
+
+msgid "All statuses"
+msgstr ""
+
+msgid "Also update this label in projects that already use it"
+msgstr ""
+
+msgid ""
+"An administrator can enable it under System AI. You do not install or "
+"configure Ollama on your computer."
+msgstr ""
+"Quản trị có thể bật ở AI hệ thống. Bạn không cần cài hay cấu hình Ollama "
+"trên máy của mình."
+
+msgid "Ann."
+msgstr ""
+
+msgid "Annotated"
+msgstr ""
+
+msgid "Annotation"
+msgstr ""
 
 msgid "Annotation assigned."
 msgstr "Đã gán annotation."
 
+msgid "Annotation protocol & ethics"
+msgstr ""
+
 msgid "Annotation removed."
 msgstr "Đã gỡ annotation."
 
+msgid "Annotation summary"
+msgstr ""
+
 msgid "Annotations"
-msgstr "Chú thích"
+msgstr ""
+
+msgid "Annotator"
+msgstr ""
+
+msgid "Annotator productivity"
+msgstr ""
+
+msgid "Annotator workload"
+msgstr ""
+
+msgid "Annotators"
+msgstr ""
+
+msgid "Annotators with episodes"
+msgstr ""
+
+msgid "Any"
+msgstr ""
 
 msgid "Applied"
-msgstr "Đã áp dụng"
+msgstr ""
 
 msgid "Apply"
-msgstr "Áp dụng"
+msgstr ""
 
 msgid "Apply my numbers"
-msgstr "Áp dụng số của tôi"
-
-msgid "Apply to canonical transcript"
-msgstr "Áp dụng vào bản ghi chính"
+msgstr ""
 
 msgid "Archive"
 msgstr "Lưu trữ"
 
 msgid "Archive project"
-msgstr "Lưu trữ dự án"
+msgstr ""
+
+msgid "Archive stops writes; research metadata remains readable."
+msgstr ""
 
 msgid "Archive this project?"
 msgstr "Lưu trữ dự án này?"
 
 msgid "Archive this project? It remains readable but writes stop."
-msgstr "Lưu trữ dự án này? Vẫn đọc được nhưng ngừng ghi."
+msgstr ""
 
 msgid "Archived"
 msgstr "Đã lưu trữ"
 
-msgid "Artifact id"
-msgstr "ID artifact"
-
-msgid "Ask a project owner to create labels."
-msgstr "Nhờ chủ dự án tạo nhãn."
+msgid "Assign"
+msgstr ""
 
 msgid "Assign a label to create the first episode."
-msgstr "Gán một nhãn để tạo episode đầu tiên."
+msgstr ""
+
+msgid "Assign by dropdown"
+msgstr ""
 
 msgid "Assign label"
-msgstr "Gán nhãn"
+msgstr ""
+
+msgid ""
+"Assign segments to annotators and track assignment progress separately from "
+"annotation episodes."
+msgstr ""
+
+msgid "Assigned"
+msgstr ""
+
+msgid "Assigned to me"
+msgstr ""
+
+msgid "Assignee"
+msgstr ""
+
+msgid "Assignment"
+msgstr ""
+
+msgid "Assignments completed"
+msgstr ""
 
 msgid "At least 8 characters"
 msgstr "Ít nhất 8 ký tự"
+
+msgid "Audio"
+msgstr ""
+
+msgid "Audio OK"
+msgstr ""
+
+msgid "Audio OK at"
+msgstr ""
+
+msgid "Audio pipeline and annotation metrics for this project."
+msgstr ""
+
+msgid "Audio processing"
+msgstr ""
+
+msgid "Audio ready"
+msgstr ""
 
 msgid "Audio research workspace"
 msgstr "Không gian nghiên cứu âm thanh"
 
 msgid "Back"
 msgstr "Quay lại"
+
+msgid "Batch name"
+msgstr ""
+
+msgid "Blind annotators"
+msgstr ""
+
+msgid "Both"
+msgstr ""
 
 msgid "Bounds"
 msgstr "Biên"
@@ -176,8 +368,18 @@ msgid ""
 "after create."
 msgstr "Biên tính theo giây trên nguồn. Chỉ OWNER. Mở Workspace sau khi tạo."
 
+msgid "By source (video) — recommended"
+msgstr ""
+
+msgid ""
+"Called from the server. If Ollama runs on the Docker host, use "
+"http://host.docker.internal:11434."
+msgstr ""
+"Được gọi từ máy chủ. Nếu Ollama chạy trên máy Docker host, dùng "
+"http://host.docker.internal:11434."
+
 msgid "Cancel"
-msgstr "Hủy"
+msgstr ""
 
 msgid "Cancellation requested."
 msgstr "Đã yêu cầu huỷ."
@@ -185,38 +387,89 @@ msgstr "Đã yêu cầu huỷ."
 msgid "Cannot revoke your own membership in the UI."
 msgstr "Không thể tự thu hồi tư cách thành viên trên giao diện."
 
+msgid "Catalog"
+msgstr ""
+
 msgid "Channel"
 msgstr "Kênh"
 
 msgid "Channels"
-msgstr "Kênh"
+msgstr ""
+
+msgid ""
+"Checked segments replace the source and limit. Leave unchecked to assign "
+"from the source above."
+msgstr ""
 
 msgid "Choose a login"
 msgstr "Chọn tên đăng nhập"
 
+msgid ""
+"Choose system defaults or your own provider. Custom fields apply only when "
+"Custom is selected."
+msgstr ""
+
+msgid "Clear"
+msgstr ""
+
+msgid "Clear Audio OK"
+msgstr ""
+
+msgid "Clear filters"
+msgstr ""
+
 msgid "Clear stored key"
-msgstr "Xóa khóa đã lưu"
+msgstr ""
 
 msgid "Clear stored system key"
-msgstr "Xóa khóa hệ thống đã lưu"
+msgstr ""
+
+msgid "Click to remove your label"
+msgstr ""
 
 msgid "Close"
 msgstr "Đóng"
 
+msgid "Cohen κ"
+msgstr ""
+
 msgid "Color"
-msgstr "Màu"
+msgstr ""
+
+msgid "Color override"
+msgstr ""
+
+msgid "Complete"
+msgstr ""
+
+msgid "Completed"
+msgstr ""
+
+msgid "Consent"
+msgstr ""
+
+msgid "Consent / ethics notes"
+msgstr ""
+
+msgid "Continue labeling"
+msgstr ""
 
 msgid "Continue to projects"
 msgstr "Tiếp tục tới dự án"
 
+msgid ""
+"Corpus protocol for this project: readiness gates, blind labeling, license, "
+"and ASR/AI defaults. API keys stay in account Settings."
+msgstr ""
+
+msgid "Could not resolve effective ASR config:"
+msgstr ""
+
 msgid "Create"
-msgstr "Tạo"
+msgstr ""
 
 msgid "Create Segment is unavailable until source duration is known."
 msgstr "Không tạo đoạn được cho đến khi biết thời lượng nguồn."
-
-msgid "Create a taxonomy label to start annotating segments."
-msgstr "Tạo nhãn phân loại để bắt đầu chú thích đoạn."
 
 msgid "Create account"
 msgstr "Tạo tài khoản"
@@ -224,8 +477,22 @@ msgstr "Tạo tài khoản"
 msgid "Create an audio research workspace."
 msgstr "Tạo không gian nghiên cứu âm thanh."
 
-msgid "Create label"
-msgstr "Tạo nhãn"
+msgid "Create assignment batch"
+msgstr ""
+
+msgid "Create assignments"
+msgstr ""
+
+msgid "Create from source"
+msgstr ""
+
+msgid "Create label in catalog and add here"
+msgstr ""
+
+msgid ""
+"Create labels here, then assign them to projects from project label "
+"settings."
+msgstr ""
 
 msgid "Create project"
 msgstr "Tạo dự án"
@@ -243,64 +510,106 @@ msgid "Cross-source index for this project (merged from per-source lists)."
 msgstr "Danh mục đoạn trên mọi nguồn của dự án."
 
 msgid "Current"
-msgstr "Hiện tại"
+msgstr ""
 
 msgid "Current artifact"
-msgstr "Artifact hiện tại"
-
-msgid "Current artifact:"
-msgstr "Artifact hiện tại:"
+msgstr ""
 
 msgid "Current audio"
-msgstr "Âm thanh hiện tại"
+msgstr ""
 
-msgid "Current job:"
-msgstr "Job hiện tại:"
+msgid "Current defaults:"
+msgstr ""
 
 msgid "Current system defaults:"
-msgstr "Mặc định hệ thống hiện tại:"
+msgstr ""
 
 msgid "Custom"
-msgstr "Tùy chỉnh"
+msgstr ""
+
+msgid "Custom model"
+msgstr "Model riêng"
 
 msgid "Danger zone"
-msgstr "Vùng nguy hiểm"
+msgstr ""
+
+msgid "Dataset readiness"
+msgstr ""
+
+msgid "Dataset ready"
+msgstr ""
 
 msgid "Deactivate"
-msgstr "Vô hiệu hóa"
+msgstr ""
 
-msgid "Deactivating blocks new assignments; historical episodes remain."
-msgstr "Vô hiệu hóa chặn gán mới; episode lịch sử vẫn giữ."
+msgid "Default"
+msgstr ""
 
 msgid "Default model"
-msgstr "Mô hình mặc định"
+msgstr ""
+
+msgid "Default provider"
+msgstr ""
+
+msgid ""
+"Defaults for new extract jobs. Typical research cut: WAV, PCM, 16 kHz, mono."
+msgstr ""
 
 msgid "Definition"
-msgstr "Định nghĩa"
+msgstr ""
 
 msgid "Definition revision:"
-msgstr "Phiên bản định nghĩa:"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Delete this label from your catalog?"
+msgstr ""
 
 msgid "Description"
 msgstr "Mô tả"
+
+msgid "Description override"
+msgstr ""
 
 msgid "Detail"
 msgstr "Chi tiết"
 
 msgid "Device / compute"
-msgstr "Thiết bị / tính toán"
+msgstr ""
 
 msgid "Discard draft"
-msgstr "Hủy bản nháp"
+msgstr ""
 
 msgid "Display name"
 msgstr "Tên hiển thị"
 
-msgid "Download WAV"
-msgstr "Tải WAV"
+msgid "Display name override"
+msgstr ""
 
-msgid "Download is available after the artifact is verified."
-msgstr "Có thể tải sau khi artifact được xác minh."
+msgid "Distribution"
+msgstr ""
+
+msgid "Download"
+msgstr ""
+
+msgid "Download JSON"
+msgstr ""
+
+msgid "Download WAV"
+msgstr ""
+
+msgid ""
+"Download a research snapshot. Full annotation episodes stay in JSON/CSV-IAA;"
+" training formats use supervised labels. Prefer by-source splits so the same"
+" video never leaks into train and test."
+msgstr ""
+
+msgid ""
+"Drag across one word or several words, then pick a label. Esc clears the "
+"selection."
+msgstr ""
 
 msgid "Duplicate video ids in this project return a conflict."
 msgstr "Trùng video id trong dự án sẽ bị xung đột."
@@ -308,23 +617,45 @@ msgstr "Trùng video id trong dự án sẽ bị xung đột."
 msgid "Duration"
 msgstr "Thời lượng"
 
+msgid ""
+"Duration histogram and per-video coverage. Splits match default export (by "
+"source, seed 42)."
+msgstr ""
+
 msgid "Duration unknown"
 msgstr "Chưa biết thời lượng"
 
 msgid "Edit"
-msgstr "Sửa"
+msgstr ""
 
-msgid "Effective:"
-msgstr "Hiệu lực:"
+msgid "Edit settings"
+msgstr ""
+
+msgid "Edit system ASR"
+msgstr ""
+
+msgid "Edit transcript"
+msgstr ""
+
+msgid "Effective now:"
+msgstr ""
+
+msgid "Enable local ASR engine"
+msgstr "Bật engine ASR local"
 
 msgid "Enabled"
-msgstr "Bật"
+msgstr ""
 
 msgid "Encoding"
-msgstr "Mã hóa"
+msgstr ""
 
 msgid "End"
 msgstr "Kết thúc"
+
+msgid ""
+"Enter an existing login identifier. A user id also works. Default role is "
+"ANNOTATOR."
+msgstr ""
 
 msgid "Enter your login"
 msgstr "Nhập tên đăng nhập"
@@ -332,43 +663,139 @@ msgstr "Nhập tên đăng nhập"
 msgid "Enter your password"
 msgstr "Nhập mật khẩu"
 
+msgid "Entire project"
+msgstr ""
+
+msgid "Episodes"
+msgstr ""
+
+msgid "Every annotator gets every segment"
+msgstr ""
+
 msgid "Everyone"
-msgstr "Mọi người"
+msgstr ""
+
+msgid "Exact"
+msgstr ""
+
+msgid "Exact-match rate"
+msgstr ""
+
+msgid "Exclude"
+msgstr ""
+
+msgid "Exclude guidance override"
+msgstr ""
+
+msgid "Export"
+msgstr ""
+
+msgid "Export dataset"
+msgstr ""
+
+msgid "Export for offline IAA"
+msgstr ""
+
+msgid ""
+"Export only segments that pass this project's readiness policy (audio, "
+"review, transcript, annotation)."
+msgstr ""
+
+msgid "Extract audio"
+msgstr ""
+
+msgid "Extract audio active"
+msgstr ""
+
+msgid "Extract audio first to enable Generate."
+msgstr ""
+
+msgid "Extract in progress"
+msgstr ""
+
+msgid "Failed"
+msgstr ""
+
+msgid "Failed jobs"
+msgstr ""
+
+msgid "File naming convention"
+msgstr ""
+
+msgid ""
+"Filled = your active label. Ctrl+Enter advances to next assigned / next "
+"segment."
+msgstr ""
 
 msgid "Filter"
 msgstr "Lọc"
 
+msgid "First annotator"
+msgstr ""
+
+msgid "Fleiss κ"
+msgstr ""
+
+msgid "Fleiss κ (label presence)"
+msgstr ""
+
+msgid "Force a new job even if an identical one already succeeded"
+msgstr ""
+
 msgid "Format"
-msgstr "Định dạng"
+msgstr ""
 
-msgid "From job"
-msgstr "Từ job"
+msgid "From audio (ASR)"
+msgstr ""
+
+msgid "From extract job"
+msgstr ""
+
+msgid "Full IAA on Progress"
+msgstr ""
+
+msgid "Generate again"
+msgstr ""
+
+msgid "Generate from audio"
+msgstr ""
+
+msgid "Generating… refresh shortly or wait for the job to finish."
+msgstr ""
+
+msgid "Gold"
+msgstr ""
+
+msgid "Gold (adjudicated; else majority)"
+msgstr ""
+
+msgid "Gold / adjudication"
+msgstr ""
+
+msgid "Gold segments"
+msgstr ""
 
 msgid ""
-"Gate 0 D1 (ahead of React F6): project becomes ARCHIVED. Writes stop; "
-"research metadata remains."
+"Groups entire YouTube videos into train/val/test to avoid acoustic leakage."
 msgstr ""
-"Gate 0 D1: dự án chuyển sang ARCHIVED. Ngừng ghi; metadata nghiên cứu vẫn "
-"giữ."
-
-msgid ""
-"Generate a machine transcript for the current verified artifact. Apply "
-"copies text into the canonical transcript (no revision bump)."
-msgstr ""
-"Tạo bản ghi máy cho artifact đã xác minh. Áp dụng sẽ chép vào bản ghi chính "
-"(không tăng phiên bản)."
-
-msgid "Generate transcript"
-msgstr "Tạo bản ghi"
 
 msgid "HTML5 player — no waveform in MVP."
-msgstr "Trình phát HTML5 — chưa có dạng sóng trong MVP."
+msgstr ""
+
+msgid "Has labels"
+msgstr ""
+
+msgid "Hide peer labels from annotators (blind)"
+msgstr ""
 
 msgid "Historical only — never current"
-msgstr "Chỉ lịch sử — không bao giờ là hiện tại"
+msgstr ""
 
 msgid "History (removed)"
-msgstr "Lịch sử (đã gỡ)"
+msgstr ""
+
+msgid "Hours"
+msgstr ""
 
 msgid "Identity cleared."
 msgstr "Đã xoá danh tính."
@@ -382,17 +809,65 @@ msgstr "Đã chọn danh tính."
 msgid "Import"
 msgstr "Nhập"
 
+msgid "Import a YouTube source and create segments before labeling."
+msgstr ""
+
 msgid "Import is OWNER-only. New sources start as Metadata pending."
 msgstr "Chỉ OWNER được nhập. Nguồn mới bắt đầu ở trạng thái chờ metadata."
 
 msgid "Import source"
 msgstr "Nhập nguồn"
 
-msgid "Inactive"
-msgstr "Không hoạt động"
+msgid "In progress"
+msgstr ""
 
-msgid "Inactive in taxonomy"
-msgstr "Không hoạt động trong phân loại"
+msgid "In transcript"
+msgstr ""
+
+msgid "In use"
+msgstr ""
+
+msgid "Inactive"
+msgstr "Ngừng"
+
+msgid "Inactive in catalog"
+msgstr ""
+
+msgid "Include"
+msgstr ""
+
+msgid "Include guidance override"
+msgstr ""
+
+msgid "Include released assignments"
+msgstr ""
+
+msgid "Include removed annotation episodes"
+msgstr ""
+
+msgid "Include soft-deleted segments"
+msgstr ""
+
+msgid "Include stale ASR runs"
+msgstr ""
+
+msgid "Inherit account/system"
+msgstr ""
+
+msgid "Inherit system"
+msgstr ""
+
+msgid "Inherit system model"
+msgstr "Kế thừa model hệ thống"
+
+msgid "Inter-annotator agreement"
+msgstr ""
+
+msgid "Internal id"
+msgstr ""
+
+msgid "Intersection (all annotators agree)"
+msgstr ""
 
 msgid "Invalid form values."
 msgstr "Giá trị biểu mẫu không hợp lệ."
@@ -406,15 +881,29 @@ msgstr "Biên đoạn không hợp lệ."
 msgid "Invalid settings values."
 msgstr "Giá trị cài đặt không hợp lệ."
 
+msgid "Jaccard"
+msgstr ""
+
+msgid "Job history"
+msgstr ""
+
 msgid ""
 "Jobs extract audio for a specific definition revision. Polling runs while "
-"queued or running. Retry creates a new job id."
+"queued or running. Retry creates a new job id. Use Submit job above to start"
+" a new extract."
 msgstr ""
-"Job trích âm thanh theo một phiên bản định nghĩa. Tự làm mới khi đang xếp "
-"hàng/chạy. Thử lại tạo job id mới."
+
+msgid "Joined"
+msgstr ""
+
+msgid "Joined projects"
+msgstr ""
 
 msgid "Label activated."
 msgstr "Đã kích hoạt nhãn."
+
+msgid "Label balance"
+msgstr ""
 
 msgid "Label created."
 msgstr "Đã tạo nhãn."
@@ -422,8 +911,23 @@ msgstr "Đã tạo nhãn."
 msgid "Label deactivated."
 msgstr "Đã vô hiệu hoá nhãn."
 
+msgid "Label name"
+msgstr ""
+
 msgid "Label saved."
 msgstr "Đã lưu nhãn."
+
+msgid "Label settings"
+msgstr ""
+
+msgid "Label this phrase"
+msgstr ""
+
+msgid "Label this segment"
+msgstr ""
+
+msgid "Labeled"
+msgstr ""
 
 msgid "Labels"
 msgstr "Nhãn"
@@ -431,20 +935,61 @@ msgstr "Nhãn"
 msgid "Language"
 msgstr "Ngôn ngữ"
 
+msgid "Last generate failed"
+msgstr ""
+
+msgid "Latest ASR result matches the box above."
+msgstr ""
+
 msgid "Legacy bootstrap (development)"
 msgstr "Bootstrap cũ (phát triển)"
 
+msgid "License"
+msgstr ""
+
+msgid ""
+"License and consent appear on Export and the Quality report. Do not paste "
+"secrets."
+msgstr ""
+
+msgid "Local (server)"
+msgstr "Local (máy chủ)"
+
+msgid ""
+"Local (server) runs on the YouAudioLab host. Nothing to install on your "
+"computer."
+msgstr ""
+"Local (máy chủ) chạy trên máy chủ YouAudioLab. Không cần cài gì trên máy của"
+" bạn."
+
+msgid ""
+"Local (server): resolve only. OpenAI: live /models check with your effective"
+" key."
+msgstr ""
+"Local (máy chủ): chỉ kiểm tra cấu hình. OpenAI: gọi /models bằng khóa đang "
+"dùng."
+
+msgid "Local ASR engine is disabled"
+msgstr "Engine ASR local đang tắt"
+
+msgid ""
+"Local ASR is off. You can only choose OpenAI until an administrator enables "
+"the local engine."
+msgstr ""
+"ASR local đang tắt. Bạn chỉ chọn được OpenAI cho đến khi quản trị bật engine"
+" local."
+
 msgid "Local compute type"
-msgstr "Kiểu tính toán local"
+msgstr ""
 
 msgid "Local device"
-msgstr "Thiết bị local"
+msgstr ""
 
 msgid "Local draft was kept."
-msgstr "Bản nháp cục bộ đã được giữ."
+msgstr ""
 
 msgid "Local model"
-msgstr "Mô hình local"
+msgstr ""
 
 msgid "Login"
 msgstr "Đăng nhập"
@@ -452,11 +997,41 @@ msgstr "Đăng nhập"
 msgid "Login identifier"
 msgstr "Tên đăng nhập"
 
+msgid "Login or user id (required)"
+msgstr ""
+
 msgid "Logout"
 msgstr "Đăng xuất"
 
+msgid "Loudness"
+msgstr ""
+
 msgid "Loudness normalization"
-msgstr "Chuẩn hóa độ lớn"
+msgstr ""
+
+msgid "Majority — recommended"
+msgstr ""
+
+msgid "Manage YouTube sources, segments, ASR and annotations in one place."
+msgstr ""
+
+msgid "Manage labels from your catalog (project owner) for this project."
+msgstr ""
+
+msgid "Manage members"
+msgstr ""
+
+msgid "Mark assignment complete"
+msgstr ""
+
+msgid "Mean Cohen κ (per-label)"
+msgstr ""
+
+msgid "Mean Jaccard"
+msgstr ""
+
+msgid "Mean pairwise Jaccard"
+msgstr ""
 
 msgid "Member added."
 msgstr "Đã thêm thành viên."
@@ -477,64 +1052,129 @@ msgid "Metadata refresh queued."
 msgstr "Đã xếp hàng làm mới metadata."
 
 msgid "Mine"
-msgstr "Của tôi"
+msgstr ""
 
 msgid "Model"
-msgstr "Mô hình"
+msgstr ""
 
-msgid "Model B: each row is one annotation episode"
-msgstr "Model B: mỗi dòng là một episode chú thích"
+msgid "Models installed on the YouAudioLab server."
+msgstr "Các model đã cài trên máy chủ YouAudioLab."
 
-msgid "Model:"
-msgstr "Mô hình:"
+msgid "Mono"
+msgstr ""
+
+msgid ""
+"Multi-label set Jaccard and per-label Cohen/Fleiss κ on segments labeled by "
+"≥2 annotators. Double-assign via Work queue for overlap."
+msgstr ""
+
+msgid "Must already be installed on the YouAudioLab server."
+msgstr "Model phải đã được cài trên máy chủ YouAudioLab."
 
 msgid "My Projects"
 msgstr "Dự án của tôi"
 
+msgid "My queue"
+msgstr ""
+
+msgid "NOT READY"
+msgstr ""
+
 msgid "Name"
 msgstr "Tên"
 
-msgid "Name (required)"
-msgstr "Tên (bắt buộc)"
-
-msgid "Naming convention"
-msgstr "Quy ước đặt tên"
+msgid "Naming"
+msgstr ""
 
 msgid "Need a transcript first."
-msgstr "Cần có bản ghi trước."
+msgstr ""
+
+msgid "Need audio"
+msgstr ""
+
+msgid "Need label"
+msgstr ""
+
+msgid "Need review"
+msgstr ""
+
+msgid "Need text"
+msgstr ""
 
 msgid "New Project"
 msgstr "Dự án mới"
 
-msgid "No AI assist candidates yet."
-msgstr "Chưa có ứng viên trợ giúp AI."
+msgid "Next"
+msgstr ""
 
-msgid "No ASR runs yet."
-msgstr "Chưa có lần chạy ASR."
+msgid "Next assigned"
+msgstr ""
+
+msgid "Next assigned segment"
+msgstr ""
+
+msgid "No AI assist candidates yet."
+msgstr ""
+
+msgid "No ASR draft yet — Generate from audio, or type above."
+msgstr ""
 
 msgid "No active annotations"
-msgstr "Không có chú thích đang dùng"
+msgstr ""
 
 msgid "No active labels in this project."
-msgstr "Chưa có nhãn đang hoạt động trong dự án."
+msgstr ""
 
 msgid "No active members"
-msgstr "Không có thành viên đang hoạt động"
+msgstr ""
+
+msgid "No annotations yet."
+msgstr ""
+
+msgid "No assignments yet."
+msgstr ""
+
+msgid "No audio yet"
+msgstr ""
+
+msgid "No current audio artifact for this revision."
+msgstr ""
 
 msgid "No description"
 msgstr "Không có mô tả"
 
+msgid "No gold labels."
+msgstr ""
+
 msgid "No jobs yet"
-msgstr "Chưa có job"
+msgstr ""
 
 msgid "No jobs yet."
 msgstr "Chưa có công việc."
 
 msgid "No labels"
-msgstr "Chưa có nhãn"
+msgstr ""
+
+msgid "No labels added to this project yet."
+msgstr ""
+
+msgid "No labels yet"
+msgstr ""
+
+msgid "No live segments in this project."
+msgstr ""
 
 msgid "No processing jobs have been submitted for this segment."
-msgstr "Chưa có job xử lý nào cho đoạn này."
+msgstr ""
+
+msgid "No project labels"
+msgstr ""
+
+msgid "No project labels yet."
+msgstr ""
+
+msgid "No segments match these filters"
+msgstr ""
 
 msgid "No segments on this source yet."
 msgstr "Nguồn này chưa có đoạn."
@@ -542,33 +1182,79 @@ msgstr "Nguồn này chưa có đoạn."
 msgid "No segments yet"
 msgstr "Chưa có đoạn"
 
+msgid "No segments yet."
+msgstr ""
+
 msgid "No sources yet."
 msgstr "Chưa có nguồn."
 
+msgid "No transcript"
+msgstr ""
+
+msgid "No transcript yet — listen to the audio, then assign labels."
+msgstr ""
+
+msgid "None (analysis dump)"
+msgstr ""
+
+msgid "Not ready"
+msgstr ""
+
+msgid ""
+"Note: “Used for” controls whether the label appears on whole-segment chips, "
+"on the text-phrase bar, or both. Deactivating hides it from “available "
+"labels” when adding to new projects. Labels already assigned to projects "
+"stay usable. Labels in use cannot be deleted."
+msgstr ""
+
+msgid "Nothing pending — all tracked gates look clear."
+msgstr ""
+
 msgid "Off"
-msgstr "Tắt"
+msgstr ""
+
+msgid "Off by default. When off, accounts can only choose OpenAI."
+msgstr "Mặc định tắt. Khi tắt, tài khoản chỉ chọn được OpenAI."
+
+msgid "Ollama (server)"
+msgstr "Ollama (máy chủ)"
 
 msgid "Ollama URL"
-msgstr "URL Ollama"
+msgstr ""
 
 msgid "Ollama base URL"
-msgstr "URL gốc Ollama"
+msgstr ""
 
 msgid ""
 "Ollama candidates for cleanup, labels, and metadata. Nothing writes until "
 "you Apply. This is not ASR."
 msgstr ""
-"Ứng viên Ollama cho làm sạch, nhãn và metadata. Chỉ ghi khi bạn Áp dụng. Đây"
-" không phải ASR."
+
+msgid "Ollama is reachable. Models: %(models)s"
+msgstr "Ollama phản hồi. Model: %(models)s"
+
+msgid "Ollama is reached from the YouAudioLab server, not from your browser."
+msgstr ""
+"Ollama được gọi từ máy chủ YouAudioLab, không phải từ trình duyệt của bạn."
 
 msgid "Ollama model"
-msgstr "Mô hình Ollama"
+msgstr ""
+
+msgid ""
+"Ollama runs on the YouAudioLab server and suggests cleanup, labels, and "
+"metadata. Off by default."
+msgstr ""
+"Ollama chạy trên máy chủ YouAudioLab và gợi ý dọn bản chép, nhãn, metadata. "
+"Mặc định tắt."
 
 msgid "Ollama settings for assist features (Gate W8.1)."
 msgstr "Cấu hình Ollama cho tính năng hỗ trợ (Gate W8.1)."
 
+msgid "Ollama settings for assist features."
+msgstr "Cấu hình Ollama cho tính năng hỗ trợ."
+
 msgid "On"
-msgstr "Bật"
+msgstr ""
 
 msgid "Only AI admins can update system defaults."
 msgstr "Chỉ quản trị AI mới cập nhật mặc định hệ thống."
@@ -582,56 +1268,122 @@ msgstr "Mở"
 msgid "Open a source to create a segment (OWNER)."
 msgstr "Mở một nguồn để tạo đoạn (OWNER)."
 
-msgid "Open on YouTube"
-msgstr "Mở trên YouTube"
+msgid "Open export"
+msgstr ""
+
+msgid "Open quality report"
+msgstr ""
+
+msgid "Open segments"
+msgstr ""
+
+msgid "Open workspace"
+msgstr ""
 
 msgid "OpenAI"
-msgstr "OpenAI"
+msgstr ""
 
 msgid "OpenAI API key"
-msgstr "Khóa API OpenAI"
+msgstr ""
 
 msgid "OpenAI base URL"
-msgstr "URL gốc OpenAI"
+msgstr ""
 
 msgid "OpenAI default model"
-msgstr "Mô hình OpenAI mặc định"
+msgstr ""
 
 msgid "OpenAI enabled"
-msgstr "Bật OpenAI"
+msgstr ""
 
 msgid "OpenAI model"
-msgstr "Mô hình OpenAI"
+msgstr ""
 
 msgid "OpenAI system key:"
-msgstr "Khóa OpenAI hệ thống:"
+msgstr ""
 
-msgid "Output format"
-msgstr "Định dạng đầu ra"
+msgid "Optional"
+msgstr ""
 
-msgid "Override provider/model for this job"
-msgstr "Ghi đè provider/model cho job này"
+msgid "Overall"
+msgstr ""
+
+msgid "Overlap"
+msgstr ""
+
+msgid "Overlap segments"
+msgstr ""
 
 msgid "Overview"
 msgstr "Tổng quan"
 
+msgid "Owned"
+msgstr ""
+
+msgid "Owned projects"
+msgstr ""
+
+msgid "Owner"
+msgstr ""
+
+msgid ""
+"Owner-only. Annotators never see gold. Training export can use these labels "
+"via the Gold supervision policy."
+msgstr ""
+
+msgid ""
+"Owners always see every episode. Turn this off only for open review or "
+"training."
+msgstr ""
+
+msgid "Pair"
+msgstr ""
+
+msgid "Participant"
+msgstr ""
+
 msgid "Password"
 msgstr "Mật khẩu"
 
-msgid "Paste a user UUID that already exists. Default role is ANNOTATOR."
-msgstr "Dán UUID người dùng đã tồn tại. Vai trò mặc định là ANNOTATOR."
+msgid ""
+"Peer labels are hidden so you label independently. Only your episodes are "
+"listed."
+msgstr ""
+
+msgid "Pending"
+msgstr ""
+
+msgid "Per-video coverage"
+msgstr ""
+
+msgid ""
+"Personal label catalog. Set whether each label is for the whole audio "
+"segment, text in the transcript, or both. Assign labels to projects from "
+"each project's label settings."
+msgstr ""
+
+msgid "Pipeline"
+msgstr ""
+
+msgid "Play segment audio"
+msgstr ""
+
+msgid "Play/Pause"
+msgstr ""
 
 msgid "Preferences"
 msgstr "Tuỳ chọn"
 
+msgid "Prev"
+msgstr ""
+
 msgid "Primary"
 msgstr "Chính"
 
-msgid "Processing"
-msgstr "Xử lý"
+msgid "Priority"
+msgstr ""
 
-msgid "Processing defaults"
-msgstr "Mặc định xử lý"
+msgid "Processing"
+msgstr ""
 
 msgid ""
 "Processing defaults (Gate 0 D4: WAV / PCM / 16 kHz / mono / loudness off)."
@@ -640,14 +1392,35 @@ msgstr "Mặc định xử lý (Gate 0 D4: WAV / PCM / 16 kHz / mono / tắt lou
 msgid "Processing job queued."
 msgstr "Đã xếp hàng xử lý."
 
+msgid "Processing jobs"
+msgstr ""
+
+msgid "Profile"
+msgstr ""
+
+msgid "Progress"
+msgstr ""
+
 msgid "Project archived."
 msgstr "Đã lưu trữ dự án."
 
 msgid "Project created."
 msgstr "Đã tạo dự án."
 
+msgid "Project is archived — labeling is read-only."
+msgstr ""
+
+msgid "Project labels"
+msgstr ""
+
+msgid "Project labels assigned"
+msgstr ""
+
 msgid "Project navigation"
 msgstr "Điều hướng dự án"
+
+msgid "Project settings"
+msgstr ""
 
 msgid ""
 "Project taxonomy for Model B annotations. Deactivating blocks new "
@@ -659,20 +1432,38 @@ msgstr ""
 msgid "Projects"
 msgstr "Dự án"
 
-msgid "Provider"
-msgstr "Nhà cung cấp"
+msgid "Projects you annotate in but do not manage."
+msgstr ""
 
-msgid "Provider:"
-msgstr "Nhà cung cấp:"
+msgid "Provider"
+msgstr ""
+
+msgid "Quality"
+msgstr ""
+
+msgid "Quality report"
+msgstr ""
 
 msgid "Quick import"
 msgstr "Nhập nhanh"
 
+msgid "Quick overview"
+msgstr ""
+
+msgid "READY"
+msgstr ""
+
+msgid "READY FOR DATASET"
+msgstr ""
+
 msgid "Read-only for ANNOTATOR."
-msgstr "Chỉ đọc đối với ANNOTATOR."
+msgstr ""
 
 msgid "Read-only — OWNER required to edit bounds."
-msgstr "Chỉ đọc — cần OWNER để sửa biên."
+msgstr ""
+
+msgid "Read-only: only project owners can add or remove project labels."
+msgstr ""
 
 msgid "Read-only: only project owners can add or revoke members."
 msgstr "Chỉ đọc: chỉ OWNER mới thêm hoặc thu hồi thành viên."
@@ -683,20 +1474,35 @@ msgstr "Chỉ đọc: chỉ OWNER mới đổi cài đặt."
 msgid "Read-only: only project owners can create, edit, or activate labels."
 msgstr "Chỉ đọc: chỉ OWNER mới tạo, sửa hoặc kích hoạt nhãn."
 
-msgid "Read-only: only project owners can generate or apply ASR."
-msgstr "Chỉ đọc: chỉ chủ dự án mới tạo hoặc áp dụng ASR."
-
 msgid "Read-only: only project owners can submit, cancel, or retry jobs."
-msgstr "Chỉ đọc: chỉ chủ dự án mới gửi, hủy hoặc thử lại job."
+msgstr ""
 
 msgid "Read-only: only project owners can suggest or apply AI assists."
-msgstr "Chỉ đọc: chỉ chủ dự án mới gợi ý hoặc áp dụng AI."
+msgstr ""
 
 msgid "Read-only: you are not an AI admin in this environment."
-msgstr "Chỉ đọc: bạn không phải quản trị AI trong môi trường này."
+msgstr ""
 
 msgid "Read-only: you are not an ASR admin in this environment."
-msgstr "Chỉ đọc: bạn không phải quản trị ASR trong môi trường này."
+msgstr ""
+
+msgid "Readiness & protocol"
+msgstr ""
+
+msgid "Ready"
+msgstr ""
+
+msgid "Ready-only"
+msgstr ""
+
+msgid "Reassign"
+msgstr ""
+
+msgid "Reassign to"
+msgstr ""
+
+msgid "Reassign to…"
+msgstr ""
 
 msgid "Recent jobs"
 msgstr "Công việc gần đây"
@@ -707,23 +1513,65 @@ msgstr "Làm mới metadata"
 msgid "Register"
 msgstr "Đăng ký"
 
+msgid "Release"
+msgstr ""
+
+msgid "Released"
+msgstr ""
+
 msgid "Remove"
-msgstr "Gỡ"
+msgstr ""
+
+msgid "Remove from project"
+msgstr ""
+
+msgid ""
+"Remove this label from the project? Existing annotations keep their history."
+msgstr ""
+
+msgid "Remove this phrase label"
+msgstr ""
+
+msgid "Remove your label"
+msgstr ""
 
 msgid "Removed"
-msgstr "Đã gỡ"
+msgstr ""
+
+msgid "Replay"
+msgstr ""
 
 msgid "Request cancellation"
-msgstr "Yêu cầu hủy"
+msgstr ""
+
+msgid "Require Audio OK review"
+msgstr ""
+
+msgid "Require at least one active annotation"
+msgstr ""
+
+msgid "Require canonical transcript"
+msgstr ""
+
+msgid "Required"
+msgstr ""
+
+msgid ""
+"Research JSON and IAA CSV keep full episodes. HF/spaCy/Doccano/LLM use "
+"supervised_labels."
+msgstr ""
+
+msgid "Reset system ASR row and fall back to environment variables?"
+msgstr ""
 
 msgid "Reset to environment"
-msgstr "Đặt lại theo môi trường"
+msgstr ""
 
 msgid "Resolve / sanity check"
-msgstr "Resolve / kiểm tra nhanh"
+msgstr ""
 
 msgid "Retry"
-msgstr "Thử lại"
+msgstr ""
 
 msgid "Retry queued."
 msgstr "Đã xếp hàng thử lại."
@@ -734,47 +1582,65 @@ msgstr "Dùng lại kết quả ASR tương đương."
 msgid "Rev"
 msgstr "Rev"
 
-msgid "Revision"
-msgstr "Phiên bản"
+msgid "Review"
+msgstr ""
+
+msgid "Reviewed"
+msgstr ""
 
 msgid "Revision conflict"
-msgstr "Xung đột phiên bản"
+msgstr ""
 
 msgid "Revoke"
-msgstr "Thu hồi"
+msgstr ""
+
+msgid "Revoke membership…? Historical annotations are kept."
+msgstr ""
 
 msgid "Role"
 msgstr "Vai trò"
 
-msgid "Run again"
-msgstr "Chạy lại"
-
-msgid "Sample rate (Hz)"
-msgstr "Tần số lấy mẫu (Hz)"
+msgid "Sample rate"
+msgstr ""
 
 msgid "Save"
-msgstr "Lưu"
+msgstr ""
+
+msgid "Save & Next"
+msgstr ""
 
 msgid "Save definition"
-msgstr "Lưu định nghĩa"
+msgstr ""
+
+msgid "Save gold"
+msgstr ""
 
 msgid "Save preferences"
-msgstr "Lưu tùy chọn"
+msgstr ""
 
 msgid "Save settings"
-msgstr "Lưu cài đặt"
+msgstr ""
 
 msgid "Save system defaults"
-msgstr "Lưu mặc định hệ thống"
+msgstr ""
 
 msgid "Save transcript"
-msgstr "Lưu bản ghi"
+msgstr ""
 
 msgid "Saved."
 msgstr "Đã lưu."
 
+msgid "Saving does not redo finished extract/ASR jobs."
+msgstr ""
+
 msgid "Scope"
-msgstr "Phạm vi"
+msgstr ""
+
+msgid "Seed"
+msgstr ""
+
+msgid "Seg"
+msgstr ""
 
 msgid "Segment"
 msgstr "Đoạn"
@@ -782,20 +1648,54 @@ msgstr "Đoạn"
 msgid "Segment #%(n)s"
 msgstr "Đoạn #%(n)s"
 
+msgid "Segment + text"
+msgstr ""
+
 msgid "Segment created."
 msgstr "Đã tạo đoạn."
 
 msgid "Segment deleted."
 msgstr "Đã xoá đoạn."
 
+msgid "Segment editor"
+msgstr ""
+
+msgid "Segment limit"
+msgstr ""
+
+msgid "Segment navigation"
+msgstr ""
+
 msgid "Segment not found"
 msgstr "Không tìm thấy đoạn"
+
+msgid "Segment processing status"
+msgstr ""
 
 msgid "Segments"
 msgstr "Đoạn"
 
 msgid "Select a label…"
-msgstr "Chọn nhãn…"
+msgstr ""
+
+msgid "Set ASR_SECRETS_KEY first"
+msgstr ""
+
+msgid "Set End"
+msgstr ""
+
+msgid "Set Start"
+msgstr ""
+
+msgid ""
+"Set bounds from the player, then create. Opens Segment Workspace after "
+"create."
+msgstr ""
+
+msgid ""
+"Set start/end bounds, then save. Saving bumps revision — submit a job to "
+"extract new audio."
+msgstr ""
 
 msgid "Settings"
 msgstr "Cài đặt"
@@ -803,14 +1703,29 @@ msgstr "Cài đặt"
 msgid "Settings saved. Existing jobs keep their snapshots."
 msgstr "Đã lưu cài đặt. Việc đang chạy giữ snapshot cũ."
 
+msgid "Settings sections"
+msgstr ""
+
+msgid "Shared"
+msgstr ""
+
+msgid "Shortcuts:"
+msgstr ""
+
 msgid "Show password"
 msgstr "Hiện mật khẩu"
 
 msgid "Show removed history"
-msgstr "Hiện lịch sử đã gỡ"
+msgstr ""
+
+msgid "Show settings for both providers"
+msgstr ""
 
 msgid "Sign in"
 msgstr "Đăng nhập"
+
+msgid "Signals"
+msgstr ""
 
 msgid "Signed in as <strong>%(name)s</strong>"
 msgstr "Đã đăng nhập với tên <strong>%(name)s</strong>"
@@ -819,37 +1734,40 @@ msgid "Signed in."
 msgstr "Đã đăng nhập."
 
 msgid "Size"
-msgstr "Kích thước"
+msgstr ""
 
 msgid "Soft-delete segment"
-msgstr "Xóa mềm đoạn"
+msgstr ""
 
 msgid "Soft-delete this segment? It can remain in history lists later."
-msgstr "Xóa mềm đoạn này? Có thể vẫn hiện trong danh sách lịch sử sau."
+msgstr ""
 
 msgid "Sort order"
-msgstr "Thứ tự"
+msgstr ""
 
 msgid "Source"
 msgstr "Nguồn"
 
 msgid "Source detail"
-msgstr "Chi tiết nguồn"
-
-msgid "Source duration:"
-msgstr "Thời lượng nguồn:"
+msgstr ""
 
 msgid "Source:"
-msgstr "Nguồn:"
+msgstr ""
 
 msgid "Sources"
 msgstr "Nguồn"
 
-msgid "Stale"
-msgstr "Lỗi thời"
+msgid "Specific segments"
+msgstr ""
 
-msgid "Stale — not applicable"
-msgstr "Lỗi thời — không áp dụng được"
+msgid "Split"
+msgstr ""
+
+msgid "Split across annotators"
+msgstr ""
+
+msgid "Stale"
+msgstr ""
 
 msgid "Start"
 msgstr "Bắt đầu"
@@ -857,26 +1775,40 @@ msgstr "Bắt đầu"
 msgid "Status"
 msgstr "Trạng thái"
 
-msgid "Submit a job to extract audio for the current revision."
-msgstr "Gửi job để trích âm thanh cho phiên bản hiện tại."
+msgid "Stereo"
+msgstr ""
 
-msgid "Submit an extract job first — ASR needs a verified audio artifact."
-msgstr "Hãy gửi job trích xuất trước — ASR cần artifact âm thanh đã xác minh."
+msgid "Submit a job to extract audio for the current revision."
+msgstr ""
 
 msgid "Submit job"
-msgstr "Gửi job"
+msgstr ""
 
 msgid "Suggest cleanup"
-msgstr "Gợi ý làm sạch"
+msgstr ""
 
 msgid "Suggest labels"
-msgstr "Gợi ý nhãn"
+msgstr ""
 
 msgid "Suggest metadata"
-msgstr "Gợi ý metadata"
+msgstr ""
 
-msgid "System"
-msgstr "Hệ thống"
+msgid ""
+"Suggests transcript cleanup, labels, and metadata. The Ollama address is set"
+" by an administrator."
+msgstr "Gợi ý dọn bản chép, nhãn và metadata. Địa chỉ Ollama do quản trị đặt."
+
+msgid ""
+"Suggests transcript cleanup, labels, and metadata. The model runs on the "
+"YouAudioLab server."
+msgstr ""
+"Gợi ý dọn bản chép, nhãn và metadata. Model chạy trên máy chủ YouAudioLab."
+
+msgid "Supervision (training views)"
+msgstr ""
+
+msgid "Support / API only"
+msgstr ""
 
 msgid "System AI"
 msgstr "AI hệ thống"
@@ -909,22 +1841,73 @@ msgid "System ASR reset to environment defaults."
 msgstr "Đã đặt lại ASR hệ thống về mặc định môi trường."
 
 msgid "System OpenAI API key"
-msgstr "Khóa API OpenAI hệ thống"
+msgstr ""
 
 msgid "System defaults or custom provider settings (Gate W7.1)."
 msgstr "Mặc định hệ thống hoặc cấu hình nhà cung cấp riêng (Gate W7.1)."
 
+msgid "System defaults:"
+msgstr ""
+
+msgid "System key:"
+msgstr ""
+
+msgid "System model:"
+msgstr "Model hệ thống:"
+
 msgid "System:"
-msgstr "Hệ thống:"
+msgstr ""
+
+msgid "Team"
+msgstr ""
+
+msgid "Test"
+msgstr ""
+
+msgid "Test Ollama connection"
+msgstr "Kiểm tra kết nối Ollama"
+
+msgid ""
+"Test checks the system OpenAI key only (ignores your personal ASR Custom "
+"prefs)."
+msgstr ""
+
+msgid "Test connection"
+msgstr ""
 
 msgid "Test connection / resolve"
-msgstr "Kiểm tra kết nối / resolve"
+msgstr ""
+
+msgid "Text"
+msgstr ""
+
+msgid "Text in transcript"
+msgstr ""
+
+msgid ""
+"The project stays readable. New writes stop. Research metadata and exports "
+"remain."
+msgstr ""
 
 msgid "The server rejected"
-msgstr "Máy chủ từ chối"
+msgstr ""
+
+msgid "This project uses:"
+msgstr ""
 
 msgid "Title"
 msgstr "Tiêu đề"
+
+msgid ""
+"Token BIO formats are not offered. Labels in this project apply to a whole "
+"segment, not to words inside the transcript."
+msgstr ""
+
+msgid "Total shown"
+msgstr ""
+
+msgid "Train"
+msgstr ""
 
 msgid "Transcript"
 msgstr "Bản chép"
@@ -932,26 +1915,66 @@ msgstr "Bản chép"
 msgid "Transcript saved."
 msgstr "Đã lưu bản chép."
 
+msgid ""
+"Type manually or generate from audio. This box is the canonical text for "
+"labeling and export."
+msgstr ""
+
 msgid "Unexpected empty membership list for this project."
-msgstr "Danh sách thành viên trống bất thường cho dự án này."
+msgstr ""
+
+msgid "Union (all active labels)"
+msgstr ""
 
 msgid "Unknown or inactive user"
 msgstr "Người dùng không tồn tại hoặc không hoạt động"
 
+msgid "Unknown user"
+msgstr ""
+
+msgid "Unsupported Ollama model"
+msgstr "Model Ollama không được hỗ trợ"
+
 msgid "Unverified"
-msgstr "Chưa xác minh"
+msgstr ""
 
-msgid "Updated"
-msgstr "Cập nhật"
+msgid "Usage count"
+msgstr ""
 
-msgid "Use Download WAV on the audio player above."
-msgstr "Dùng Tải WAV trên trình phát phía trên."
+msgid "Use"
+msgstr ""
+
+msgid ""
+"Use Quick labels on the left for fast assign. This panel lists episodes "
+"(Model B)."
+msgstr ""
+
+msgid "Use in transcript box"
+msgstr ""
 
 msgid "Use system defaults"
-msgstr "Dùng mặc định hệ thống"
+msgstr ""
 
 msgid "Use this identity"
 msgstr "Dùng danh tính này"
+
+msgid ""
+"Use your login when someone adds you to a project. The internal id is for "
+"support and API clients only."
+msgstr ""
+
+msgid "Used for"
+msgstr ""
+
+msgid "Used only when no specific segments are checked below."
+msgstr ""
+
+msgid ""
+"Used when generating a transcript. Empty provider inherits account/system "
+"ASR. Local (server) runs on the YouAudioLab host. Keys stay in"
+msgstr ""
+"Dùng khi tạo bản chép. Để trống nhà cung cấp thì kế thừa ASR tài khoản/hệ "
+"thống. Local (máy chủ) chạy trên máy chủ YouAudioLab. Khóa nằm ở"
 
 msgid "User"
 msgstr "Người dùng"
@@ -959,23 +1982,72 @@ msgstr "Người dùng"
 msgid "User UUID"
 msgstr "UUID người dùng"
 
-msgid "User id (required)"
-msgstr "ID người dùng (bắt buộc)"
+msgid ""
+"Users on system defaults get this provider unless they switch to Custom."
+msgstr ""
+
+msgid "Val"
+msgstr ""
 
 msgid "Verified"
-msgstr "Đã xác minh"
+msgstr ""
+
+msgid "Video"
+msgstr ""
+
+msgid "View all"
+msgstr ""
 
 msgid "View all project segments"
 msgstr "Xem mọi đoạn của dự án"
+
+msgid "View progress dashboard"
+msgstr ""
 
 msgid "View sources"
 msgstr "Xem nguồn"
 
 msgid "Wait for the active job to finish."
-msgstr "Chờ job đang chạy hoàn tất."
+msgstr ""
+
+msgid "What counts as this label"
+msgstr ""
+
+msgid "What does not count"
+msgstr ""
+
+msgid "When disabled, accounts only see that AI assist is off."
+msgstr "Khi tắt, tài khoản chỉ thấy trợ lý AI đang tắt."
+
+msgid ""
+"Which segments count as READY on Progress, Quality, and ready-only export."
+msgstr ""
+
+msgid "Whole segment"
+msgstr ""
+
+msgid ""
+"Whole segment = clip chips. Text in transcript = drag words then label. Both"
+" = either place."
+msgstr ""
+
+msgid "With artifact"
+msgstr ""
+
+msgid "With transcript"
+msgstr ""
+
+msgid "Work queue"
+msgstr ""
 
 msgid "Workspace"
 msgstr "Không gian làm việc"
+
+msgid "Workspace overview"
+msgstr ""
+
+msgid "You are not participating in any projects."
+msgstr ""
 
 msgid ""
 "You don't have any projects yet. Click <strong>New Project</strong> to get "
@@ -983,671 +2055,99 @@ msgid ""
 msgstr "Bạn chưa có dự án nào. Bấm <strong>Dự án mới</strong> để bắt đầu."
 
 msgid "You have no active annotations on this segment."
-msgstr "Bạn chưa có chú thích đang dùng trên đoạn này."
+msgstr ""
+
+msgid "You manage project settings, sources, and processing."
+msgstr ""
 
 msgid "YouAudioLab"
 msgstr "YouAudioLab"
 
+msgid "YouTube"
+msgstr ""
+
 msgid "YouTube URL"
 msgstr "URL YouTube"
+
+msgid "Your ASR preferences"
+msgstr ""
+
+msgid "Your effective (system mode):"
+msgstr ""
+
+msgid "Your labels"
+msgstr ""
 
 msgid ""
 "Your local draft was preserved. Choose Apply or Discard — nothing was "
 "written to the server."
 msgstr ""
-"Bản nháp cục bộ đã được giữ. Chọn Áp dụng hoặc Hủy — chưa ghi gì lên máy "
-"chủ."
 
 msgid "Your name"
 msgstr "Tên của bạn"
 
+msgid "account Settings"
+msgstr ""
+
+msgid "ch"
+msgstr ""
+
 msgid "configured"
-msgstr "đã cấu hình"
+msgstr ""
+
+msgid "dev fake engine"
+msgstr ""
 
 msgid "disabled"
-msgstr "tắt"
+msgstr ""
 
 msgid "enabled"
-msgstr "bật"
+msgstr ""
+
+msgid "episodes"
+msgstr ""
+
+msgid "fake"
+msgstr ""
+
+msgid "in use"
+msgstr ""
 
 msgid "no"
-msgstr "không"
-
-msgid "not set"
-msgstr "chưa đặt"
-
-msgid "optional"
-msgstr "tùy chọn"
-
-msgid "source(s) in this project."
-msgstr "nguồn trong dự án này."
-
-msgid "unknown"
-msgstr "không rõ"
-
-msgid "yes"
-msgstr "có"
-
-msgid "•••• configured"
-msgstr "•••• đã cấu hình"
-
-msgid "← Back to segments"
-msgstr "← Quay lại các đoạn"
-
-msgid "%(fmt)s · %(rate)s Hz · %(channels)s ch"
-msgstr "%(fmt)s · %(rate)s Hz · %(channels)s kênh"
-
-msgid "%(n)s bytes"
-msgstr "%(n)s byte"
-
-msgid "(segment now %(cur)s)"
-msgstr "(đoạn hiện là %(cur)s)"
-
-msgid "An active job already exists for this segment."
-msgstr "Đã có job đang chạy cho đoạn này."
-
-msgid "Annotator %(id)s"
-msgstr "Người chú thích %(id)s"
-
-msgid "Annotator %(who)s"
-msgstr "Người chú thích %(who)s"
-
-msgid "Artifact exists but is not verified yet."
-msgstr "Artifact đã có nhưng chưa được xác minh."
-
-msgid "Cancellation requested…"
-msgstr "Đã yêu cầu hủy…"
-
-msgid "Cancelled"
-msgstr "Đã hủy"
-
-msgid "Completed"
-msgstr "Hoàn tất"
-
-msgid "Could not load artifact audio."
-msgstr "Không tải được âm thanh artifact."
-
-msgid ""
-"Create labels on the <a href=\"%(labels_url)s\">Labels</a> screen (F6), or "
-"via API."
-msgstr "Tạo nhãn trên màn <a href=\"%(labels_url)s\">Nhãn</a> (F6), hoặc qua API."
-
-msgid "Create labels on the Labels screen (F6), or via API."
-msgstr "Tạo nhãn ở màn Nhãn (F6), hoặc qua API."
-
-msgid "Current server revision is <strong>%(cur)s</strong>."
-msgstr "Phiên bản máy chủ hiện tại là <strong>%(cur)s</strong>."
-
-msgid "Duration %(d)s"
-msgstr "Thời lượng %(d)s"
-
-msgid "Duration %(d)ss"
-msgstr "Thời lượng %(d)s"
-
-msgid "Edit \"%(name)s\""
-msgstr "Sửa \"%(name)s\""
-
-msgid "Edit “%(name)s”"
-msgstr "Sửa “%(name)s”"
-
-msgid "Enter a valid user UUID (X-User-Id)."
-msgstr "Nhập UUID người dùng hợp lệ (X-User-Id)."
-
-msgid "Failed"
-msgstr "Thất bại"
-
-msgid "Format %(fmt)s"
-msgstr "Định dạng %(fmt)s"
-
-msgid "Loading audio…"
-msgstr "Đang tải âm thanh…"
-
-msgid "Metadata failed"
-msgstr "Metadata thất bại"
-
-msgid "Metadata pending"
-msgstr "Đang chờ metadata"
-
-msgid ""
-"No current audio artifact for definition revision %(n)s. Submit a processing"
-" job to produce one."
 msgstr ""
-"Chưa có artifact âm thanh cho phiên bản định nghĩa %(n)s. Gửi job xử lý để "
-"tạo."
-
-msgid ""
-"No current audio artifact for definition revision %(rev)s. Submit a "
-"processing job to produce one."
-msgstr ""
-"Chưa có artifact âm thanh cho phiên bản định nghĩa %(rev)s. Gửi job xử lý để"
-" tạo."
-
-msgid "Out of date"
-msgstr "Lỗi thời"
-
-msgid "Peers can share the same label. Re-assign after remove creates a"
-msgstr "Người khác có thể dùng cùng nhãn. Gán lại sau khi gỡ sẽ tạo"
-
-msgid ""
-"Peers can share the same label. Re-assign after remove creates a "
-"<strong>new</strong> episode."
-msgstr ""
-"Người khác có thể dùng cùng nhãn. Gán lại sau khi gỡ tạo episode "
-"<strong>mới</strong>."
-
-msgid "Pending"
-msgstr "Chờ"
-
-msgid "Queued"
-msgstr "Đang xếp hàng"
-
-msgid "Ready"
-msgstr "Sẵn sàng"
-
-msgid ""
-"Remove annotation episode for “%(name)s”? Re-assigning later creates a new "
-"episode id."
-msgstr ""
-"Gỡ episode chú thích cho “%(name)s”? Gán lại sau sẽ tạo episode id mới."
-
-msgid "Revoke membership for %(who)s…? Historical annotations are kept."
-msgstr "Thu hồi thành viên %(who)s…? Chú thích lịch sử vẫn giữ."
-
-msgid "Running"
-msgstr "Đang chạy"
-
-msgid "Server bounds: %(a)ss – %(b)ss · Your draft: %(c)ss – %(d)ss"
-msgstr "Biên máy chủ: %(a)ss – %(b)ss · Bản nháp: %(c)ss – %(d)ss"
-
-msgid "Server bounds: %(s)ss – %(e)ss"
-msgstr "Biên máy chủ: %(s)ss – %(e)ss"
-
-msgid "Size %(n)s bytes"
-msgstr "Kích thước %(n)s byte"
-
-msgid ""
-"Someone else updated this segment (now revision %(current)s). Your save was "
-"not applied."
-msgstr ""
-"Người khác đã cập nhật đoạn này (phiên bản %(current)s). Lưu của bạn chưa "
-"được áp dụng."
-
-msgid "Someone else updated this segment. Your save was not applied."
-msgstr "Người khác đã cập nhật đoạn này. Lưu của bạn chưa được áp dụng."
-
-msgid "Source imported (metadata pending). Fetch queued."
-msgstr "Đã nhập nguồn (đang chờ metadata). Đã xếp hàng lấy dữ liệu."
-
-msgid "Succeeded"
-msgstr "Thành công"
-
-msgid "That label is inactive. Choose an active label."
-msgstr "Nhãn đó không hoạt động. Chọn nhãn đang dùng."
-
-msgid "This project is archived and cannot be modified."
-msgstr "Dự án đã lưu trữ và không thể chỉnh sửa."
-
-msgid "This segment was soft-deleted."
-msgstr "Đoạn này đã bị xóa mềm."
-
-msgid "This source already exists in the project."
-msgstr "Nguồn này đã tồn tại trong dự án."
-
-msgid "You (%(name)s)"
-msgstr "Bạn (%(name)s)"
-
-msgid "Your draft: %(s)ss – %(e)ss"
-msgstr "Bản nháp của bạn: %(s)ss – %(e)ss"
-
-msgid "attempt %(n)s"
-msgstr "lần thử %(n)s"
-
-msgid "bytes"
-msgstr "byte"
-
-msgid "created %(when)s"
-msgstr "tạo lúc %(when)s"
-
-msgid "episode."
-msgstr "episode."
-
-msgid "local %(model)s"
-msgstr "local %(model)s"
-
-msgid "new"
-msgstr "mới"
 
 msgid "none"
 msgstr "không có"
 
-msgid "removed %(when)s"
-msgstr "gỡ lúc %(when)s"
-
-msgid "rev %(n)s"
-msgstr "rev %(n)s"
-
-msgid "rev %(r)s"
-msgstr "rev %(r)s"
-
-msgid "sort %(n)s"
-msgstr "thứ tự %(n)s"
-
-msgid "Reload the workspace, then paste your transcript and Save again."
-msgstr "Tải lại workspace, dán bản ghi rồi Lưu lại."
-
-msgid "OpenAI credentials resolve; use API test-connection for a live check."
-msgstr ""
-"Thông tin OpenAI resolve được; dùng API test-connection để kiểm tra thật."
-
-msgid "Local provider OK — %(engine)s / %(model)s"
-msgstr "Nhà cung cấp local OK — %(engine)s / %(model)s"
-
-msgid "Resolved %(provider)s · %(model)s @ %(url)s"
-msgstr "Đã resolve %(provider)s · %(model)s @ %(url)s"
-
-msgid "This YouTube video is already imported in this project."
-msgstr "Video YouTube này đã được nhập vào dự án."
-
-msgid "Workspace overview"
-msgstr "Tổng quan không gian làm việc"
-
-msgid "Manage YouTube sources, segments, ASR and annotations in one place."
-msgstr "Quản lý nguồn YouTube, đoạn âm thanh, ASR và chú thích tại một nơi."
-
-msgid "Owned"
-msgstr "Sở hữu"
-
-msgid "Joined"
-msgstr "Tham gia"
-
-msgid "Total shown"
-msgstr "Tổng số đang hiển thị"
-
-msgid "Owned projects"
-msgstr "Dự án sở hữu"
-
-msgid "You manage project settings, sources, and processing."
-msgstr "Bạn quản lý cấu hình dự án, các nguồn và việc xử lý."
-
-msgid "Owner"
-msgstr "Người sở hữu"
-
-msgid "Joined projects"
-msgstr "Dự án tham gia"
-
-msgid "Projects you annotate in but do not manage."
-msgstr "Các dự án bạn tham gia gắn nhãn nhưng không quản lý cấu hình."
-
-msgid "Participant"
-msgstr "Người tham gia"
-
-msgid ""
-"You don't own any projects yet. Click <strong>New Project</strong> to get "
-"started."
-msgstr "Bạn chưa sở hữu dự án nào. Bấm <strong>Dự án mới</strong> để bắt đầu."
-
-msgid "You are not participating in any projects."
-msgstr "Bạn chưa tham gia dự án nào."
-
-msgid "%(n)s source"
-msgid_plural "%(n)s sources"
-msgstr[0] "%(n)s nguồn"
-msgstr[1] "%(n)s nguồn"
-
-msgid "%(n)s segment"
-msgid_plural "%(n)s segments"
-msgstr[0] "%(n)s đoạn"
-msgstr[1] "%(n)s đoạn"
-
-msgid "Account"
-msgstr "Tài khoản"
-
-msgid "Account profile and ASR / AI provider configuration."
-msgstr "Hồ sơ tài khoản và cấu hình ASR / AI."
-
-msgid "Actions"
-msgstr "Hành động"
-
-msgid "Add new label"
-msgstr "Thêm nhãn mới"
-
-msgid "Create a label in one of your projects to start annotating segments."
-msgstr "Tạo nhãn trong dự án của bạn để bắt đầu chú thích đoạn."
-
-msgid "Join or create a project to see labels here."
-msgstr "Tham gia hoặc tạo dự án để xem nhãn tại đây."
-
-msgid "Label name"
-msgstr "Tên nhãn"
-
-msgid ""
-"Labels across projects you belong to. Edit and manage labels in projects you"
-" own."
-msgstr "Nhãn trong các dự án bạn tham gia. Chỉnh sửa nhãn ở dự án bạn sở hữu."
-
-msgid "No labels yet"
-msgstr "Chưa có nhãn"
-
-msgid ""
-"Note: You can only edit or deactivate labels in projects you own. Labels "
-"with active annotations remain in history when deactivated."
-msgstr ""
-"Lưu ý: Bạn chỉ có thể sửa hoặc vô hiệu hóa nhãn trong dự án bạn sở hữu. Nhãn"
-" đã dùng trong chú thích vẫn giữ trong lịch sử khi bị vô hiệu hóa."
-
-msgid "Profile"
-msgstr "Hồ sơ"
-
-msgid "Project"
-msgstr "Dự án"
-
-msgid "Settings sections"
-msgstr "Mục cài đặt"
-
-msgid "Usage count"
-msgstr "Số lần dùng"
-
-msgid ""
-"Use the ASR and AI tabs to configure transcription and assist providers for "
-"your workspace."
-msgstr ""
-"Dùng tab ASR và AI để cấu hình chuyển lời và trợ giúp AI cho không gian làm "
-"việc."
-
-msgid "User id"
-msgstr "ID người dùng"
-
-msgid "Your labels"
-msgstr "Nhãn của bạn"
-
-msgid "in use"
-msgstr "đang dùng"
-
-msgid "Active label in project"
-msgstr "Nhãn đang dùng trong dự án"
-
-msgid "Active labels in project"
-msgstr "Nhãn đang dùng trong dự án"
-
-msgid "Add"
+msgid "not set"
 msgstr ""
 
-msgid ""
-"All active catalog labels are already in this project, or your catalog is "
-"empty."
-msgstr "Mọi nhãn đang hoạt động đã có trong dự án, hoặc danh mục trống."
-
-msgid "Available label"
-msgstr "Nhãn có thể thêm"
-
-msgid "Available labels"
-msgstr "Nhãn có thể thêm"
-
-msgid "Catalog"
-msgstr "Danh mục"
-
-msgid "Color override"
-msgstr "Ghi đè màu"
-
-msgid "Create label in catalog and add here"
-msgstr "Tạo nhãn trong danh mục và thêm vào đây"
-
-msgid ""
-"Create labels here, then assign them to projects from project label "
-"settings."
-msgstr "Tạo nhãn tại đây, rồi gán vào dự án từ cài đặt nhãn dự án."
-
-msgid "Delete"
-msgstr "Xóa"
-
-msgid "Delete this label from your catalog?"
-msgstr "Xóa nhãn này khỏi danh mục?"
-
-msgid "Description override"
-msgstr "Ghi đè mô tả"
-
-msgid "Display name override"
-msgstr "Ghi đè tên hiển thị"
-
-msgid "Inactive in catalog"
-msgstr "Không hoạt động trong danh mục"
-
-msgid "Label added to project."
-msgstr "Đã thêm nhãn vào dự án."
-
-msgid "Label created and added to project."
-msgstr "Đã tạo nhãn và thêm vào dự án."
-
-msgid "Label deleted."
-msgstr "Đã xóa nhãn."
-
-msgid "Label removed from project."
-msgstr "Đã bỏ nhãn khỏi dự án."
-
-msgid "Label settings"
-msgstr "Cài đặt nhãn"
-
-msgid "Manage labels from your catalog (project owner) for this project."
-msgstr "Quản lý nhãn từ danh mục của bạn (chủ dự án) cho dự án này."
-
-msgid "No labels added to this project yet."
-msgstr "Chưa có nhãn nào trong dự án."
-
-msgid ""
-"Note: Deactivating a label hides it from “available labels” when adding to "
-"new projects. Labels already assigned to projects stay usable. Labels in use"
-" cannot be deleted."
-msgstr ""
-"Lưu ý: Vô hiệu hóa nhãn sẽ ẩn khỏi “nhãn có thể thêm” khi thêm vào dự án "
-"mới. Nhãn đã gán trong dự án vẫn dùng được. Nhãn đang dùng không thể xóa."
-
-msgid ""
-"Personal label catalog. Assign labels to projects from each project's label "
-"settings."
-msgstr ""
-"Danh mục nhãn cá nhân. Gán nhãn vào dự án từ cài đặt nhãn của từng dự án."
-
-msgid "Read-only: only project owners can add or remove project labels."
-msgstr "Chỉ đọc: chỉ chủ dự án mới thêm hoặc gỡ nhãn khỏi dự án."
-
-msgid "Remove from project"
-msgstr "Gỡ khỏi dự án"
-
-msgid ""
-"Remove this label from the project? Existing annotations keep their history."
-msgstr "Gỡ nhãn này khỏi dự án? Chú thích hiện có vẫn giữ lịch sử."
-
-msgid "Used in %(n)s annotation episode(s)"
-msgstr "Dùng trong %(n)s episode chú thích"
-
-msgid "%(n)s segment(s)"
-msgstr "%(n)s đoạn"
-
-msgid "ASR active"
-msgstr "ASR đang chạy"
-
-msgid "Active (queued/running)"
-msgstr "Đang xếp hàng/chạy"
-
-msgid "Active annotation episodes"
-msgstr "Episode chú thích đang hoạt động"
-
-msgid "Active jobs"
-msgstr "Job đang chạy"
-
-msgid "Active members"
+msgid "optional"
 msgstr ""
 
-msgid "Add YouTube source"
-msgstr "Thêm nguồn YouTube"
-
-msgid "All segments"
-msgstr "Tất cả đoạn"
-
-msgid "Annotated"
-msgstr "Đã chú thích"
-
-msgid "Annotation summary"
-msgstr "Tóm tắt chú thích"
-
-msgid "Annotator"
-msgstr "Người chú thích"
-
-msgid "Annotator productivity"
-msgstr "Năng suất người chú thích"
-
-msgid "Archive stops writes; research metadata remains readable."
-msgstr "Lưu trữ ngừng ghi; metadata nghiên cứu vẫn đọc được."
-
-msgid "Audio pipeline and annotation metrics for this project."
-msgstr "Chỉ số pipeline âm thanh và chú thích cho dự án này."
-
-msgid "Continue labeling"
-msgstr "Tiếp tục gán nhãn"
-
-msgid "Edit settings"
-msgstr "Sửa cài đặt"
-
-msgid "Episodes"
-msgstr "Episode"
-
-msgid "Extract audio active"
-msgstr "Trích âm đang chạy"
-
-msgid "Failed jobs"
-msgstr "Job thất bại"
-
-msgid "Import a YouTube source and create segments before labeling."
-msgstr "Nhập nguồn YouTube và tạo đoạn trước khi gán nhãn."
-
-msgid "Manage members"
-msgstr "Quản lý thành viên"
-
-msgid "No annotations yet."
-msgstr "Chưa có chú thích."
-
-msgid "No segments yet."
+msgid "segments"
 msgstr ""
 
-msgid "Open workspace"
-msgstr "Mở workspace"
+msgid "source(s) in this project."
+msgstr "nguồn trong dự án này."
 
-msgid "Processing jobs"
-msgstr "Job xử lý"
-
-msgid "Progress"
-msgstr "Tiến độ"
-
-msgid "Project labels"
-msgstr "Nhãn dự án"
-
-msgid "Project labels assigned"
-msgstr "Nhãn đã gán trong dự án"
-
-msgid "Quick overview"
-msgstr "Tổng quan nhanh"
-
-msgid ""
-"Segment #%(idx)s — open the workspace to assign labels, run ASR, and review "
-"audio."
-msgstr "Đoạn #%(idx)s — mở workspace để gán nhãn, chạy ASR và nghe âm thanh."
-
-msgid "Segment processing status"
-msgstr "Trạng thái xử lý đoạn"
-
-msgid "Team"
-msgstr "Nhóm"
-
-msgid "View all"
-msgstr "Xem tất cả"
-
-msgid "View progress dashboard"
-msgstr "Xem bảng tiến độ"
-
-msgid "With artifact"
-msgstr "Có artifact"
-
-msgid "With transcript"
-msgstr "Có bản ghi"
-
-msgid "%(n)s active member in this project."
-msgstr "%(n)s thành viên đang hoạt động trong dự án."
-
-msgid "%(n)s active members in this project."
-msgstr "%(n)s thành viên đang hoạt động trong dự án."
-
-msgid ""
-"Drag across one word or several words, then pick a label. Esc clears the "
-"selection."
-msgstr "Kéo chọn một hoặc nhiều chữ rồi chọn nhãn. Esc để bỏ chọn."
-
-msgid ""
-"No text labels yet. On <a href=\"%(labels_url)s\">Labels</a>, set a label’s "
-"scope to “Text in transcript”."
+msgid "sources"
 msgstr ""
-"Chưa có nhãn chữ. Vào <a href=\"%(labels_url)s\">Nhãn</a> và đặt phạm vi của"
-" nhãn là “Chữ trong transcript”."
 
-msgid "Label this phrase"
-msgstr "Gán nhãn cho cụm chữ"
-
-msgid "1–9 or click a label"
-msgstr "Bấm 1–9 hoặc chọn nhãn"
-
-msgid "Remove this phrase label"
-msgstr "Gỡ nhãn của cụm chữ này"
-
-msgid "Whole segment"
-msgstr "Cả đoạn audio"
-
-msgid "Text in transcript"
-msgstr "Chữ trong transcript"
-
-msgid "Both"
-msgstr "Cả hai"
-
-msgid "Segment + text"
-msgstr "Đoạn + chữ"
-
-msgid "Used for"
-msgstr "Dùng cho"
-
-msgid "Text span assigned."
-msgstr "Đã gán nhãn cho chữ."
-
-msgid "Text span removed."
-msgstr "Đã gỡ nhãn của chữ."
-
-msgid ""
-"Personal label catalog. Set whether each label is for the whole audio "
-"segment, text in the transcript, or both. Assign labels to projects from "
-"each project's label settings."
+msgid "system defaults"
 msgstr ""
-"Katalog nhãn cá nhân. Chọn nhãn dùng cho cả đoạn audio, chữ trong "
-"transcript, hoặc cả hai. Gán nhãn vào dự án từ trang Nhãn của từng dự án."
 
-msgid "Also update this label in projects that already use it"
-msgstr "Cập nhật luôn nhãn này trong các dự án đang dùng"
-
-msgid ""
-"Note: “Used for” controls whether the label appears on whole-segment chips, "
-"on the text-phrase bar, or both. Deactivating hides it from “available "
-"labels” when adding to new projects. Labels already assigned to projects "
-"stay usable. Labels in use cannot be deleted."
+msgid "yes"
 msgstr ""
-"Ghi chú: “Dùng cho” quyết định nhãn hiện ở chip cả đoạn, thanh gán chữ, hoặc"
-" cả hai. Vô hiệu hoá sẽ ẩn khỏi “nhãn có sẵn” khi thêm vào dự án mới. Nhãn "
-"đã gán vào dự án vẫn dùng được. Nhãn đang được dùng không xoá được."
 
-msgid ""
-"Whole segment = clip chips. Text in transcript = drag words then label. Both"
-" = either place."
+msgid "your custom prefs"
 msgstr ""
-"Cả đoạn audio = chip cả clip. Chữ trong transcript = kéo chọn chữ rồi gán. "
-"Cả hai = dùng được ở cả hai chỗ."
 
-msgid "Segment #%(idx)s"
-msgstr "Đoạn #%(idx)s"
+msgid "κ"
+msgstr ""
 
-msgid "Open the workspace to assign labels, run ASR, and review audio."
-msgstr "Mở workspace để gán nhãn, chạy ASR và nghe âm thanh."
+msgid "•••• configured"
+msgstr ""
+
+msgid "← Back to segments"
+msgstr ""

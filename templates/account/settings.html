@@ -63,6 +63,16 @@
 {% if tab == "asr" or tab == "system-asr" %}
 <script type="module" src="{% static 'js/settings_asr.js' %}"></script>
 {% endif %}
+{% if tab == "ai" %}
+<script>
+  document.querySelectorAll("[data-ai-mode]").forEach((el) => {
+    el.addEventListener("change", () => {
+      const mode = document.querySelector('input[name="mode"]:checked')?.value;
+      document.querySelector("[data-ai-custom-fields]")?.classList.toggle("d-none", mode !== "custom");
+    });
+  });
+</script>
+{% endif %}
 {% if tab == "system-asr" %}
 <script type="module" src="{% static 'js/confirm.js' %}"></script>
 {% endif %}

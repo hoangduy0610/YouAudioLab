@@ -56,6 +56,8 @@ services:
       CELERY_BROKER_URL: redis://redis:6379/0
       CELERY_RESULT_BACKEND: redis://redis:6379/0
       STORAGE_ROOT: /data/storage
+      ASR_ENGINE: faster-whisper
+      ASR_MODEL_CACHE_DIR: /data/storage/whisper-models
       CELERY_ENQUEUE_ENABLED: "true"
     ports:
       - "8001:8001"
@@ -85,6 +87,8 @@ services:
       CELERY_BROKER_URL: redis://redis:6379/0
       CELERY_RESULT_BACKEND: redis://redis:6379/0
       STORAGE_ROOT: /data/storage
+      ASR_ENGINE: faster-whisper
+      ASR_MODEL_CACHE_DIR: /data/storage/whisper-models
       CELERY_WORKER_CONCURRENCY: ${CELERY_WORKER_CONCURRENCY:-2}
     command:
       [

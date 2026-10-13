@@ -43,6 +43,23 @@ def require_ai_admin(user_id: uuid.UUID) -> None:
         )
 
 
+def installed_ollama_models(base_url: str, *keep: str | None) -> list[str]:
+    """Models Ollama reports, plus any current names so a down server still shows a choice."""
+    from apps.processing.services.ai_ollama import AiProviderError, OllamaClient
+
+    names: list[str] = []
+    try:
+        names = OllamaClient(base_url=base_url).list_tags()
+    except AiProviderError:
+        names = []
+    ordered: list[str] = []
+    for name in [*names, *keep]:
+        cleaned = (name or "").strip()
+        if cleaned and cleaned not in ordered:
+            ordered.append(cleaned)
+    return ordered
+
+
 def effective_system_ai() -> dict[str, Any]:
     base = {
         "enabled": bool(getattr(settings, "AI_ENABLED", False)),
@@ -109,7 +126,7 @@ def resolve_ai_config(
     else:
         assert prefs is not None
         provider = (prefs.provider or eff["provider"]).strip().lower()
-        base_url = (prefs.ollama_base_url or eff["ollama_base_url"]).strip().rstrip("/")
+        base_url = eff["ollama_base_url"]
         model = (prefs.ollama_model or eff["ollama_default_model"]).strip()
 
     enabled = bool(eff["enabled"])
@@ -122,8 +139,6 @@ def resolve_ai_config(
                 enabled = bool(proj.ai_enabled)
             if proj.ai_provider:
                 provider = proj.ai_provider.strip().lower()
-            if proj.ai_ollama_base_url:
-                base_url = proj.ai_ollama_base_url.strip().rstrip("/")
             if proj.ai_ollama_model:
                 model = proj.ai_ollama_model.strip()
 

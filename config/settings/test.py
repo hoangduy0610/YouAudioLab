@@ -4,6 +4,7 @@ from config.settings.base import *  # noqa: F403
 from config.settings.base import parse_database_url
 
 ENVIRONMENT = "test"
+ASR_LOCAL_ENGINE_ENABLED = True
 DEBUG = True
 CELERY_ENQUEUE_ENABLED = False
 CELERY_TASK_ALWAYS_EAGER = False

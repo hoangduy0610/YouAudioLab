@@ -3,6 +3,13 @@
   <p class="small mb-3">
     {% trans "Choose system defaults or your own provider. Custom fields apply only when Custom is selected." %}
   </p>
+  <p class="small text-muted mb-3">
+    {% if local_asr_enabled %}
+    {% trans "Local (server) runs on the YouAudioLab host. Nothing to install on your computer." %}
+    {% else %}
+    {% trans "Local ASR is off. You can only choose OpenAI until an administrator enables the local engine." %}
+    {% endif %}
+  </p>
 
   {% if not asr_secrets_configured %}
   <div class="alert alert-warning py-2 small" role="status" data-testid="asr-secrets-missing">
@@ -29,7 +36,7 @@
   <p class="small text-muted mb-3">
     {% trans "System defaults:" %}
     <strong>{{ asr_defaults.provider }}</strong>
-    · {% blocktrans with model=asr_defaults.local_model %}local {{ model }}{% endblocktrans %}
+    · {% trans "Local (server)" %} {{ asr_defaults.local_model }}
     · {% trans "OpenAI" %} {% if asr_defaults.openai_enabled %}{% trans "enabled" %}{% else %}{% trans "disabled" %}{% endif %}
     ({{ asr_defaults.openai_default_model }})
     {% if is_asr_admin %}
@@ -60,15 +67,22 @@
       <div class="mb-2">
         <label class="form-label" for="asr_provider">{% trans "Provider" %}</label>
         <select class="form-select" name="provider" id="asr_provider" data-asr-provider>
-          <option value="local" {% if asr_prefs.provider == "local" or not asr_prefs.provider %}selected{% endif %}>local</option>
-          <option value="openai" {% if asr_prefs.provider == "openai" %}selected{% endif %}>openai</option>
+          {% if local_asr_enabled %}
+          <option value="local" {% if asr_prefs.provider == "local" %}selected{% endif %}>{% trans "Local (server)" %}</option>
+          {% endif %}
+          <option value="openai" {% if not local_asr_enabled or asr_prefs.provider == "openai" or not asr_prefs.provider %}selected{% endif %}>openai</option>
         </select>
       </div>
 
-      <div data-asr-local-fields class="{% if asr_prefs.provider == 'openai' %}d-none{% endif %}">
+      <div data-asr-local-fields class="{% if not local_asr_enabled or asr_prefs.provider != 'local' %}d-none{% endif %}">
         <div class="mb-2">
           <label class="form-label" for="asr_local_model">{% trans "Local model" %}</label>
-          <input class="form-control" name="local_model" id="asr_local_model" value="{{ asr_prefs.local_model|default:'' }}" placeholder="{{ asr_defaults.local_model }}">
+          <select class="form-select" name="local_model" id="asr_local_model">
+            <option value="" {% if not asr_prefs.local_model %}selected{% endif %}>{% trans "Use system defaults" %} ({{ asr_defaults.local_model }})</option>
+            {% for m in local_asr_models %}
+            <option value="{{ m }}" {% if asr_prefs.local_model == m %}selected{% endif %}>{{ m }}</option>
+            {% endfor %}
+          </select>
         </div>
         <div class="row">
           <div class="col-md-6 mb-2">
@@ -111,6 +125,6 @@
     <button class="btn btn-outline-secondary btn-sm" type="submit" data-testid="asr-test-connection">
       {% trans "Test connection" %}
     </button>
-    <span class="small text-muted ms-2">{% trans "Local: resolve only. OpenAI: live /models check with your effective key." %}</span>
+    <span class="small text-muted ms-2">{% trans "Local (server): resolve only. OpenAI: live /models check with your effective key." %}</span>
   </form>
 </div>

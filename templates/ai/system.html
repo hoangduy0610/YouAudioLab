@@ -8,6 +8,7 @@
       <h1 class="h4 mb-1"><i class="bi bi-cpu"></i> {% trans "System AI defaults" %}</h1>
       <p class="text-muted mb-0 small">
         {% trans "Admin defaults for Ollama assists (Gate W8.1)." %}
+        {% trans "Ollama is reached from the YouAudioLab server, not from your browser." %}
         · <a href="{% url 'ai-preferences' %}">{% trans "Account AI preferences" %}</a>
       </p>
     </div>
@@ -36,7 +37,7 @@
     <div class="mb-2">
       <label class="form-label">{% trans "Provider" %}</label>
       <select class="form-select" name="provider">
-        <option value="ollama" selected>ollama</option>
+        <option value="ollama" selected>{% trans "Ollama (server)" %}</option>
       </select>
     </div>
     <div class="mb-2">

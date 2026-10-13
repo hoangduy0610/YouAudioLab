@@ -46,7 +46,7 @@ def _allowlist_local() -> set[str]:
     return {
         s.strip()
         for s in (
-            getattr(settings, "ASR_MODEL_ALLOWLIST", "tiny,base,small,medium,large-v3") or ""
+            getattr(settings, "ASR_MODEL_ALLOWLIST", "tiny,base,small") or ""
         ).split(",")
         if s.strip()
     }
@@ -90,6 +90,7 @@ def effective_system_asr() -> dict[str, Any]:
         "openai_base_url": getattr(settings, "OPENAI_BASE_URL", "https://api.openai.com/v1")
         or "https://api.openai.com/v1",
         "openai_api_key": getattr(settings, "OPENAI_API_KEY", None) or None,
+        "local_engine_enabled": bool(getattr(settings, "ASR_LOCAL_ENGINE_ENABLED", False)),
         "source": "env",
         "updated_at": None,
     }
@@ -110,6 +111,8 @@ def effective_system_asr() -> dict[str, Any]:
         base["openai_default_model"] = row.openai_default_model
     if row.openai_base_url:
         base["openai_base_url"] = row.openai_base_url
+    if row.local_engine_enabled is not None:
+        base["local_engine_enabled"] = bool(row.local_engine_enabled)
     if row.openai_api_key_encrypted:
         try:
             base["openai_api_key"] = decrypt_secret(row.openai_api_key_encrypted)
@@ -118,6 +121,10 @@ def effective_system_asr() -> dict[str, Any]:
     base["source"] = "database"
     base["updated_at"] = row.updated_at
     return base
+
+
+def local_engine_enabled() -> bool:
+    return bool(effective_system_asr().get("local_engine_enabled"))
 
 
 def resolve_asr_config(
@@ -187,6 +194,19 @@ def resolve_asr_config(
         )
 
     if provider == "local":
+        if not system["local_engine_enabled"]:
+            raise ValidationError(
+                "Local ASR engine is disabled",
+                details={
+                    "fields": [
+                        {
+                            "field": "provider",
+                            "code": "DISABLED",
+                            "allowed": ["openai"],
+                        }
+                    ]
+                },
+            )
         if local_model not in _allowlist_local():
             raise ValidationError(
                 "Unsupported local ASR model",

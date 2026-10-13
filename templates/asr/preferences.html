@@ -8,6 +8,7 @@
       <h1 class="h4 mb-1"><i class="bi bi-mic"></i> {% trans "ASR preferences" %}</h1>
       <p class="text-muted mb-0 small">
         {% trans "System defaults or custom provider settings (Gate W7.1)." %}
+        {% trans "Local (server) runs on the YouAudioLab host. Nothing to install on your computer." %}
         {% if is_asr_admin %}· <a href="{% url 'system-asr' %}">{% trans "System ASR admin" %}</a>{% endif %}
       </p>
     </div>
@@ -16,7 +17,7 @@
   <p class="small mb-3">
     {% trans "Current system defaults:" %}
     <strong>{{ defaults.provider }}</strong>
-    · {% blocktrans with model=defaults.local_model %}local {{ model }}{% endblocktrans %}
+    · {% trans "Local (server)" %} {{ defaults.local_model }}
     · {% trans "OpenAI" %} {% if defaults.openai_enabled %}{% trans "enabled" %}{% else %}{% trans "disabled" %}{% endif %}
     ({{ defaults.openai_default_model }})
   </p>
@@ -40,13 +41,18 @@
     <div class="mb-2">
       <label class="form-label">{% trans "Provider" %}</label>
       <select class="form-select" name="provider">
-        <option value="local" {% if prefs.provider == "local" or not prefs.provider %}selected{% endif %}>local</option>
+        <option value="local" {% if prefs.provider == "local" or not prefs.provider %}selected{% endif %}>{% trans "Local (server)" %}</option>
         <option value="openai" {% if prefs.provider == "openai" %}selected{% endif %}>openai</option>
       </select>
     </div>
     <div class="mb-2">
       <label class="form-label">{% trans "Local model" %}</label>
-      <input class="form-control" name="local_model" value="{{ prefs.local_model|default:'' }}" placeholder="{{ defaults.local_model }}">
+      <select class="form-select" name="local_model">
+        <option value="" {% if not prefs.local_model %}selected{% endif %}>{% trans "Use system defaults" %} ({{ defaults.local_model }})</option>
+        <option value="tiny" {% if prefs.local_model == "tiny" %}selected{% endif %}>tiny</option>
+        <option value="base" {% if prefs.local_model == "base" %}selected{% endif %}>base</option>
+        <option value="small" {% if prefs.local_model == "small" %}selected{% endif %}>small</option>
+      </select>
     </div>
     <div class="row">
       <div class="col-md-6 mb-2">

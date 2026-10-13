@@ -195,20 +195,36 @@
         </div>
         <div class="card-body">
           <p class="small text-muted">
-            {% trans "Used when generating a transcript. Empty provider inherits account/system ASR. Keys stay in" %}
+            {% trans "Used when generating a transcript. Empty provider inherits account/system ASR. Local (server) runs on the YouAudioLab host. Keys stay in" %}
             <a href="{% url 'account-settings' %}">{% trans "account Settings" %}</a>.
           </p>
           <div class="mb-2">
             <label class="form-label" for="asr_provider">{% trans "Provider" %}</label>
             <select class="form-select" name="asr_provider" id="asr_provider" {% if project.status == "ARCHIVED" %}disabled{% endif %}>
               <option value="" {% if not settings.asr_provider %}selected{% endif %}>{% trans "Inherit account/system" %}</option>
-              <option value="local" {% if settings.asr_provider == "local" %}selected{% endif %}>local</option>
+              {% if local_asr_enabled %}
+              <option value="local" {% if settings.asr_provider == "local" %}selected{% endif %}>{% trans "Local (server)" %}</option>
+              {% endif %}
               <option value="openai" {% if settings.asr_provider == "openai" %}selected{% endif %}>openai</option>
             </select>
           </div>
           <div>
             <label class="form-label" for="asr_model">{% trans "Model" %}</label>
-            <input class="form-control" name="asr_model" id="asr_model" value="{{ settings.asr_model|default:'' }}" placeholder="base · gpt-4o-mini-transcribe · whisper-1" {% if project.status == "ARCHIVED" %}readonly{% endif %}>
+            <select class="form-select" name="asr_model" id="asr_model" {% if project.status == "ARCHIVED" %}disabled{% endif %}>
+              <option value="" {% if not settings.asr_model %}selected{% endif %}>{% trans "Inherit account/system" %}</option>
+              {% if local_asr_enabled %}
+              <optgroup label="{% trans "Local (server)" %}">
+                {% for m in local_asr_models %}
+                <option value="{{ m }}" {% if settings.asr_model == m %}selected{% endif %}>{{ m }}</option>
+                {% endfor %}
+              </optgroup>
+              {% endif %}
+              <optgroup label="OpenAI">
+                {% for m in openai_asr_models %}
+                <option value="{{ m }}" {% if settings.asr_model == m %}selected{% endif %}>{{ m }}</option>
+                {% endfor %}
+              </optgroup>
+            </select>
           </div>
         </div>
       </div>
@@ -220,7 +236,9 @@
           <h2 class="h6 mb-0">{% trans "AI assist (this project)" %}</h2>
         </div>
         <div class="card-body">
-          <p class="small text-muted">{% trans "Suggest cleanup / labels / metadata. Inherit leaves system AI defaults." %}</p>
+          <p class="small text-muted">
+            {% trans "Suggests transcript cleanup, labels, and metadata. The Ollama address is set by an administrator." %}
+          </p>
           <div class="mb-2">
             <label class="form-label" for="ai_enabled">{% trans "Enabled" %}</label>
             <select class="form-select" name="ai_enabled" id="ai_enabled" {% if project.status == "ARCHIVED" %}disabled{% endif %}>
@@ -229,20 +247,14 @@
               <option value="off" {% if settings.ai_enabled == False %}selected{% endif %}>{% trans "disabled" %}</option>
             </select>
           </div>
-          <div class="mb-2">
-            <label class="form-label" for="ai_provider">{% trans "Provider" %}</label>
-            <select class="form-select" name="ai_provider" id="ai_provider" {% if project.status == "ARCHIVED" %}disabled{% endif %}>
-              <option value="" {% if not settings.ai_provider %}selected{% endif %}>{% trans "Inherit" %}</option>
-              <option value="ollama" {% if settings.ai_provider == "ollama" %}selected{% endif %}>ollama</option>
-            </select>
-          </div>
-          <div class="mb-2">
-            <label class="form-label" for="ai_ollama_base_url">{% trans "Ollama base URL" %}</label>
-            <input class="form-control" name="ai_ollama_base_url" id="ai_ollama_base_url" value="{{ settings.ai_ollama_base_url|default:'' }}" placeholder="http://127.0.0.1:11434" {% if project.status == "ARCHIVED" %}readonly{% endif %}>
-          </div>
           <div>
             <label class="form-label" for="ai_ollama_model">{% trans "Ollama model" %}</label>
-            <input class="form-control" name="ai_ollama_model" id="ai_ollama_model" value="{{ settings.ai_ollama_model|default:'' }}" placeholder="llama3.2" {% if project.status == "ARCHIVED" %}readonly{% endif %}>
+            <select class="form-select" name="ai_ollama_model" id="ai_ollama_model" {% if project.status == "ARCHIVED" %}disabled{% endif %}>
+              <option value="" {% if not settings.ai_ollama_model %}selected{% endif %}>{% trans "Inherit system model" %}</option>
+              {% for m in ollama_models %}
+              <option value="{{ m }}" {% if settings.ai_ollama_model == m %}selected{% endif %}>{{ m }}</option>
+              {% endfor %}
+            </select>
           </div>
         </div>
       </div>

@@ -14,6 +14,7 @@ from apps.processing.services.asr_resolve import (
     PROVIDERS,
     effective_system_asr,
     is_asr_admin,
+    local_engine_enabled,
     probe_asr_connection,
     _allowlist_local,
     _allowlist_openai,
@@ -31,6 +32,7 @@ def _system_defaults_out(*, editable: bool) -> dict:
     engine = "fake" if eng in {"fake", "fake-asr"} else "faster-whisper"
     return {
         "provider": sys["provider"],
+        "local_engine_enabled": bool(sys["local_engine_enabled"]),
         "local": {
             "engine": engine,
             "model": sys["local_model"],
@@ -88,7 +90,7 @@ def _prefs_out(prefs: UserAsrPreferences | None) -> dict:
     }
 
 
-def _validate_provider(value: str | None) -> str | None:
+def _validate_provider(value: str | None, *, allow_local: bool | None = None) -> str | None:
     if value is None:
         return None
     p = value.strip().lower()
@@ -100,6 +102,15 @@ def _validate_provider(value: str | None) -> str | None:
             details={
                 "fields": [
                     {"field": "provider", "code": "INVALID", "allowed": sorted(PROVIDERS)}
+                ]
+            },
+        )
+    if p == "local" and not (local_engine_enabled() if allow_local is None else allow_local):
+        raise ValidationError(
+            "Local ASR engine is disabled",
+            details={
+                "fields": [
+                    {"field": "provider", "code": "DISABLED", "allowed": ["openai"]}
                 ]
             },
         )
@@ -122,8 +133,15 @@ def system_asr_defaults(request):
         return Response(_system_defaults_out(editable=True))
 
     row, _ = SystemAsrSettings.objects.get_or_create(pk=1)
+    if "local_engine_enabled" in data:
+        row.local_engine_enabled = bool(data.get("local_engine_enabled"))
+    allow_local = (
+        row.local_engine_enabled
+        if row.local_engine_enabled is not None
+        else local_engine_enabled()
+    )
     if "provider" in data:
-        row.provider = _validate_provider(data.get("provider"))
+        row.provider = _validate_provider(data.get("provider"), allow_local=allow_local)
     if "local_model" in data:
         lm = (data.get("local_model") or "").strip() or None
         if lm and lm not in _allowlist_local():

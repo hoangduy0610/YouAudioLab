@@ -34,16 +34,21 @@ from apps.processing.models import (
     UserAsrPreferences,
 )
 from apps.processing.services.ai_assist import AiAssistService
+from apps.processing.services.ai_ollama import AiProviderError, OllamaClient
 from apps.processing.services.ai_resolve import (
     effective_system_ai,
+    installed_ollama_models,
     is_ai_admin,
     resolve_ai_config,
 )
 from apps.processing.services.asr import AsrService
 from apps.processing.services.asr_resolve import (
+    _allowlist_local,
+    _allowlist_openai,
     effective_system_asr,
     format_asr_probe_flash,
     is_asr_admin,
+    local_engine_enabled,
     probe_asr_connection,
     resolve_asr_config,
 )
@@ -1395,11 +1400,15 @@ def settings_page(request: HttpRequest, project_id) -> HttpResponse:
                 require_annotation=request.POST.get("require_annotation") == "on",
                 blind_annotators=request.POST.get("blind_annotators") == "on",
                 asr_provider=request.POST.get("asr_provider"),
-                asr_model=request.POST.get("asr_model"),
+                asr_model=_posted_project_asr_model(request),
                 ai_enabled=ai_enabled_val,
-                ai_provider=request.POST.get("ai_provider"),
-                ai_ollama_base_url=request.POST.get("ai_ollama_base_url"),
-                ai_ollama_model=request.POST.get("ai_ollama_model"),
+                ai_provider=settings.ai_provider,
+                ai_ollama_base_url=settings.ai_ollama_base_url,
+                ai_ollama_model=_posted_ollama_model(
+                    request,
+                    "ai_ollama_model",
+                    allow_blank=True,
+                ),
                 apply_asr_protocol=True,
                 apply_ai_protocol=True,
             )
@@ -1418,6 +1427,14 @@ def settings_page(request: HttpRequest, project_id) -> HttpResponse:
             "project": project,
             "settings": settings,
             "role": _role(project_id, user.id),
+            "local_asr_models": sorted(_allowlist_local()),
+            "openai_asr_models": sorted(_allowlist_openai()),
+            "local_asr_enabled": local_engine_enabled(),
+            "ollama_models": installed_ollama_models(
+                effective_system_ai()["ollama_base_url"],
+                effective_system_ai()["ollama_default_model"],
+                settings.ai_ollama_model,
+            ),
         },
     )
 
@@ -1552,8 +1569,11 @@ def account_settings_page(
                 mode = request.POST.get("mode") or "system"
                 asr_prefs.use_system_defaults = mode == "system"
                 if mode == "custom":
-                    asr_prefs.provider = (request.POST.get("provider") or "local").strip().lower()
-                    asr_prefs.local_model = request.POST.get("local_model") or None
+                    provider = (request.POST.get("provider") or "openai").strip().lower()
+                    if provider == "local" and not local_engine_enabled():
+                        raise ValidationError("Local ASR engine is disabled")
+                    asr_prefs.provider = provider
+                    asr_prefs.local_model = _posted_local_model(request)
                     asr_prefs.local_device = request.POST.get("local_device") or None
                     asr_prefs.local_compute_type = request.POST.get("local_compute_type") or None
                     asr_prefs.openai_model = request.POST.get("openai_model") or None
@@ -1568,29 +1588,17 @@ def account_settings_page(
                 return _settings_redirect("asr")
 
             if tab == "ai":
-                if action == "test":
-                    resolved = resolve_ai_config(actor_user_id=user.id)
-                    if not resolved.enabled:
-                        messages.error(request, _("AI provider is disabled."))
-                    else:
-                        messages.success(
-                            request,
-                            _("Resolved %(provider)s · %(model)s @ %(url)s")
-                            % {
-                                "provider": resolved.provider,
-                                "model": resolved.ollama_model,
-                                "url": resolved.ollama_base_url,
-                            },
-                        )
+                if not ai_defaults.enabled:
+                    messages.error(request, _("AI assist is off."))
                     return _settings_redirect("ai")
                 if ai_prefs is None:
                     ai_prefs = UserAiPreferences(user_id=user.id)
                 mode = request.POST.get("mode") or "system"
                 ai_prefs.use_system_defaults = mode == "system"
                 if mode == "custom":
-                    ai_prefs.provider = (request.POST.get("provider") or "ollama").strip().lower()
-                    ai_prefs.ollama_base_url = request.POST.get("ollama_base_url") or None
-                    ai_prefs.ollama_model = request.POST.get("ollama_model") or None
+                    ai_prefs.provider = "ollama"
+                    ai_prefs.ollama_model = _posted_ollama_model(request, "ollama_model")
+                    ai_prefs.ollama_base_url = None
                 ai_prefs.save()
                 messages.success(request, _("AI preferences saved."))
                 return _settings_redirect("ai")
@@ -1611,8 +1619,12 @@ def account_settings_page(
                     getattr(messages, level)(request, text)
                     return _settings_redirect("system-asr")
                 row, _created = SystemAsrSettings.objects.get_or_create(pk=1)
-                row.provider = (request.POST.get("provider") or "").strip() or None
-                row.local_model = request.POST.get("local_model") or None
+                row.local_engine_enabled = request.POST.get("local_engine_enabled") == "on"
+                provider = (request.POST.get("provider") or "").strip() or None
+                if provider == "local" and not row.local_engine_enabled:
+                    raise ValidationError("Local ASR engine is disabled")
+                row.provider = provider
+                row.local_model = _posted_local_model(request)
                 row.local_device = request.POST.get("local_device") or None
                 row.local_compute_type = request.POST.get("local_compute_type") or None
                 enabled = request.POST.get("openai_enabled")
@@ -1637,6 +1649,9 @@ def account_settings_page(
                 if not ai_admin:
                     messages.error(request, _("Only AI admins can update system defaults."))
                     return _settings_redirect("system-ai")
+                if action == "test":
+                    _flash_ollama_test(request, ai_defaults["ollama_base_url"])
+                    return _settings_redirect("system-ai")
                 if action == "reset":
                     SystemAiSettings.objects.filter(pk=1).delete()
                     messages.success(request, _("System AI reset to environment defaults."))
@@ -1647,9 +1662,11 @@ def account_settings_page(
                     row.enabled = True
                 elif enabled == "off":
                     row.enabled = False
-                row.provider = (request.POST.get("provider") or "").strip() or None
+                row.provider = "ollama"
                 row.ollama_base_url = request.POST.get("ollama_base_url") or None
-                row.ollama_default_model = request.POST.get("ollama_default_model") or None
+                row.ollama_default_model = _posted_ollama_model(
+                    request, "ollama_default_model"
+                )
                 row.updated_by_user_id = user.id
                 row.save()
                 messages.success(request, _("System AI defaults saved."))
@@ -1675,8 +1692,85 @@ def account_settings_page(
             "is_ai_admin": ai_admin,
             "asr_editable": asr_admin,
             "ai_editable": ai_admin,
+            "local_asr_models": sorted(_allowlist_local()),
+            "local_asr_enabled": local_engine_enabled(),
+            "ollama_models": installed_ollama_models(
+                ai_defaults["ollama_base_url"],
+                ai_defaults["ollama_default_model"],
+                ai_prefs.ollama_model if ai_prefs else None,
+            ),
         },
     )
+
+
+def _posted_ollama_model(
+    request: HttpRequest, field: str, *, allow_blank: bool = False
+) -> str | None:
+    raw = (request.POST.get(field) or "").strip() or None
+    if raw is None and allow_blank:
+        return None
+    system = effective_system_ai()
+    reported = installed_ollama_models(system["ollama_base_url"])
+    allowed = set(reported) or {system["ollama_default_model"]}
+    allowed.discard("")
+    if not raw or raw not in allowed:
+        raise ValidationError(
+            "Unsupported Ollama model",
+            details={
+                "fields": [
+                    {"field": field, "code": "INVALID", "allowed": sorted(allowed)}
+                ]
+            },
+        )
+    return raw
+
+
+def _flash_ollama_test(request: HttpRequest, base_url: str) -> None:
+    try:
+        result = OllamaClient(base_url=base_url).ping()
+    except AiProviderError as exc:
+        messages.error(request, exc.message)
+        return
+    names = ", ".join(result.get("models") or []) or _("none")
+    messages.success(
+        request,
+        _("Ollama is reachable. Models: %(models)s") % {"models": names},
+    )
+
+
+def _posted_local_model(request: HttpRequest) -> str | None:
+    raw = (request.POST.get("local_model") or "").strip() or None
+    if raw and raw not in _allowlist_local():
+        raise ValidationError(
+            "Unsupported local ASR model",
+            details={"fields": [{"field": "local_model", "code": "INVALID"}]},
+        )
+    return raw
+
+
+def _posted_project_asr_model(request: HttpRequest) -> str | None:
+    raw = (request.POST.get("asr_model") or "").strip() or None
+    provider = (request.POST.get("asr_provider") or "").strip().lower()
+    if provider == "local" and not local_engine_enabled():
+        raise ValidationError("Local ASR engine is disabled")
+    if not raw:
+        return None
+    if provider == "local" and raw not in _allowlist_local():
+        raise ValidationError(
+            "Unsupported local ASR model",
+            details={"fields": [{"field": "asr_model", "code": "INVALID"}]},
+        )
+    if provider == "openai" and raw not in _allowlist_openai():
+        raise ValidationError(
+            "Unsupported OpenAI ASR model",
+            details={"fields": [{"field": "asr_model", "code": "INVALID"}]},
+        )
+    if not provider and raw not in _allowlist_local() and raw not in _allowlist_openai():
+        raise ValidationError(
+            "Unsupported local ASR model",
+            details={"fields": [{"field": "asr_model", "code": "INVALID"}]},
+        )
+    return raw
 
 
 @require_http_methods(["GET", "POST"])
