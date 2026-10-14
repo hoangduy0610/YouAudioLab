@@ -5,7 +5,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     DJANGO_SETTINGS_MODULE=config.settings.docker
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends ffmpeg \
+    && apt-get install -y --no-install-recommends ffmpeg libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

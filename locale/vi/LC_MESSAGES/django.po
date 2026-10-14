@@ -562,7 +562,7 @@ msgid "Definition revision:"
 msgstr ""
 
 msgid "Delete"
-msgstr ""
+msgstr "Xoá"
 
 msgid "Delete this label from your catalog?"
 msgstr ""
@@ -2151,3 +2151,18 @@ msgstr ""
 
 msgid "← Back to segments"
 msgstr ""
+
+msgid "Source deleted."
+msgstr "Đã xoá nguồn."
+
+msgid "Delete source"
+msgstr "Xoá nguồn"
+
+msgid "Delete this source and its segments? This cannot be undone."
+msgstr "Xoá nguồn này và các đoạn của nó? Thao tác không hoàn tác được."
+
+msgid "Project saved."
+msgstr "Đã lưu dự án."
+
+msgid "Project details"
+msgstr "Thông tin dự án"

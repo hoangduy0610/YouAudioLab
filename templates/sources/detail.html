@@ -25,7 +25,14 @@
         · <a href="{{ source.youtube_url }}" rel="noopener noreferrer" target="_blank"><i class="bi bi-box-arrow-up-right"></i> YouTube</a>
       </p>
     </div>
-    <div class="page-head__actions">
+    <div class="page-head__actions d-flex gap-2">
+      {% if role == "OWNER" and project.status != "ARCHIVED" %}
+      <form method="post" data-confirm="{% trans "Delete this source and its segments? This cannot be undone." %}">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="delete_source">
+        <button class="btn btn-sm btn-outline-danger" type="submit" data-testid="delete-source">{% trans "Delete source" %}</button>
+      </form>
+      {% endif %}
       <a class="btn btn-sm btn-outline-secondary" href="{% url 'source-list' project.id %}">
         <i class="bi bi-arrow-left"></i> {% trans "Sources" %}
       </a>

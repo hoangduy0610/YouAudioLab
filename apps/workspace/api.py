@@ -222,13 +222,16 @@ def project_sources(request, project_id):
     return Response(source_out(source), status=status.HTTP_201_CREATED)
 
 
-@api_view(["GET", "PATCH"])
+@api_view(["GET", "PATCH", "DELETE"])
 @permission_classes([IsIdentified])
 def source_detail(request, project_id, source_id):
     principal = _principal(request)
     MembershipService().require_member(project_id, principal.user_id)
     sources = SourceService()
     source = sources.get_for_project(project_id, source_id)
+    if request.method == "DELETE":
+        sources.delete_source(source_id, actor_user_id=principal.user_id)
+        return Response(status=status.HTTP_204_NO_CONTENT)
     if request.method == "GET":
         return Response(source_out(source))
     ser = SourceUpdateSerializer(data=request.data)

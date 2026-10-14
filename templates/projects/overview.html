@@ -28,6 +28,29 @@
     {% endif %}
   </div>
 
+  {% if role == "OWNER" and project.status != "ARCHIVED" %}
+  <div class="card border-0 shadow-sm mb-4" data-testid="edit-project">
+    <div class="card-body">
+      <h2 class="h6">{% trans "Project details" %}</h2>
+      <form method="post" class="row g-2">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="update_project">
+        <div class="col-md-6">
+          <label class="form-label" for="project-name">{% trans "Name" %}</label>
+          <input class="form-control" id="project-name" name="name" required maxlength="255" value="{{ project.name }}">
+        </div>
+        <div class="col-12">
+          <label class="form-label" for="project-description">{% trans "Description" %}</label>
+          <textarea class="form-control" id="project-description" name="description" rows="3" maxlength="2000">{{ project.description|default:"" }}</textarea>
+        </div>
+        <div class="col-12">
+          <button class="btn btn-primary btn-sm" type="submit" data-testid="save-project">{% trans "Save" %}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+
   <div class="row g-4">
     <div class="col-lg-8">
       {% if next_segment and project.status != "ARCHIVED" %}

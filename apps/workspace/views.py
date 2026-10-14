@@ -226,12 +226,26 @@ def project_create(request: HttpRequest) -> HttpResponse:
     return render(request, "projects/create.html")
 
 
+@require_http_methods(["GET", "POST"])
 def project_overview(request: HttpRequest, project_id) -> HttpResponse:
     user = _require_identity(request)
     if not isinstance(user, AppUser):
         return user
     try:
         MembershipService().require_member(project_id, user.id)
+        if request.method == "POST" and request.POST.get("action") == "update_project":
+            try:
+                ProjectService().update(
+                    project_id,
+                    actor_user_id=user.id,
+                    name=request.POST.get("name") or "",
+                    description=(request.POST.get("description") or "").strip() or None,
+                )
+            except DomainError as exc:
+                _handle_domain(request, exc)
+                return redirect("project-overview", project_id=project_id)
+            messages.success(request, _("Project saved."))
+            return redirect("project-overview", project_id=project_id)
         project = ProjectService().get(project_id)
         stats_svc = ProjectStatsService()
         stats = stats_svc.get_stats(project_id)
@@ -541,6 +555,17 @@ def source_list(request: HttpRequest, project_id) -> HttpResponse:
         MembershipService().require_member(project_id, user.id)
         project = ProjectService().get(project_id)
         if request.method == "POST":
+            if request.POST.get("action") == "delete_source":
+                try:
+                    source_uuid = uuid.UUID(str(request.POST.get("source_id") or ""))
+                except ValueError as exc:
+                    raise ValidationError(
+                        "source_id is required",
+                        details={"fields": [{"field": "source_id", "code": "INVALID"}]},
+                    ) from exc
+                SourceService().delete_source(source_uuid, actor_user_id=user.id)
+                messages.success(request, _("Source deleted."))
+                return redirect("source-list", project_id=project_id)
             try:
                 source = SourceService().import_source(
                     project_id=project_id,
@@ -609,6 +634,10 @@ def source_detail(request: HttpRequest, project_id, source_id) -> HttpResponse:
                 SourceService().request_metadata_refresh(source_id, actor_user_id=user.id)
                 enqueue_fetch_source_metadata(source_id)
                 messages.success(request, _("Metadata refresh queued."))
+            elif action == "delete_source":
+                SourceService().delete_source(source_id, actor_user_id=user.id)
+                messages.success(request, _("Source deleted."))
+                return redirect("source-list", project_id=project_id)
             return redirect("source-detail", project_id=project_id, source_id=source_id)
     except DomainError as exc:
         _handle_domain(request, exc)
@@ -1383,6 +1412,8 @@ def settings_page(request: HttpRequest, project_id) -> HttpResponse:
             ProjectService().update(
                 project_id,
                 actor_user_id=user.id,
+                name=request.POST.get("name") or "",
+                description=(request.POST.get("description") or "").strip() or None,
                 license=request.POST.get("license") or None,
                 consent_notes=request.POST.get("consent_notes") or None,
             )

@@ -1,13 +1,6 @@
 /** ASR generate form: keep model sensible when provider changes. */
 
-const LOCAL_MODELS = new Set([
-  "tiny",
-  "base",
-  "small",
-  "medium",
-  "large-v3",
-  "large",
-]);
+const LOCAL_MODELS = new Set(["tiny", "base", "small"]);
 
 function syncProviderModel(form) {
   const provider = form.querySelector("[data-asr-provider]")?.value || "local";

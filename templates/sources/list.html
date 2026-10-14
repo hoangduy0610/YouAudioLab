@@ -29,7 +29,17 @@
           <td>{{ source.channel_name|default:"—" }}</td>
           <td>{% if source.duration_seconds %}{{ source.duration_seconds }}{% else %}{% trans "Duration unknown" %}{% endif %}</td>
           <td>{% status_badge source.source_status "source" %}</td>
-          <td><a href="{% url 'source-detail' project.id source.id %}">{% trans "Open" %}</a></td>
+          <td class="text-nowrap">
+            <a href="{% url 'source-detail' project.id source.id %}">{% trans "Open" %}</a>
+            {% if role == "OWNER" and project.status != "ARCHIVED" %}
+            <form method="post" class="d-inline ms-2" data-confirm="{% trans "Delete this source and its segments? This cannot be undone." %}">
+              {% csrf_token %}
+              <input type="hidden" name="action" value="delete_source">
+              <input type="hidden" name="source_id" value="{{ source.id }}">
+              <button class="btn btn-link btn-sm text-danger p-0 align-baseline" type="submit" data-testid="delete-source">{% trans "Delete" %}</button>
+            </form>
+            {% endif %}
+          </td>
         </tr>
         {% endfor %}
       </tbody>

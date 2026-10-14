@@ -81,7 +81,7 @@ class FasterWhisperEngine:
         except ImportError as exc:
             raise AsrEngineError(
                 "MODEL_UNAVAILABLE",
-                "faster-whisper is not installed",
+                f"faster-whisper import failed: {exc}",
             ) from exc
         key = (config.model_size, config.device, config.compute_type)
         if key in self._models:

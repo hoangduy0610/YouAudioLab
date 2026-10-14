@@ -8,8 +8,10 @@ from typing import Any
 from django.db import IntegrityError, transaction
 
 from apps.core.errors import NotFoundError, SourceDuplicateError, ValidationError
+from apps.core.storage import get_storage
 from apps.core.youtube import extract_youtube_video_id
-from apps.workspace.models import VideoSource
+from apps.processing.models import AsrRun, ProcessingArtifact, SourceMediaCache
+from apps.workspace.models import AudioSegment, VideoSource
 from apps.workspace.services.membership import MembershipService
 
 
@@ -92,6 +94,55 @@ class SourceService:
         return list(
             VideoSource.objects.filter(project_id=project_id).order_by("-created_at")
         )
+
+    def delete_source(
+        self,
+        source_id: uuid.UUID,
+        *,
+        actor_user_id: uuid.UUID,
+    ) -> None:
+        """Remove a source and its segments. The same YouTube video can be imported again."""
+        storage_keys: list[str] = []
+        with transaction.atomic():
+            try:
+                source = VideoSource.objects.select_for_update().get(pk=source_id)
+            except VideoSource.DoesNotExist as exc:
+                raise NotFoundError(
+                    "Source not found",
+                    details={"source_id": str(source_id)},
+                ) from exc
+            self.memberships.require_owner(source.project_id, actor_user_id)
+            self.memberships.require_active_project(source.project_id)
+
+            from apps.workspace.services.segment import SegmentService
+
+            segments = SegmentService()
+            live_ids = list(
+                AudioSegment.objects.filter(
+                    source_id=source.id,
+                    deleted_at__isnull=True,
+                ).values_list("id", flat=True)
+            )
+            for segment_id in live_ids:
+                segments.soft_delete(segment_id, actor_user_id=actor_user_id)
+
+            try:
+                storage_keys.append(source.media_cache.storage_key)
+            except SourceMediaCache.DoesNotExist:
+                pass
+            storage_keys.extend(
+                ProcessingArtifact.objects.filter(job__source_id=source.id).values_list(
+                    "storage_key", flat=True
+                )
+            )
+            # AsrRun restricts deletion of its job and artifact; drop runs first.
+            AsrRun.objects.filter(source_id=source.id).delete()
+            source.delete()
+
+        storage = get_storage()
+        for key in storage_keys:
+            if key and storage.exists(key):
+                storage.delete(key)
 
     def update_display_metadata(
         self,

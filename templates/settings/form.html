@@ -36,6 +36,8 @@
       <div class="card-header bg-white"><h2 class="h6 mb-0">{% trans "Audio processing" %}</h2></div>
       <div class="card-body">
         <dl class="row mb-0">
+          <dt class="col-sm-5">{% trans "Name" %}</dt><dd class="col-sm-7">{{ project.name }}</dd>
+          <dt class="col-sm-5">{% trans "Description" %}</dt><dd class="col-sm-7">{{ project.description|default:"—" }}</dd>
           <dt class="col-sm-5">{% trans "Format" %}</dt><dd class="col-sm-7">{{ settings.output_format }} / {{ settings.encoding }}</dd>
           <dt class="col-sm-5">{% trans "Sample rate" %}</dt><dd class="col-sm-7">{{ settings.sample_rate_hz }} Hz · {{ settings.channels }} {% trans "ch" %}</dd>
           <dt class="col-sm-5">{% trans "Loudness" %}</dt><dd class="col-sm-7">{% if settings.loudness_normalization %}{% trans "On" %}{% else %}{% trans "Off" %}{% endif %}</dd>
@@ -73,6 +75,20 @@
     </div>
   </div>
   {% endif %}
+
+  <div class="card border-0 shadow-sm mb-3" data-testid="edit-project">
+    <div class="card-header bg-white"><h2 class="h6 mb-0">{% trans "Project details" %}</h2></div>
+    <div class="card-body">
+      <div class="mb-2">
+        <label class="form-label" for="project-name">{% trans "Name" %}</label>
+        <input class="form-control" id="project-name" name="name" required maxlength="255" value="{{ project.name }}" {% if project.status == "ARCHIVED" %}disabled{% endif %}>
+      </div>
+      <div class="mb-0">
+        <label class="form-label" for="project-description">{% trans "Description" %}</label>
+        <textarea class="form-control" id="project-description" name="description" rows="3" maxlength="2000" {% if project.status == "ARCHIVED" %}disabled{% endif %}>{{ project.description|default:"" }}</textarea>
+      </div>
+    </div>
+  </div>
 
   <div class="row g-3">
     <div class="col-lg-6">

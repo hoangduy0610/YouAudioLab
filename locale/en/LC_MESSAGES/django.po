@@ -2133,3 +2133,18 @@ msgstr ""
 
 msgid "← Back to segments"
 msgstr ""
+
+msgid "Source deleted."
+msgstr ""
+
+msgid "Delete source"
+msgstr ""
+
+msgid "Delete this source and its segments? This cannot be undone."
+msgstr ""
+
+msgid "Project saved."
+msgstr ""
+
+msgid "Project details"
+msgstr ""

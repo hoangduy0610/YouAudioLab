@@ -42,14 +42,19 @@ def _local_engine_name() -> str:
     return "faster-whisper"
 
 
+# CPU int8 on the YouAudioLab host. medium / large stay out of the picker.
+_LOCAL_MODEL_CHOICES = frozenset({"tiny", "base", "small"})
+
+
 def _allowlist_local() -> set[str]:
-    return {
+    configured = {
         s.strip()
         for s in (
             getattr(settings, "ASR_MODEL_ALLOWLIST", "tiny,base,small") or ""
         ).split(",")
         if s.strip()
     }
+    return configured & _LOCAL_MODEL_CHOICES
 
 
 def _allowlist_openai() -> set[str]:
