@@ -87,20 +87,11 @@
           <label class="form-label" for="sys_local_model">{% trans "Local model" %}</label>
           <select class="form-select" name="local_model" id="sys_local_model">
             {% for m in local_asr_models %}
-            <option value="{{ m }}" {% if asr_defaults.local_model == m %}selected{% endif %}>{{ m }}</option>
+            <option value="{{ m }}" {% if asr_defaults.local_model == m %}selected{% endif %}>PhoWhisper {{ m }}</option>
             {% endfor %}
           </select>
         </div>
-        <div class="row">
-          <div class="col-md-6 mb-2">
-            <label class="form-label" for="sys_local_device">{% trans "Local device" %}</label>
-            <input class="form-control" name="local_device" id="sys_local_device" value="{{ asr_defaults.local_device }}">
-          </div>
-          <div class="col-md-6 mb-2">
-            <label class="form-label" for="sys_local_compute">{% trans "Local compute type" %}</label>
-            <input class="form-control" name="local_compute_type" id="sys_local_compute" value="{{ asr_defaults.local_compute_type }}">
-          </div>
-        </div>
+        <p class="form-text mb-0">{% trans "Device / compute" %}: {{ asr_defaults.local_device }} / {{ asr_defaults.local_compute_type }}</p>
       </div>
     </div>
 

@@ -80,20 +80,11 @@
           <select class="form-select" name="local_model" id="asr_local_model">
             <option value="" {% if not asr_prefs.local_model %}selected{% endif %}>{% trans "Use system defaults" %} ({{ asr_defaults.local_model }})</option>
             {% for m in local_asr_models %}
-            <option value="{{ m }}" {% if asr_prefs.local_model == m %}selected{% endif %}>{{ m }}</option>
+            <option value="{{ m }}" {% if asr_prefs.local_model == m %}selected{% endif %}>PhoWhisper {{ m }}</option>
             {% endfor %}
           </select>
         </div>
-        <div class="row">
-          <div class="col-md-6 mb-2">
-            <label class="form-label" for="asr_local_device">{% trans "Local device" %}</label>
-            <input class="form-control" name="local_device" id="asr_local_device" value="{{ asr_prefs.local_device|default:'' }}" placeholder="{{ asr_defaults.local_device }}">
-          </div>
-          <div class="col-md-6 mb-2">
-            <label class="form-label" for="asr_local_compute">{% trans "Local compute type" %}</label>
-            <input class="form-control" name="local_compute_type" id="asr_local_compute" value="{{ asr_prefs.local_compute_type|default:'' }}" placeholder="{{ asr_defaults.local_compute_type }}">
-          </div>
-        </div>
+        <p class="form-text">{% trans "Device / compute" %}: {{ asr_defaults.local_device }} / {{ asr_defaults.local_compute_type }}</p>
       </div>
 
       <div data-asr-openai-fields class="{% if asr_prefs.provider != 'openai' %}d-none{% endif %}">

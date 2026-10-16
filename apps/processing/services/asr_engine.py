@@ -69,13 +69,72 @@ class FakeAsrEngine:
         )
 
 
+# VinAI PhoWhisper converted with ct2-transformers-converter.
+# faster-whisper only loads a CTranslate2 folder that contains model.bin at its root,
+# so each size is fetched from its subfolder rather than the transformers checkpoints.
+_PHOWHISPER_REPO = "quocphu/PhoWhisper-ct2-FasterWhisper"
+_PHOWHISPER_FOLDERS = {
+    "tiny": "PhoWhisper-tiny-ct2-fasterWhisper",
+    "base": "PhoWhisper-base-ct2-fasterWhisper",
+    "small": "PhoWhisper-small-ct2-fasterWhisper",
+}
+_PHOWHISPER_FILES = (
+    "config.json",
+    "model.bin",
+    "preprocessor_config.json",
+    "tokenizer.json",
+    "vocabulary.json",
+)
+
+# One WhisperModel per worker process. The next job reuses it when size, device,
+# and compute type match; a different size replaces it.
+_resident_model: tuple[tuple[str, str, str], Any, str] | None = None
+
+
 class FasterWhisperEngine:
     def __init__(self, *, model_cache_dir: str | Path, download: bool = True) -> None:
         self.model_cache_dir = Path(model_cache_dir)
         self.download = download
-        self._models: dict[tuple[str, str, str], Any] = {}
 
-    def _load_model(self, config: AsrEngineConfig) -> Any:
+    def _ensure_phowhisper(self, folder: str) -> str:
+        dest = self.model_cache_dir / "phowhisper" / folder
+        if (dest / "model.bin").is_file():
+            return str(dest)
+        if not self.download:
+            raise AsrEngineError(
+                "MODEL_UNAVAILABLE",
+                f"PhoWhisper weights are not cached at {dest}",
+            )
+        try:
+            from huggingface_hub import hf_hub_download
+        except ImportError as exc:
+            raise AsrEngineError(
+                "MODEL_UNAVAILABLE",
+                f"huggingface_hub import failed: {exc}",
+            ) from exc
+        dest.mkdir(parents=True, exist_ok=True)
+        try:
+            for name in _PHOWHISPER_FILES:
+                hf_hub_download(
+                    repo_id=_PHOWHISPER_REPO,
+                    filename=f"{folder}/{name}",
+                    local_dir=str(self.model_cache_dir / "phowhisper"),
+                )
+        except Exception as exc:  # noqa: BLE001
+            raise AsrEngineError("MODEL_DOWNLOAD_FAILED", str(exc)[:2000]) from exc
+        if not (dest / "model.bin").is_file():
+            raise AsrEngineError(
+                "MODEL_DOWNLOAD_FAILED",
+                f"PhoWhisper download for {folder} did not include model.bin",
+            )
+        return str(dest)
+
+    def _load_model(self, config: AsrEngineConfig) -> tuple[Any, str]:
+        """Reuse the worker's loaded model, or load it when the size changed."""
+        global _resident_model
+        key = (config.model_size, config.device, config.compute_type)
+        if _resident_model is not None and _resident_model[0] == key:
+            return _resident_model[1], _resident_model[2]
         try:
             from faster_whisper import WhisperModel  # type: ignore[import-untyped]
         except ImportError as exc:
@@ -83,28 +142,36 @@ class FasterWhisperEngine:
                 "MODEL_UNAVAILABLE",
                 f"faster-whisper import failed: {exc}",
             ) from exc
-        key = (config.model_size, config.device, config.compute_type)
-        if key in self._models:
-            return self._models[key]
         self.model_cache_dir.mkdir(parents=True, exist_ok=True)
+        folder = _PHOWHISPER_FOLDERS.get(config.model_size)
         try:
+            if folder:
+                model_ref = self._ensure_phowhisper(folder)
+                local_only = True
+            else:
+                model_ref = config.model_size
+                local_only = not self.download
             model = WhisperModel(
-                config.model_size,
+                model_ref,
                 device=config.device,
                 compute_type=config.compute_type,
                 download_root=str(self.model_cache_dir),
-                local_files_only=not self.download,
+                local_files_only=local_only,
             )
+        except AsrEngineError:
+            raise
         except Exception as exc:  # noqa: BLE001
             code = "MODEL_DOWNLOAD_FAILED" if self.download else "MODEL_UNAVAILABLE"
             raise AsrEngineError(code, str(exc)[:2000]) from exc
-        self._models[key] = model
-        return model
+        model_id = folder or config.model_size
+        _resident_model = (key, model, model_id)
+        return model, model_id
 
     def transcribe(self, audio_bytes: bytes, config: AsrEngineConfig) -> AsrEngineResult:
         import tempfile
 
-        model = self._load_model(config)
+        model, model_id = self._load_model(config)
+        version = "PhoWhisper" if config.model_size in _PHOWHISPER_FOLDERS else "faster-whisper"
         with tempfile.NamedTemporaryFile(suffix=".wav", delete=True) as tmp:
             tmp.write(audio_bytes)
             tmp.flush()
@@ -126,8 +193,8 @@ class FasterWhisperEngine:
         return AsrEngineResult(
             text=text,
             language_detected=detected,
-            model_version="faster-whisper",
-            model_path_or_id=config.model_size,
+            model_version=version,
+            model_path_or_id=model_id,
         )
 
 

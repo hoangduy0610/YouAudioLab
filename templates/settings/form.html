@@ -231,7 +231,7 @@
               {% if local_asr_enabled %}
               <optgroup label="{% trans "Local (server)" %}">
                 {% for m in local_asr_models %}
-                <option value="{{ m }}" {% if settings.asr_model == m %}selected{% endif %}>{{ m }}</option>
+                <option value="{{ m }}" {% if settings.asr_model == m %}selected{% endif %}>PhoWhisper {{ m }}</option>
                 {% endfor %}
               </optgroup>
               {% endif %}
@@ -253,15 +253,17 @@
         </div>
         <div class="card-body">
           <p class="small text-muted">
-            {% trans "Suggests transcript cleanup, labels, and metadata. The Ollama address is set by an administrator." %}
+            {% trans "Suggests transcript cleanup, labels, and metadata. This list is the server Ollama model. To use your own LLM API instead, set it in account AI settings." %}
+            <a href="{% url 'account-settings' %}?tab=ai">{% trans "Your LLM API" %}</a>
           </p>
           <div class="mb-2">
-            <label class="form-label" for="ai_enabled">{% trans "Enabled" %}</label>
+            <label class="form-label" for="ai_enabled">{% trans "Ollama (server)" %}</label>
             <select class="form-select" name="ai_enabled" id="ai_enabled" {% if project.status == "ARCHIVED" %}disabled{% endif %}>
               <option value="" {% if settings.ai_enabled is None %}selected{% endif %}>{% trans "Inherit system" %}</option>
               <option value="on" {% if settings.ai_enabled %}selected{% endif %}>{% trans "enabled" %}</option>
               <option value="off" {% if settings.ai_enabled == False %}selected{% endif %}>{% trans "disabled" %}</option>
             </select>
+            <div class="form-text">{% trans "Only the server model. Your LLM API is not turned off here." %}</div>
           </div>
           <div>
             <label class="form-label" for="ai_ollama_model">{% trans "Ollama model" %}</label>

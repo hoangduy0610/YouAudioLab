@@ -42,7 +42,8 @@ def _local_engine_name() -> str:
     return "faster-whisper"
 
 
-# CPU int8 on the YouAudioLab host. medium / large stay out of the picker.
+# CPU int8 on the YouAudioLab host. tiny/base/small load PhoWhisper.
+# medium / large stay out of the picker.
 _LOCAL_MODEL_CHOICES = frozenset({"tiny", "base", "small"})
 
 
@@ -106,10 +107,7 @@ def effective_system_asr() -> dict[str, Any]:
         base["provider"] = row.provider.strip().lower()
     if row.local_model:
         base["local_model"] = row.local_model
-    if row.local_device:
-        base["local_device"] = row.local_device
-    if row.local_compute_type:
-        base["local_compute_type"] = row.local_compute_type
+    # Device and compute stay on the server env (cpu / int8). Saved rows cannot override them.
     if row.openai_enabled is not None:
         base["openai_enabled"] = row.openai_enabled
     if row.openai_default_model:
@@ -157,8 +155,8 @@ def resolve_asr_config(
         assert prefs is not None
         provider = (prefs.provider or system["provider"]).strip().lower()
         local_model = (prefs.local_model or system["local_model"]).strip()
-        device = (prefs.local_device or system["local_device"]).strip()
-        compute = (prefs.local_compute_type or system["local_compute_type"]).strip()
+        device = system["local_device"]
+        compute = system["local_compute_type"]
         openai_model = (prefs.openai_model or system["openai_default_model"]).strip()
         user_key_enc = prefs.openai_api_key_encrypted
 

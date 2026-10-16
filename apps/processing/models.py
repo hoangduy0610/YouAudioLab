@@ -244,6 +244,9 @@ class UserAiPreferences(models.Model):
     provider = models.CharField(max_length=32, null=True, blank=True)
     ollama_base_url = models.CharField(max_length=512, null=True, blank=True)
     ollama_model = models.CharField(max_length=128, null=True, blank=True)
+    llm_base_url = models.CharField(max_length=512, null=True, blank=True)
+    llm_model = models.CharField(max_length=128, null=True, blank=True)
+    llm_api_key_encrypted = models.TextField(null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:

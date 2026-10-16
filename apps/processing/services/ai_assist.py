@@ -18,7 +18,12 @@ from apps.core.errors import (
 )
 from apps.processing.models import AiAssistRun
 from apps.processing.services.ai_ollama import AiProviderError, OllamaClient
-from apps.processing.services.ai_resolve import resolve_ai_config
+from apps.processing.services.ai_openai import OpenAiCompatClient
+from apps.processing.services.ai_resolve import (
+    PROVIDER_OPENAI,
+    ResolvedAiConfig,
+    resolve_ai_config,
+)
 from apps.workspace.models import AudioSegment, VideoSource
 from apps.workspace.services.annotation import AnnotationService
 from apps.workspace.services.label import LabelService
@@ -107,11 +112,15 @@ class AiAssistService:
         self,
         *,
         ollama_factory: Callable[[str], OllamaClient] | None = None,
+        openai_factory: Callable[[str, str], OpenAiCompatClient] | None = None,
     ) -> None:
         self.memberships = MembershipService()
         self.labels = LabelService()
         self.annotations = AnnotationService()
         self._ollama_factory = ollama_factory or (lambda url: OllamaClient(base_url=url))
+        self._openai_factory = openai_factory or (
+            lambda url, key: OpenAiCompatClient(base_url=url, api_key=key)
+        )
 
     def list_for_segment(self, segment_id: uuid.UUID) -> list[AiAssistRun]:
         return list(
@@ -181,18 +190,14 @@ class AiAssistService:
         )
         input_text = self._require_transcript(segment)
         resolved = self._require_ai(actor_user_id, project_id=source.project_id)
-        output = self._generate(
-            resolved.ollama_base_url,
-            resolved.ollama_model,
-            _CLEANUP_PROMPT + input_text,
-        )
+        output = self._generate(resolved, _CLEANUP_PROMPT + input_text)
         return self._persist_run(
             segment=segment,
             source=source,
             actor_user_id=actor_user_id,
             kind=KIND_TRANSCRIPT_CLEANUP,
             provider=resolved.provider,
-            model=resolved.ollama_model,
+            model=resolved.model,
             input_text=input_text,
             output_text=output.strip(),
             prompt_version=PROMPT_CLEANUP,
@@ -220,7 +225,7 @@ class AiAssistService:
         catalog_lines = "\n".join(f"- {lb.display_name}" for lb in catalog)
         resolved = self._require_ai(actor_user_id, project_id=source.project_id)
         prompt = _LABEL_PROMPT.format(catalog=catalog_lines, transcript=input_text)
-        raw = self._generate(resolved.ollama_base_url, resolved.ollama_model, prompt)
+        raw = self._generate(resolved, prompt)
         payload = parse_assist_payload(KIND_LABEL_SUGGEST, raw)
         suggestions = payload.get("suggestions")
         if not isinstance(suggestions, list):
@@ -250,7 +255,7 @@ class AiAssistService:
             actor_user_id=actor_user_id,
             kind=KIND_LABEL_SUGGEST,
             provider=resolved.provider,
-            model=resolved.ollama_model,
+            model=resolved.model,
             input_text=input_text,
             output_text=output_text,
             prompt_version=PROMPT_LABEL,
@@ -271,7 +276,7 @@ class AiAssistService:
         input_text = self._require_transcript(segment)
         resolved = self._require_ai(actor_user_id, project_id=source.project_id)
         prompt = _METADATA_PROMPT.format(transcript=input_text)
-        raw = self._generate(resolved.ollama_base_url, resolved.ollama_model, prompt)
+        raw = self._generate(resolved, prompt)
         payload = parse_assist_payload(KIND_METADATA_SUGGEST, raw)
         summary = str(payload.get("summary") or "").strip()
         if not summary:
@@ -312,7 +317,7 @@ class AiAssistService:
             actor_user_id=actor_user_id,
             kind=KIND_METADATA_SUGGEST,
             provider=resolved.provider,
-            model=resolved.ollama_model,
+            model=resolved.model,
             input_text=input_text,
             output_text=output_text,
             prompt_version=PROMPT_METADATA,
@@ -490,15 +495,28 @@ class AiAssistService:
         )
         if not resolved.enabled:
             raise ValidationError(
-                "AI provider is disabled",
+                "Ollama (server) is off",
                 details={"code": "AI_PROVIDER_DISABLED"},
             )
         return resolved
 
-    def _generate(self, base_url: str, model: str, prompt: str) -> str:
-        client = self._ollama_factory(base_url)
+    def _generate(self, resolved: ResolvedAiConfig, prompt: str) -> str:
         try:
-            return client.generate(model=model, prompt=prompt)
+            if resolved.provider == PROVIDER_OPENAI:
+                if not resolved.llm_base_url or not resolved.llm_model:
+                    raise ValidationError(
+                        "LLM API is not configured",
+                        details={"code": "AI_LLM_NOT_CONFIGURED"},
+                    )
+                if not resolved.llm_api_key:
+                    raise ValidationError(
+                        "LLM API key is required",
+                        details={"code": "AI_LLM_KEY_REQUIRED"},
+                    )
+                client = self._openai_factory(resolved.llm_base_url, resolved.llm_api_key)
+                return client.generate(model=resolved.llm_model, prompt=prompt)
+            ollama = self._ollama_factory(resolved.ollama_base_url)
+            return ollama.generate(model=resolved.ollama_model, prompt=prompt)
         except AiProviderError as exc:
             raise ValidationError(
                 exc.message,

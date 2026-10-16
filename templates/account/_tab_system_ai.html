@@ -1,13 +1,13 @@
 {% load i18n %}
 <div data-testid="system-ai-page">
   <p class="text-muted small mb-3">
-    {% trans "Ollama runs on the YouAudioLab server and suggests cleanup, labels, and metadata. Off by default." %}
+    {% trans "Ollama (server) suggests cleanup, labels, and metadata. Off by default. This switch does not turn off an account's own LLM API." %}
   </p>
 
   {% if not ai_editable %}
   <p class="alert alert-secondary" role="status">{% trans "Read-only: you are not an AI admin in this environment." %}</p>
   <dl class="row">
-    <dt class="col-sm-3">{% trans "Enabled" %}</dt><dd class="col-sm-9">{% if ai_defaults.enabled %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}</dd>
+    <dt class="col-sm-3">{% trans "Ollama (server)" %}</dt><dd class="col-sm-9">{% if ai_defaults.enabled %}{% trans "enabled" %}{% else %}{% trans "disabled" %}{% endif %}</dd>
     <dt class="col-sm-3">{% trans "Ollama URL" %}</dt><dd class="col-sm-9">{{ ai_defaults.ollama_base_url }}</dd>
     <dt class="col-sm-3">{% trans "Default model" %}</dt><dd class="col-sm-9">{{ ai_defaults.ollama_default_model }}</dd>
   </dl>
@@ -17,12 +17,12 @@
     <input type="hidden" name="settings_tab" value="system-ai">
     <input type="hidden" name="action" value="save">
     <div class="mb-2">
-      <label class="form-label" for="sys_ai_enabled">{% trans "AI assist" %}</label>
+      <label class="form-label" for="sys_ai_enabled">{% trans "Ollama (server)" %}</label>
       <select class="form-select" name="enabled" id="sys_ai_enabled">
         <option value="off" {% if not ai_defaults.enabled %}selected{% endif %}>{% trans "disabled" %}</option>
         <option value="on" {% if ai_defaults.enabled %}selected{% endif %}>{% trans "enabled" %}</option>
       </select>
-      <div class="form-text">{% trans "When disabled, accounts only see that AI assist is off." %}</div>
+      <div class="form-text">{% trans "When disabled, the server model is off. Accounts can still use their own LLM API." %}</div>
     </div>
     <div class="mb-2">
       <label class="form-label" for="sys_ollama_url">{% trans "Ollama base URL" %}</label>

@@ -35,10 +35,17 @@ from apps.processing.models import (
 )
 from apps.processing.services.ai_assist import AiAssistService
 from apps.processing.services.ai_ollama import AiProviderError, OllamaClient
+from apps.processing.services.ai_openai import OpenAiCompatClient
 from apps.processing.services.ai_resolve import (
+    AI_PROVIDERS,
+    PROVIDER_OLLAMA,
+    PROVIDER_OPENAI,
+    ResolvedAiConfig,
     effective_system_ai,
     installed_ollama_models,
     is_ai_admin,
+    normalize_llm_base_url,
+    normalize_llm_model,
     resolve_ai_config,
 )
 from apps.processing.services.asr import AsrService
@@ -1619,17 +1626,61 @@ def account_settings_page(
                 return _settings_redirect("asr")
 
             if tab == "ai":
-                if not ai_defaults.enabled:
-                    messages.error(request, _("AI assist is off."))
+                if action == "test":
+                    resolved = resolve_ai_config(actor_user_id=user.id)
+                    if resolved.provider == PROVIDER_OPENAI:
+                        _flash_llm_test(request, resolved)
+                    elif not resolved.enabled:
+                        messages.error(request, _("Ollama (server) is off."))
+                    else:
+                        _flash_ollama_test(request, resolved.ollama_base_url)
                     return _settings_redirect("ai")
                 if ai_prefs is None:
                     ai_prefs = UserAiPreferences(user_id=user.id)
                 mode = request.POST.get("mode") or "system"
                 ai_prefs.use_system_defaults = mode == "system"
                 if mode == "custom":
-                    ai_prefs.provider = "ollama"
-                    ai_prefs.ollama_model = _posted_ollama_model(request, "ollama_model")
-                    ai_prefs.ollama_base_url = None
+                    provider = (request.POST.get("provider") or PROVIDER_OLLAMA).strip().lower()
+                    if provider not in AI_PROVIDERS:
+                        raise ValidationError(
+                            "Unsupported AI provider",
+                            details={
+                                "fields": [
+                                    {
+                                        "field": "provider",
+                                        "code": "INVALID",
+                                        "allowed": sorted(AI_PROVIDERS),
+                                    }
+                                ]
+                            },
+                        )
+                    ai_prefs.provider = provider
+                    if provider == PROVIDER_OLLAMA:
+                        ai_prefs.ollama_model = _posted_ollama_model(request, "ollama_model")
+                        ai_prefs.ollama_base_url = None
+                    else:
+                        ai_prefs.llm_base_url = normalize_llm_base_url(
+                            request.POST.get("llm_base_url")
+                        )
+                        ai_prefs.llm_model = normalize_llm_model(request.POST.get("llm_model"))
+                if request.POST.get("clear_llm_api_key") == "on":
+                    ai_prefs.llm_api_key_encrypted = None
+                elif request.POST.get("llm_api_key"):
+                    ai_prefs.llm_api_key_encrypted = encrypt_secret(
+                        request.POST.get("llm_api_key").strip()
+                    )
+                if (
+                    not ai_prefs.use_system_defaults
+                    and ai_prefs.provider == PROVIDER_OPENAI
+                    and not ai_prefs.llm_api_key_encrypted
+                ):
+                    raise ValidationError(
+                        "LLM API key is required",
+                        details={
+                            "fields": [{"field": "llm_api_key", "code": "REQUIRED"}],
+                            "code": "AI_LLM_KEY_REQUIRED",
+                        },
+                    )
                 ai_prefs.save()
                 messages.success(request, _("AI preferences saved."))
                 return _settings_redirect("ai")
@@ -1754,6 +1805,24 @@ def _posted_ollama_model(
             },
         )
     return raw
+
+
+def _flash_llm_test(request: HttpRequest, resolved: ResolvedAiConfig) -> None:
+    if not resolved.llm_base_url or not resolved.llm_model or not resolved.llm_api_key:
+        messages.error(request, _("LLM API is not configured."))
+        return
+    try:
+        OpenAiCompatClient(
+            base_url=resolved.llm_base_url,
+            api_key=resolved.llm_api_key,
+        ).ping(model=resolved.llm_model)
+    except AiProviderError as exc:
+        messages.error(request, exc.message)
+        return
+    messages.success(
+        request,
+        _("LLM API is reachable (%(model)s).") % {"model": resolved.llm_model},
+    )
 
 
 def _flash_ollama_test(request: HttpRequest, base_url: str) -> None:

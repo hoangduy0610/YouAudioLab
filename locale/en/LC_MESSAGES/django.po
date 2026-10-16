@@ -49,10 +49,10 @@ msgstr ""
 msgid "AI preferences saved."
 msgstr ""
 
-msgid "AI provider disabled."
+msgid "AI provider is disabled."
 msgstr ""
 
-msgid "AI provider is disabled."
+msgid "API key"
 msgstr ""
 
 msgid "ASR"
@@ -80,6 +80,11 @@ msgid "ASR text applied to transcript."
 msgstr ""
 
 msgid "ASR:"
+msgstr ""
+
+msgid ""
+"ASR_SECRETS_KEY is not configured — LLM API keys cannot be stored. Set it in"
+" .env and restart the server."
 msgstr ""
 
 msgid "Account"
@@ -349,6 +354,9 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
+msgid "Base URL"
+msgstr ""
+
 msgid "Batch name"
 msgstr ""
 
@@ -398,6 +406,9 @@ msgid ""
 msgstr ""
 
 msgid "Choose a login"
+msgstr ""
+
+msgid "Choose server model or your LLM API"
 msgstr ""
 
 msgid ""
@@ -560,7 +571,13 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
+msgid "Delete source"
+msgstr ""
+
 msgid "Delete this label from your catalog?"
+msgstr ""
+
+msgid "Delete this source and its segments? This cannot be undone."
 msgstr ""
 
 msgid "Description"
@@ -895,6 +912,12 @@ msgstr ""
 msgid "Joined projects"
 msgstr ""
 
+msgid "LLM API is not configured."
+msgstr ""
+
+msgid "LLM API is reachable (%(model)s)."
+msgstr ""
+
 msgid "Label activated."
 msgstr ""
 
@@ -967,12 +990,6 @@ msgstr ""
 msgid ""
 "Local ASR is off. You can only choose OpenAI until an administrator enables "
 "the local engine."
-msgstr ""
-
-msgid "Local compute type"
-msgstr ""
-
-msgid "Local device"
 msgstr ""
 
 msgid "Local draft was kept."
@@ -1209,15 +1226,21 @@ msgstr ""
 msgid "Ollama (server)"
 msgstr ""
 
+msgid "Ollama (server) is off."
+msgstr ""
+
+msgid "Ollama (server) is off. Your LLM API is not affected."
+msgstr ""
+
+msgid ""
+"Ollama (server) suggests cleanup, labels, and metadata. Off by default. This"
+" switch does not turn off an account's own LLM API."
+msgstr ""
+
 msgid "Ollama URL"
 msgstr ""
 
 msgid "Ollama base URL"
-msgstr ""
-
-msgid ""
-"Ollama candidates for cleanup, labels, and metadata. Nothing writes until "
-"you Apply. This is not ASR."
 msgstr ""
 
 msgid "Ollama is reachable. Models: %(models)s"
@@ -1247,6 +1270,9 @@ msgid "Only AI admins can update system defaults."
 msgstr ""
 
 msgid "Only ASR admins can update system defaults."
+msgstr ""
+
+msgid "Only the server model. Your LLM API is not turned off here."
 msgstr ""
 
 msgid "Open"
@@ -1286,6 +1312,12 @@ msgid "OpenAI model"
 msgstr ""
 
 msgid "OpenAI system key:"
+msgstr ""
+
+msgid ""
+"OpenAI-compatible chat API. YouAudioLab sends the prompt to this endpoint "
+"with your key. The key is stored encrypted for your account and is not a "
+"server model."
 msgstr ""
 
 msgid "Optional"
@@ -1394,6 +1426,9 @@ msgstr ""
 msgid "Project created."
 msgstr ""
 
+msgid "Project details"
+msgstr ""
+
 msgid "Project is archived — labeling is read-only."
 msgstr ""
 
@@ -1404,6 +1439,9 @@ msgid "Project labels assigned"
 msgstr ""
 
 msgid "Project navigation"
+msgstr ""
+
+msgid "Project saved."
 msgstr ""
 
 msgid "Project settings"
@@ -1733,6 +1771,9 @@ msgstr ""
 msgid "Source"
 msgstr ""
 
+msgid "Source deleted."
+msgstr ""
+
 msgid "Source detail"
 msgstr ""
 
@@ -1779,6 +1820,11 @@ msgid "Suggest metadata"
 msgstr ""
 
 msgid ""
+"Suggests transcript cleanup, labels, and metadata. An administrator can turn"
+" Ollama (server) on or off. Your LLM API is not affected."
+msgstr ""
+
+msgid ""
 "Suggests transcript cleanup, labels, and metadata. The Ollama address is set"
 " by an administrator."
 msgstr ""
@@ -1786,6 +1832,18 @@ msgstr ""
 msgid ""
 "Suggests transcript cleanup, labels, and metadata. The model runs on the "
 "YouAudioLab server."
+msgstr ""
+
+msgid ""
+"Suggests transcript cleanup, labels, and metadata. This list is the server "
+"Ollama model. To use your own LLM API instead, set it in account AI "
+"settings."
+msgstr ""
+
+msgid ""
+"Suggests transcript cleanup, labels, and metadata. Use the server model, or "
+"your own LLM API. Your API is called directly and is not the YouAudioLab "
+"server model."
 msgstr ""
 
 msgid "Supervision (training views)"
@@ -1968,6 +2026,16 @@ msgid ""
 "Users on system defaults get this provider unless they switch to Custom."
 msgstr ""
 
+msgid ""
+"Using the server model for cleanup, labels, and metadata. Nothing writes "
+"until you Apply. This is not ASR."
+msgstr ""
+
+msgid ""
+"Using your LLM API for cleanup, labels, and metadata. Nothing writes until "
+"you Apply. This is not ASR."
+msgstr ""
+
 msgid "Val"
 msgstr ""
 
@@ -1999,6 +2067,11 @@ msgid "What does not count"
 msgstr ""
 
 msgid "When disabled, accounts only see that AI assist is off."
+msgstr ""
+
+msgid ""
+"When disabled, the server model is off. Accounts can still use their own LLM"
+" API."
 msgstr ""
 
 msgid ""
@@ -2054,6 +2127,9 @@ msgstr ""
 msgid "Your ASR preferences"
 msgstr ""
 
+msgid "Your LLM API"
+msgstr ""
+
 msgid "Your effective (system mode):"
 msgstr ""
 
@@ -2107,6 +2183,9 @@ msgstr ""
 msgid "optional"
 msgstr ""
 
+msgid "required"
+msgstr ""
+
 msgid "segments"
 msgstr ""
 
@@ -2132,19 +2211,4 @@ msgid "•••• configured"
 msgstr ""
 
 msgid "← Back to segments"
-msgstr ""
-
-msgid "Source deleted."
-msgstr ""
-
-msgid "Delete source"
-msgstr ""
-
-msgid "Delete this source and its segments? This cannot be undone."
-msgstr ""
-
-msgid "Project saved."
-msgstr ""
-
-msgid "Project details"
 msgstr ""

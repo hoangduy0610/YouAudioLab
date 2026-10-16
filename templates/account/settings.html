@@ -65,12 +65,18 @@
 {% endif %}
 {% if tab == "ai" %}
 <script>
+  function syncAiFields() {
+    const mode = document.querySelector('input[name="mode"]:checked')?.value;
+    const provider = document.querySelector("[data-ai-provider]")?.value || "ollama";
+    document.querySelector("[data-ai-custom-fields]")?.classList.toggle("d-none", mode !== "custom");
+    document.querySelector("[data-ai-ollama-fields]")?.classList.toggle("d-none", mode !== "custom" || provider !== "ollama");
+    document.querySelector("[data-ai-llm-fields]")?.classList.toggle("d-none", mode !== "custom" || provider !== "openai");
+  }
   document.querySelectorAll("[data-ai-mode]").forEach((el) => {
-    el.addEventListener("change", () => {
-      const mode = document.querySelector('input[name="mode"]:checked')?.value;
-      document.querySelector("[data-ai-custom-fields]")?.classList.toggle("d-none", mode !== "custom");
-    });
+    el.addEventListener("change", syncAiFields);
   });
+  document.querySelector("[data-ai-provider]")?.addEventListener("change", syncAiFields);
+  syncAiFields();
 </script>
 {% endif %}
 {% if tab == "system-asr" %}

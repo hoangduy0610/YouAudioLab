@@ -49,21 +49,12 @@
       <label class="form-label">{% trans "Local model" %}</label>
       <select class="form-select" name="local_model">
         <option value="" {% if not prefs.local_model %}selected{% endif %}>{% trans "Use system defaults" %} ({{ defaults.local_model }})</option>
-        <option value="tiny" {% if prefs.local_model == "tiny" %}selected{% endif %}>tiny</option>
-        <option value="base" {% if prefs.local_model == "base" %}selected{% endif %}>base</option>
-        <option value="small" {% if prefs.local_model == "small" %}selected{% endif %}>small</option>
+        <option value="tiny" {% if prefs.local_model == "tiny" %}selected{% endif %}>PhoWhisper tiny</option>
+        <option value="base" {% if prefs.local_model == "base" %}selected{% endif %}>PhoWhisper base</option>
+        <option value="small" {% if prefs.local_model == "small" %}selected{% endif %}>PhoWhisper small</option>
       </select>
     </div>
-    <div class="row">
-      <div class="col-md-6 mb-2">
-        <label class="form-label">{% trans "Local device" %}</label>
-        <input class="form-control" name="local_device" value="{{ prefs.local_device|default:'' }}" placeholder="{{ defaults.local_device }}">
-      </div>
-      <div class="col-md-6 mb-2">
-        <label class="form-label">{% trans "Local compute type" %}</label>
-        <input class="form-control" name="local_compute_type" value="{{ prefs.local_compute_type|default:'' }}" placeholder="{{ defaults.local_compute_type }}">
-      </div>
-    </div>
+    <p class="form-text">{% trans "Device / compute" %}: {{ defaults.local_device }} / {{ defaults.local_compute_type }}</p>
     <div class="mb-2">
       <label class="form-label">{% trans "OpenAI model" %}</label>
       <input class="form-control" name="openai_model" value="{{ prefs.openai_model|default:'' }}" placeholder="{{ defaults.openai_default_model }}">
