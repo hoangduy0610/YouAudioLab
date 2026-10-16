@@ -18,10 +18,13 @@ COPY apps /app/apps
 COPY templates /app/templates
 COPY static /app/static
 COPY docs /app/docs
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
 RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir ".[dev]"
 
 EXPOSE 8001
 
+ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8001"]
