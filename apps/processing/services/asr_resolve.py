@@ -42,16 +42,15 @@ def _local_engine_name() -> str:
     return "faster-whisper"
 
 
-# CPU int8 on the YouAudioLab host. tiny/base/small load PhoWhisper.
-# medium / large stay out of the picker.
-_LOCAL_MODEL_CHOICES = frozenset({"tiny", "base", "small"})
+# CPU int8 on the YouAudioLab host. These sizes load PhoWhisper.
+_LOCAL_MODEL_CHOICES = frozenset({"tiny", "base", "small", "medium"})
 
 
 def _allowlist_local() -> set[str]:
     configured = {
         s.strip()
         for s in (
-            getattr(settings, "ASR_MODEL_ALLOWLIST", "tiny,base,small") or ""
+            getattr(settings, "ASR_MODEL_ALLOWLIST", "tiny,base,small,medium") or ""
         ).split(",")
         if s.strip()
     }

@@ -77,6 +77,7 @@ _PHOWHISPER_FOLDERS = {
     "tiny": "PhoWhisper-tiny-ct2-fasterWhisper",
     "base": "PhoWhisper-base-ct2-fasterWhisper",
     "small": "PhoWhisper-small-ct2-fasterWhisper",
+    "medium": "PhoWhisper-medium-ct2-fasterWhisper",
 }
 _PHOWHISPER_FILES = (
     "config.json",

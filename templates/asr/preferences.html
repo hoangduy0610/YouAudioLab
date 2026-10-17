@@ -52,6 +52,7 @@
         <option value="tiny" {% if prefs.local_model == "tiny" %}selected{% endif %}>PhoWhisper tiny</option>
         <option value="base" {% if prefs.local_model == "base" %}selected{% endif %}>PhoWhisper base</option>
         <option value="small" {% if prefs.local_model == "small" %}selected{% endif %}>PhoWhisper small</option>
+        <option value="medium" {% if prefs.local_model == "medium" %}selected{% endif %}>PhoWhisper medium</option>
       </select>
     </div>
     <p class="form-text">{% trans "Device / compute" %}: {{ defaults.local_device }} / {{ defaults.local_compute_type }}</p>
