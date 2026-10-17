@@ -24,6 +24,8 @@ RUN chmod +x /app/entrypoint.sh
 RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir ".[dev]"
 
+RUN sed -i 's/\r$//' /app/entrypoint.sh
+
 EXPOSE 8001
 
 ENTRYPOINT ["/app/entrypoint.sh"]

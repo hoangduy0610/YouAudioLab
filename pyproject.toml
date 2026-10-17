@@ -19,6 +19,7 @@ dependencies = [
     "bcrypt>=5.0.0",
     "PyJWT>=2.15.0",
     "faster-whisper>=1.1.0",
+    # faster-whisper 1.2.1 passes metadata_errors to av.open; PyAV 19 removed it.
     "av>=14,<19",
 ]
 
