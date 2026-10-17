@@ -39,6 +39,8 @@ class SegmentIndexRow:
     readiness_status: str = "NOT_READY"
     readiness_failed_gates: tuple[str, ...] = ()
     audio_reviewed: bool = False
+    asr_preview: str | None = None
+    asr_job_status: str | None = None
 
     @property
     def is_ready(self) -> bool:
@@ -61,6 +63,26 @@ class SegmentSourceGroup:
     @property
     def mine_labeled_count(self) -> int:
         return sum(1 for row in self.rows if any(chip.get("annotation_id") for chip in row.chips))
+
+
+def _asr_list_state(segment: AudioSegment, transcript: str) -> tuple[str | None, str | None]:
+    """Candidate text to review on the list, and an in-flight or failed job status."""
+    job = segment.current_asr_job
+    job_status = None
+    if job is not None and job.status in {"QUEUED", "RUNNING", "FAILED"}:
+        job_status = job.status
+    run = segment.current_asr_run
+    preview = None
+    if (
+        run is not None
+        and not run.is_stale_result
+        and run.segment_revision == segment.definition_revision
+        and run.artifact_id == segment.current_artifact_id
+    ):
+        text = (run.text or "").strip()
+        if text and text != transcript:
+            preview = text
+    return preview, job_status
 
 
 def group_index_rows_by_source(rows: list[SegmentIndexRow]) -> list[SegmentSourceGroup]:
@@ -202,6 +224,8 @@ class SegmentService:
                 "source",
                 "current_artifact",
                 "current_artifact__job",
+                "current_asr_job",
+                "current_asr_run",
                 "audio_reviewed_by",
             )
             .order_by("source__created_at", "segment_index")
@@ -305,6 +329,7 @@ class SegmentService:
                     }
                 )
             readiness = readiness_map[segment.id]
+            asr_preview, asr_job_status = _asr_list_state(segment, transcript)
             rows.append(
                 SegmentIndexRow(
                     segment=segment,
@@ -319,6 +344,8 @@ class SegmentService:
                     readiness_status=readiness.status,
                     readiness_failed_gates=readiness.failed_gates,
                     audio_reviewed=segment.audio_reviewed_at is not None,
+                    asr_preview=asr_preview,
+                    asr_job_status=asr_job_status,
                 )
             )
         return rows

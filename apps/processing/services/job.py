@@ -194,6 +194,79 @@ class JobService:
         segment.save(update_fields=["processing_status", "current_job", "updated_at"])
         return job
 
+    def submit_extract_batch(
+        self,
+        *,
+        segment_ids: list[uuid.UUID],
+        actor_user_id: uuid.UUID,
+        project_id: uuid.UUID,
+    ) -> tuple[list[ProcessingJob], int]:
+        """Queue extract jobs with one membership check and one active-job lookup."""
+        if not segment_ids:
+            return [], 0
+        self.memberships.require_owner(project_id, actor_user_id)
+        self.memberships.require_active_project(project_id)
+        try:
+            settings = ProjectSettings.objects.get(pk=project_id)
+        except ProjectSettings.DoesNotExist as exc:
+            raise NotFoundError(
+                "Project settings not found",
+                details={"project_id": str(project_id)},
+            ) from exc
+        snapshot = self._config_snapshot(settings)
+        rows = AudioSegment.objects.select_related("source").filter(
+            id__in=segment_ids,
+            source__project_id=project_id,
+            deleted_at__isnull=True,
+        )
+        by_id = {row.id: row for row in rows}
+        active = set(
+            ProcessingJob.objects.filter(
+                segment_id__in=list(by_id),
+                job_type=ProcessingJob.JobType.EXTRACT_SEGMENT_AUDIO,
+                status__in=list(_ACTIVE),
+            ).values_list("segment_id", "expected_revision")
+        )
+        skipped = 0
+        pending: list[AudioSegment] = []
+        seen: set[uuid.UUID] = set()
+        for seg_id in segment_ids:
+            segment = by_id.get(seg_id)
+            if segment is None or seg_id in seen:
+                skipped += 1
+                continue
+            seen.add(seg_id)
+            if (segment.id, segment.definition_revision) in active:
+                skipped += 1
+                continue
+            pending.append(segment)
+        created: list[ProcessingJob] = []
+        for segment in pending:
+            try:
+                with transaction.atomic():
+                    job = ProcessingJob.objects.create(
+                        segment=segment,
+                        source=segment.source,
+                        project_id=segment.source.project_id,
+                        expected_revision=segment.definition_revision,
+                        job_type=ProcessingJob.JobType.EXTRACT_SEGMENT_AUDIO,
+                        start_seconds=segment.start_seconds,
+                        end_seconds=segment.end_seconds,
+                        config_snapshot=snapshot,
+                        status=ProcessingJob.Status.QUEUED,
+                        attempt_n=1,
+                    )
+                    segment.processing_status = AudioSegment.ProcessingStatus.PROCESSING
+                    segment.current_job = job
+                    segment.save(
+                        update_fields=["processing_status", "current_job", "updated_at"]
+                    )
+            except IntegrityError:
+                skipped += 1
+                continue
+            created.append(job)
+        return created, skipped
+
     def _lock_segment_then_job(
         self, job_id: uuid.UUID
     ) -> tuple[AudioSegment, ProcessingJob]:

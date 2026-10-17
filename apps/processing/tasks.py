@@ -160,13 +160,12 @@ def extract_segment_audio(self, job_id: str) -> dict[str, str]:
                         ]
                     )
             else:
-                source_checksum = sha256_file(src_path)
-                source_size = src_path.stat().st_size
                 storage_key = media_cache.storage_key
-                if (
-                    media_cache.checksum != source_checksum
-                    or media_cache.file_size_bytes != source_size
-                ):
+                source_size = src_path.stat().st_size
+                if media_cache.checksum and media_cache.file_size_bytes == source_size:
+                    source_checksum = media_cache.checksum
+                else:
+                    source_checksum = sha256_file(src_path)
                     media_cache.checksum = source_checksum
                     media_cache.file_size_bytes = source_size
                     media_cache.save(

@@ -64,6 +64,9 @@ msgstr ""
 msgid "ASR active"
 msgstr ""
 
+msgid "ASR candidate"
+msgstr ""
+
 msgid "ASR draft"
 msgstr ""
 
@@ -271,7 +274,13 @@ msgstr ""
 msgid "Applied"
 msgstr ""
 
+msgid "Applied ASR text to %(applied)s segment(s). %(skipped)s skipped."
+msgstr ""
+
 msgid "Apply"
+msgstr ""
+
+msgid "Apply ASR text"
 msgstr ""
 
 msgid "Apply my numbers"
@@ -720,6 +729,11 @@ msgstr ""
 msgid "Extract audio active"
 msgstr ""
 
+msgid ""
+"Extract audio cuts the selected segments. Generate runs recognition after "
+"audio is ready. Apply copies a finished candidate into the transcript."
+msgstr ""
+
 msgid "Extract audio first to enable Generate."
 msgstr ""
 
@@ -771,6 +785,15 @@ msgid "Generate again"
 msgstr ""
 
 msgid "Generate from audio"
+msgstr ""
+
+msgid ""
+"Generate runs recognition for the selected segments. Apply copies a finished"
+" candidate into the transcript. Review the candidate on this list before "
+"applying."
+msgstr ""
+
+msgid "Generate transcripts"
 msgstr ""
 
 msgid "Generating… refresh shortly or wait for the job to finish."
@@ -1272,6 +1295,12 @@ msgstr ""
 msgid "Only ASR admins can update system defaults."
 msgstr ""
 
+msgid "Only project owners can run bulk actions."
+msgstr ""
+
+msgid "Only project owners can run bulk transcript jobs."
+msgstr ""
+
 msgid "Only the server model. Your LLM API is not turned off here."
 msgstr ""
 
@@ -1465,6 +1494,14 @@ msgid "Quality"
 msgstr ""
 
 msgid "Quality report"
+msgstr ""
+
+msgid "Queued %(queued)s audio extract job(s). %(skipped)s skipped."
+msgstr ""
+
+msgid ""
+"Queued %(queued)s transcript job(s). %(reused)s reused an existing result. "
+"%(skipped)s skipped."
 msgstr ""
 
 msgid "Quick import"
@@ -1671,10 +1708,21 @@ msgstr ""
 msgid "Segment #%(n)s"
 msgstr ""
 
+msgid ""
+"Segment #%(n)s is in the list. No time is left after it on this source."
+msgstr ""
+
+msgid "Segment #%(n)s is in the list. The next start continues from its end."
+msgstr ""
+
 msgid "Segment + text"
 msgstr ""
 
 msgid "Segment created."
+msgstr ""
+
+msgid ""
+"Segment created. You are still on this video so you can mark the next range."
 msgstr ""
 
 msgid "Segment deleted."
@@ -1701,6 +1749,15 @@ msgstr ""
 msgid "Select a label…"
 msgstr ""
 
+msgid "Select at least one segment."
+msgstr ""
+
+msgid "Select at most %(n)s segments at once."
+msgstr ""
+
+msgid "Select visible"
+msgstr ""
+
 msgid "Set ASR_SECRETS_KEY first"
 msgstr ""
 
@@ -1711,8 +1768,13 @@ msgid "Set Start"
 msgstr ""
 
 msgid ""
-"Set bounds from the player, then create. Opens Segment Workspace after "
-"create."
+"Set bounds from the player, then create. You stay on this video to mark the "
+"next range. Extract audio later from the segment list."
+msgstr ""
+
+msgid ""
+"Set bounds from the player, then create. You stay on this video to mark the "
+"next range. Select segments below to extract audio."
 msgstr ""
 
 msgid ""
@@ -1954,6 +2016,12 @@ msgstr ""
 msgid "Transcript"
 msgstr ""
 
+msgid "Transcript job failed"
+msgstr ""
+
+msgid "Transcript job running"
+msgstr ""
+
 msgid "Transcript saved."
 msgstr ""
 
@@ -2187,6 +2255,9 @@ msgid "required"
 msgstr ""
 
 msgid "segments"
+msgstr ""
+
+msgid "selected"
 msgstr ""
 
 msgid "source(s) in this project."

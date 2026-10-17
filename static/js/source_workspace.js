@@ -98,9 +98,14 @@ function setupButtons() {
     event.preventDefault();
     setEndFromPlayer();
   });
+  document.querySelector("[data-source-play]")?.addEventListener("click", (event) => {
+    event.preventDefault();
+    togglePlay();
+  });
   document.querySelector("[data-start-input]")?.addEventListener("input", updateDurationDisplay);
   document.querySelector("[data-end-input]")?.addEventListener("input", updateDurationDisplay);
   updateDurationDisplay();
+  document.querySelector("[data-created-segment]")?.scrollIntoView({ block: "nearest" });
 }
 
 window.onYouTubeIframeAPIReady = function onYouTubeIframeAPIReady() {
@@ -110,12 +115,17 @@ window.onYouTubeIframeAPIReady = function onYouTubeIframeAPIReady() {
   const videoId = root.getAttribute("data-youtube-id");
   if (!videoId) return;
 
+  const seek = Number(root.getAttribute("data-seek-to"));
+  const hasSeek = Number.isFinite(seek) && seek > 0;
   ytPlayer = new window.YT.Player("yt-player", {
     videoId,
     playerVars: {
       rel: 0,
       modestbranding: 1,
       enablejsapi: 1,
+      controls: 1,
+      playsinline: 1,
+      ...(hasSeek ? { start: Math.floor(seek) } : {}),
     },
     events: {
       onReady: () => {

@@ -85,6 +85,19 @@
     </div>
   </form>
 
+  {% if source_groups and role == "OWNER" and project.status != "ARCHIVED" %}
+  <form method="post" action="?{{ request.GET.urlencode }}" id="bulk-segments" class="card border-0 shadow-sm mb-3" data-testid="bulk-actions">
+    {% csrf_token %}
+    <div class="card-body py-2 d-flex flex-wrap align-items-center gap-2">
+      <span class="small text-muted"><span data-bulk-count>0</span> {% trans "selected" %}</span>
+      <button class="btn btn-sm btn-outline-primary" type="submit" name="action" value="bulk_submit_extract" data-testid="bulk-extract-audio">{% trans "Extract audio" %}</button>
+      <button class="btn btn-sm btn-primary" type="submit" name="action" value="bulk_submit_asr" data-testid="bulk-generate-transcripts">{% trans "Generate transcripts" %}</button>
+      <button class="btn btn-sm btn-outline-primary" type="submit" name="action" value="bulk_apply_asr" data-testid="bulk-apply-asr">{% trans "Apply ASR text" %}</button>
+      <span class="small text-muted">{% trans "Extract audio cuts the selected segments. Generate runs recognition after audio is ready. Apply copies a finished candidate into the transcript." %}</span>
+    </div>
+  </form>
+  {% endif %}
+
   {% if source_groups %}
   <div data-testid="segment-list">
     {% for group in source_groups %}
@@ -109,6 +122,11 @@
         <table class="table table-hover mb-0 align-middle">
           <thead>
             <tr>
+              {% if role == "OWNER" and project.status != "ARCHIVED" %}
+              <th style="width:2rem">
+                <input class="form-check-input" type="checkbox" data-bulk-all aria-label="{% trans 'Select visible' %}">
+              </th>
+              {% endif %}
               <th style="width:4.5rem">{% trans "Seg" %}</th>
               <th style="min-width:12rem">{% trans "Transcript" %}</th>
               <th>{% trans "Labels" %}</th>
@@ -123,6 +141,11 @@
             {% for row in group.rows %}
             {% with segment=row.segment %}
             <tr>
+              {% if role == "OWNER" and project.status != "ARCHIVED" %}
+              <td>
+                <input class="form-check-input" type="checkbox" name="segment_ids" value="{{ segment.id }}" form="bulk-segments" data-bulk-segment data-testid="bulk-segment">
+              </td>
+              {% endif %}
               <td>
                 <div class="d-flex align-items-start gap-1">
                   {% if segment.current_artifact_id %}
@@ -198,6 +221,25 @@
                   {% else %}
                   <span class="text-muted small">{% trans "No transcript" %}</span>
                   {% endif %}
+                {% endif %}
+                {% if row.asr_job_status == "QUEUED" or row.asr_job_status == "RUNNING" %}
+                <div class="small text-muted mt-1" data-testid="asr-job-status">{% trans "Transcript job running" %}</div>
+                {% elif row.asr_job_status == "FAILED" and not row.asr_preview %}
+                <div class="small text-danger mt-1" data-testid="asr-job-status">{% trans "Transcript job failed" %}</div>
+                {% endif %}
+                {% if row.asr_preview %}
+                <div class="small border-start ps-2 mt-1" data-testid="asr-preview" title="{{ row.asr_preview }}">
+                  <span class="text-muted">{% trans "ASR candidate" %}:</span>
+                  {{ row.asr_preview|truncatechars:140 }}
+                  {% if role == "OWNER" and project.status != "ARCHIVED" %}
+                  <form method="post" action="?{{ request.GET.urlencode }}" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="bulk_apply_asr">
+                    <input type="hidden" name="segment_ids" value="{{ segment.id }}">
+                    <button class="btn btn-link btn-sm p-0" type="submit" data-testid="asr-apply">{% trans "Apply" %}</button>
+                  </form>
+                  {% endif %}
+                </div>
                 {% endif %}
               </td>
               <td style="min-width:14rem">
@@ -303,4 +345,22 @@
 {% block scripts %}
 <script type="module" src="{% static 'js/segment_list_audio.js' %}"></script>
 <script type="module" src="{% static 'js/segment_transcript_edit.js' %}"></script>
+<script>
+  const bulkBoxes = () => document.querySelectorAll("[data-bulk-segment]");
+  const bulkCount = document.querySelector("[data-bulk-count]");
+  function syncBulkCount() {
+    if (!bulkCount) return;
+    bulkCount.textContent = String([...bulkBoxes()].filter((box) => box.checked).length);
+  }
+  document.querySelectorAll("[data-bulk-all]").forEach((toggle) => {
+    toggle.addEventListener("change", () => {
+      const table = toggle.closest("table");
+      table?.querySelectorAll("[data-bulk-segment]").forEach((box) => {
+        box.checked = toggle.checked;
+      });
+      syncBulkCount();
+    });
+  });
+  bulkBoxes().forEach((box) => box.addEventListener("change", syncBulkCount));
+</script>
 {% endblock %}

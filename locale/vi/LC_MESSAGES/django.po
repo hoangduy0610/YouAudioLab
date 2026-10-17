@@ -64,6 +64,9 @@ msgstr ""
 msgid "ASR active"
 msgstr ""
 
+msgid "ASR candidate"
+msgstr "Ứng viên ASR"
+
 msgid "ASR draft"
 msgstr ""
 
@@ -275,8 +278,14 @@ msgstr ""
 msgid "Applied"
 msgstr ""
 
+msgid "Applied ASR text to %(applied)s segment(s). %(skipped)s skipped."
+msgstr "Đã áp chữ ASR cho %(applied)s đoạn. %(skipped)s bỏ qua."
+
 msgid "Apply"
 msgstr ""
+
+msgid "Apply ASR text"
+msgstr "Áp chữ ASR"
 
 msgid "Apply my numbers"
 msgstr ""
@@ -721,10 +730,17 @@ msgid ""
 msgstr ""
 
 msgid "Extract audio"
-msgstr ""
+msgstr "Cắt audio"
 
 msgid "Extract audio active"
 msgstr ""
+
+msgid ""
+"Extract audio cuts the selected segments. Generate runs recognition after "
+"audio is ready. Apply copies a finished candidate into the transcript."
+msgstr ""
+"Cắt audio tạo file cho các đoạn đã chọn. Tạo bản chép chạy nhận dạng sau khi"
+" đã có audio. Áp chữ chép ứng viên đã xong vào bản chép."
 
 msgid "Extract audio first to enable Generate."
 msgstr ""
@@ -778,6 +794,17 @@ msgstr ""
 
 msgid "Generate from audio"
 msgstr ""
+
+msgid ""
+"Generate runs recognition for the selected segments. Apply copies a finished"
+" candidate into the transcript. Review the candidate on this list before "
+"applying."
+msgstr ""
+"Tạo bản chép chạy nhận dạng cho các đoạn đã chọn. Áp chữ chép ứng viên đã "
+"xong vào bản chép. Xem ứng viên ngay trên danh sách này trước khi áp."
+
+msgid "Generate transcripts"
+msgstr "Tạo bản chép"
 
 msgid "Generating… refresh shortly or wait for the job to finish."
 msgstr ""
@@ -1289,6 +1316,12 @@ msgstr "Chỉ quản trị AI mới cập nhật mặc định hệ thống."
 msgid "Only ASR admins can update system defaults."
 msgstr "Chỉ quản trị ASR mới cập nhật mặc định hệ thống."
 
+msgid "Only project owners can run bulk actions."
+msgstr "Chỉ chủ dự án chạy thao tác hàng loạt."
+
+msgid "Only project owners can run bulk transcript jobs."
+msgstr "Chỉ chủ dự án chạy job bản chép hàng loạt."
+
 msgid "Only the server model. Your LLM API is not turned off here."
 msgstr ""
 "Chỉ áp dụng cho model trên máy chủ. API LLM của bạn không bị tắt ở đây."
@@ -1309,7 +1342,7 @@ msgid "Open segments"
 msgstr ""
 
 msgid "Open workspace"
-msgstr ""
+msgstr "Mở không gian làm việc"
 
 msgid "OpenAI"
 msgstr ""
@@ -1408,7 +1441,7 @@ msgid "Play segment audio"
 msgstr ""
 
 msgid "Play/Pause"
-msgstr ""
+msgstr "Phát/Tạm dừng"
 
 msgid "Preferences"
 msgstr "Tuỳ chọn"
@@ -1489,6 +1522,16 @@ msgstr ""
 
 msgid "Quality report"
 msgstr ""
+
+msgid "Queued %(queued)s audio extract job(s). %(skipped)s skipped."
+msgstr "Đã xếp %(queued)s job cắt audio. %(skipped)s bỏ qua."
+
+msgid ""
+"Queued %(queued)s transcript job(s). %(reused)s reused an existing result. "
+"%(skipped)s skipped."
+msgstr ""
+"Đã xếp %(queued)s job bản chép. %(reused)s dùng lại kết quả có sẵn. "
+"%(skipped)s bỏ qua."
 
 msgid "Quick import"
 msgstr "Nhập nhanh"
@@ -1694,11 +1737,23 @@ msgstr "Đoạn"
 msgid "Segment #%(n)s"
 msgstr "Đoạn #%(n)s"
 
+msgid ""
+"Segment #%(n)s is in the list. No time is left after it on this source."
+msgstr "Đoạn #%(n)s đã vào danh sách. Nguồn không còn thời gian sau đoạn đó."
+
+msgid "Segment #%(n)s is in the list. The next start continues from its end."
+msgstr ""
+"Đoạn #%(n)s đã vào danh sách. Mốc bắt đầu tiếp theo nối từ cuối đoạn đó."
+
 msgid "Segment + text"
 msgstr ""
 
 msgid "Segment created."
 msgstr "Đã tạo đoạn."
+
+msgid ""
+"Segment created. You are still on this video so you can mark the next range."
+msgstr "Đã tạo đoạn. Bạn vẫn ở video này để khoanh đoạn tiếp theo."
 
 msgid "Segment deleted."
 msgstr "Đã xoá đoạn."
@@ -1724,6 +1779,15 @@ msgstr "Đoạn"
 msgid "Select a label…"
 msgstr ""
 
+msgid "Select at least one segment."
+msgstr "Hãy chọn ít nhất một đoạn."
+
+msgid "Select at most %(n)s segments at once."
+msgstr "Chọn tối đa %(n)s đoạn mỗi lần."
+
+msgid "Select visible"
+msgstr "Chọn các đoạn đang hiện"
+
 msgid "Set ASR_SECRETS_KEY first"
 msgstr ""
 
@@ -1734,9 +1798,18 @@ msgid "Set Start"
 msgstr ""
 
 msgid ""
-"Set bounds from the player, then create. Opens Segment Workspace after "
-"create."
+"Set bounds from the player, then create. You stay on this video to mark the "
+"next range. Extract audio later from the segment list."
 msgstr ""
+"Đặt biên từ player rồi tạo. Bạn ở lại video này để khoanh đoạn tiếp theo. "
+"Cắt audio sau trên danh sách đoạn."
+
+msgid ""
+"Set bounds from the player, then create. You stay on this video to mark the "
+"next range. Select segments below to extract audio."
+msgstr ""
+"Đặt biên từ player rồi tạo. Bạn ở lại video này để khoanh đoạn tiếp theo. "
+"Chọn các đoạn bên dưới để cắt audio."
 
 msgid ""
 "Set start/end bounds, then save. Saving bumps revision — submit a job to "
@@ -1985,6 +2058,12 @@ msgstr ""
 msgid "Transcript"
 msgstr "Bản chép"
 
+msgid "Transcript job failed"
+msgstr "Job bản chép thất bại"
+
+msgid "Transcript job running"
+msgstr "Job bản chép đang chạy"
+
 msgid "Transcript saved."
 msgstr "Đã lưu bản chép."
 
@@ -2227,6 +2306,9 @@ msgstr "bắt buộc"
 
 msgid "segments"
 msgstr ""
+
+msgid "selected"
+msgstr "đã chọn"
 
 msgid "source(s) in this project."
 msgstr "nguồn trong dự án này."

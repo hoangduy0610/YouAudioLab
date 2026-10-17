@@ -631,12 +631,38 @@ def source_detail(request: HttpRequest, project_id, source_id) -> HttpResponse:
                     actor_user_id=user.id,
                     transcript=request.POST.get("transcript") or None,
                 )
-                messages.success(request, _("Segment created."))
-                return redirect(
-                    "segment-workspace",
-                    project_id=project_id,
-                    segment_id=segment.id,
+                messages.success(
+                    request,
+                    _("Segment created. You are still on this video so you can mark the next range."),
                 )
+                detail_url = reverse(
+                    "source-detail",
+                    kwargs={"project_id": project_id, "source_id": source_id},
+                )
+                return redirect(f"{detail_url}?created={segment.id}")
+            elif action == "bulk_submit_extract":
+                if _role(project_id, user.id) != "OWNER" or project.status == "ARCHIVED":
+                    messages.error(request, _("Only project owners can run bulk actions."))
+                else:
+                    _bulk_transcript_action(
+                        request,
+                        project_id=project_id,
+                        actor_user_id=user.id,
+                        action=action,
+                        source_id=source.id,
+                    )
+                detail_url = reverse(
+                    "source-detail",
+                    kwargs={"project_id": project_id, "source_id": source_id},
+                )
+                created = request.POST.get("return_created") or ""
+                try:
+                    uuid.UUID(str(created))
+                except ValueError:
+                    created = ""
+                if created:
+                    return redirect(f"{detail_url}?created={created}")
+                return redirect(detail_url)
             elif action == "refresh_metadata":
                 SourceService().request_metadata_refresh(source_id, actor_user_id=user.id)
                 enqueue_fetch_source_metadata(source_id)
@@ -663,6 +689,29 @@ def source_detail(request: HttpRequest, project_id, source_id) -> HttpResponse:
         }
         for segment in segments
     ]
+    duration = float(source.duration_seconds or 0)
+    next_start = 0.0
+    next_end = duration if 0 < duration < 10 else (10.0 if duration else 0.0)
+    created_segment = None
+    at_source_end = False
+    raw_created = request.GET.get("created")
+    if raw_created:
+        try:
+            created_id = uuid.UUID(str(raw_created))
+        except ValueError:
+            created_id = None
+        if created_id is not None:
+            created_segment = next((row for row in segments if row.id == created_id), None)
+            if created_segment is not None:
+                span = float(created_segment.end_seconds) - float(created_segment.start_seconds)
+                if span <= 0:
+                    span = 10.0
+                next_start = float(created_segment.end_seconds)
+                next_end = min(duration, next_start + span) if duration else next_start + span
+                if next_end <= next_start:
+                    at_source_end = True
+                    next_start = float(created_segment.start_seconds)
+                    next_end = float(created_segment.end_seconds)
     return render(
         request,
         "sources/detail.html",
@@ -672,7 +721,112 @@ def source_detail(request: HttpRequest, project_id, source_id) -> HttpResponse:
             "segments": segments,
             "segment_rows": segment_rows,
             "role": _role(project_id, user.id),
+            "created_segment": created_segment,
+            "next_start": next_start,
+            "next_end": next_end,
+            "at_source_end": at_source_end,
         },
+    )
+
+
+_BULK_SEGMENT_LIMIT = 100
+
+
+def _bulk_transcript_action(
+    request: HttpRequest,
+    *,
+    project_id,
+    actor_user_id: uuid.UUID,
+    action: str,
+    source_id=None,
+) -> None:
+    raw_ids = request.POST.getlist("segment_ids")
+    if not raw_ids:
+        messages.error(request, _("Select at least one segment."))
+        return
+    if len(raw_ids) > _BULK_SEGMENT_LIMIT:
+        messages.error(
+            request,
+            _("Select at most %(n)s segments at once.") % {"n": _BULK_SEGMENT_LIMIT},
+        )
+        return
+    ids: list[uuid.UUID] = []
+    for raw in raw_ids:
+        try:
+            ids.append(uuid.UUID(str(raw)))
+        except ValueError:
+            continue
+    segment_qs = AudioSegment.objects.filter(
+        id__in=ids,
+        source__project_id=project_id,
+        deleted_at__isnull=True,
+    )
+    if source_id is not None:
+        segment_qs = segment_qs.filter(source_id=source_id)
+    segments = {row.id: row for row in segment_qs}
+    queued = reused = applied = skipped = 0
+    storage = get_storage()
+    jobs = JobService(storage)
+    if action == "bulk_submit_extract":
+        allowed_ids = [seg_id for seg_id in ids if seg_id in segments]
+        created_jobs, batch_skipped = jobs.submit_extract_batch(
+            segment_ids=allowed_ids,
+            actor_user_id=actor_user_id,
+            project_id=project_id,
+        )
+        for job in created_jobs:
+            enqueue_extract_segment_audio(job.id)
+        messages.success(
+            request,
+            _("Queued %(queued)s audio extract job(s). %(skipped)s skipped.")
+            % {
+                "queued": len(created_jobs),
+                "skipped": (len(ids) - len(allowed_ids)) + batch_skipped,
+            },
+        )
+        return
+    asr = AsrService(storage)
+    for seg_id in ids:
+        segment = segments.get(seg_id)
+        if segment is None:
+            skipped += 1
+            continue
+        try:
+            if action == "bulk_submit_asr":
+                job, created = asr.submit(
+                    segment_id=segment.id,
+                    expected_definition_revision=segment.definition_revision,
+                    actor_user_id=actor_user_id,
+                )
+                if created:
+                    enqueue_transcribe_segment_audio(job.id)
+                    queued += 1
+                else:
+                    reused += 1
+            elif segment.current_asr_run_id is None:
+                skipped += 1
+            else:
+                asr.apply(
+                    segment.current_asr_run_id,
+                    expected_definition_revision=segment.definition_revision,
+                    actor_user_id=actor_user_id,
+                )
+                applied += 1
+        except DomainError:
+            skipped += 1
+    if action == "bulk_submit_asr":
+        messages.success(
+            request,
+            _(
+                "Queued %(queued)s transcript job(s). %(reused)s reused an existing result. %(skipped)s skipped."
+            )
+            % {"queued": queued, "reused": reused, "skipped": skipped},
+        )
+        return
+    messages.success(
+        request,
+        _("Applied ASR text to %(applied)s segment(s). %(skipped)s skipped.")
+        % {"applied": applied, "skipped": skipped},
     )
 
 
@@ -714,6 +868,23 @@ def segment_index(request: HttpRequest, project_id) -> HttpResponse:
                             transcript=request.POST.get("transcript") or None,
                         )
                         messages.success(request, _("Transcript saved."))
+                    elif action in {
+                        "bulk_submit_extract",
+                        "bulk_submit_asr",
+                        "bulk_apply_asr",
+                    }:
+                        if _role(project_id, user.id) != "OWNER":
+                            messages.error(
+                                request,
+                                _("Only project owners can run bulk actions."),
+                            )
+                        else:
+                            _bulk_transcript_action(
+                                request,
+                                project_id=project_id,
+                                actor_user_id=user.id,
+                                action=action,
+                            )
                 except DomainError as exc:
                     _handle_domain(request, exc)
                 except (TypeError, ValueError):
