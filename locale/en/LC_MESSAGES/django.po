@@ -522,6 +522,9 @@ msgstr ""
 msgid "Created"
 msgstr ""
 
+msgid "Creating…"
+msgstr ""
+
 msgid "Cross-source index for this project (merged from per-source lists)."
 msgstr ""
 

@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.db.models import Count
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
@@ -602,6 +603,28 @@ def source_list(request: HttpRequest, project_id) -> HttpResponse:
     )
 
 
+def _draft_after_segment(source, segment) -> tuple[float, float, bool]:
+    duration = float(source.duration_seconds or 0)
+    span = float(segment.end_seconds) - float(segment.start_seconds)
+    if span <= 0:
+        span = 10.0
+    next_start = float(segment.end_seconds)
+    next_end = min(duration, next_start + span) if duration else next_start + span
+    if next_end <= next_start:
+        return float(segment.start_seconds), float(segment.end_seconds), True
+    return next_start, next_end, False
+
+
+def _source_segment_rows(segments, project_id):
+    from apps.workspace.services.readiness import ReadinessService
+
+    readiness_map = ReadinessService().evaluate_many(segments, project_id=project_id)
+    return [
+        {"segment": segment, "readiness": readiness_map[segment.id]}
+        for segment in segments
+    ]
+
+
 @require_http_methods(["GET", "POST"])
 def source_detail(request: HttpRequest, project_id, source_id) -> HttpResponse:
     user = _require_identity(request)
@@ -614,23 +637,81 @@ def source_detail(request: HttpRequest, project_id, source_id) -> HttpResponse:
         if request.method == "POST":
             action = request.POST.get("action")
             if action == "create_segment":
+                quick = request.headers.get("X-Segment-Create") == "1"
+
+                def _quick_error(message: str, status: int = 400) -> JsonResponse:
+                    return JsonResponse({"ok": False, "message": message}, status=status)
+
                 if source.duration_seconds is None:
-                    messages.error(
-                        request,
-                        _("Create Segment is unavailable until source duration is known."),
+                    message = _(
+                        "Create Segment is unavailable until source duration is known."
                     )
+                    if quick:
+                        return _quick_error(str(message))
+                    messages.error(request, message)
                     return redirect(
                         "source-detail",
                         project_id=project_id,
                         source_id=source_id,
                     )
-                segment = SegmentService().create(
-                    source_id=source_id,
-                    start_seconds=float(request.POST.get("start_seconds", "0")),
-                    end_seconds=float(request.POST.get("end_seconds", "0")),
-                    actor_user_id=user.id,
-                    transcript=request.POST.get("transcript") or None,
-                )
+                try:
+                    segment = SegmentService().create(
+                        source_id=source_id,
+                        start_seconds=float(request.POST.get("start_seconds", "0")),
+                        end_seconds=float(request.POST.get("end_seconds", "0")),
+                        actor_user_id=user.id,
+                        transcript=request.POST.get("transcript") or None,
+                    )
+                except DomainError as exc:
+                    if quick:
+                        return _quick_error(exc.message)
+                    raise
+                except (TypeError, ValueError):
+                    message = _("Invalid segment bounds.")
+                    if quick:
+                        return _quick_error(str(message))
+                    raise
+                next_start, next_end, at_source_end = _draft_after_segment(source, segment)
+                if quick:
+                    segments = SegmentService().list_for_source(source_id)
+                    role = _role(project_id, user.id)
+                    if at_source_end:
+                        notice = _(
+                            "Segment #%(n)s is in the list. No time is left after it on this source."
+                        ) % {"n": segment.segment_index}
+                    else:
+                        notice = _(
+                            "Segment #%(n)s is in the list. The next start continues from its end."
+                        ) % {"n": segment.segment_index}
+                    list_html = render_to_string(
+                        "sources/_segment_list.html",
+                        {
+                            "project": project,
+                            "role": role,
+                            "segment_rows": _source_segment_rows(segments, project_id),
+                            "created_segment": segment,
+                        },
+                        request=request,
+                    )
+                    return JsonResponse(
+                        {
+                            "ok": True,
+                            "message": str(
+                                _(
+                                    "Segment created. You are still on this video so you can mark the next range."
+                                )
+                            ),
+                            "notice": str(notice),
+                            "workspace_url": reverse(
+                                "segment-workspace",
+                                kwargs={"project_id": project_id, "segment_id": segment.id},
+                            ),
+                            "next_start": next_start,
+                            "next_end": next_end,
+                            "seek_to": None if at_source_end else next_start,
+                            "list_html": list_html,
+                        }
+                    )
                 messages.success(
                     request,
                     _("Segment created. You are still on this video so you can mark the next range."),
@@ -679,16 +760,7 @@ def source_detail(request: HttpRequest, project_id, source_id) -> HttpResponse:
         messages.error(request, _("Invalid segment bounds."))
         return redirect("source-detail", project_id=project_id, source_id=source_id)
     segments = SegmentService().list_for_source(source_id)
-    from apps.workspace.services.readiness import ReadinessService
-
-    readiness_map = ReadinessService().evaluate_many(segments, project_id=project_id)
-    segment_rows = [
-        {
-            "segment": segment,
-            "readiness": readiness_map[segment.id],
-        }
-        for segment in segments
-    ]
+    segment_rows = _source_segment_rows(segments, project_id)
     duration = float(source.duration_seconds or 0)
     next_start = 0.0
     next_end = duration if 0 < duration < 10 else (10.0 if duration else 0.0)
@@ -703,15 +775,9 @@ def source_detail(request: HttpRequest, project_id, source_id) -> HttpResponse:
         if created_id is not None:
             created_segment = next((row for row in segments if row.id == created_id), None)
             if created_segment is not None:
-                span = float(created_segment.end_seconds) - float(created_segment.start_seconds)
-                if span <= 0:
-                    span = 10.0
-                next_start = float(created_segment.end_seconds)
-                next_end = min(duration, next_start + span) if duration else next_start + span
-                if next_end <= next_start:
-                    at_source_end = True
-                    next_start = float(created_segment.start_seconds)
-                    next_end = float(created_segment.end_seconds)
+                next_start, next_end, at_source_end = _draft_after_segment(
+                    source, created_segment
+                )
     return render(
         request,
         "sources/detail.html",

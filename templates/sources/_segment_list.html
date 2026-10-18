@@ -1,0 +1,72 @@
+{% load i18n yal_badges %}
+{% if segment_rows and role == "OWNER" and project.status != "ARCHIVED" %}
+<form method="post" id="bulk-source-segments" class="d-flex flex-wrap align-items-center gap-2 mb-2" data-testid="bulk-actions">
+  {% csrf_token %}
+  {% if created_segment %}
+  <input type="hidden" name="return_created" value="{{ created_segment.id }}">
+  {% endif %}
+  <span class="small text-muted"><span data-bulk-count>0</span> {% trans "selected" %}</span>
+  <button class="btn btn-sm btn-outline-primary" type="submit" name="action" value="bulk_submit_extract" data-testid="bulk-extract-audio">{% trans "Extract audio" %}</button>
+</form>
+{% endif %}
+{% if segment_rows %}
+<div class="table-responsive">
+  <table class="table table-sm">
+    <thead>
+      <tr>
+        {% if role == "OWNER" and project.status != "ARCHIVED" %}
+        <th style="width:2rem">
+          <input class="form-check-input" type="checkbox" data-bulk-all aria-label="{% trans 'Select visible' %}">
+        </th>
+        {% endif %}
+        <th>#</th>
+        <th>{% trans "Start" %}</th>
+        <th>{% trans "End" %}</th>
+        <th>{% trans "Ready" %}</th>
+        <th>{% trans "Status" %}</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in segment_rows %}
+      {% with segment=row.segment readiness=row.readiness %}
+      <tr{% if created_segment and segment.id == created_segment.id %} class="table-success" data-created-segment data-testid="created-segment"{% endif %}>
+        {% if role == "OWNER" and project.status != "ARCHIVED" %}
+        <td>
+          <input class="form-check-input" type="checkbox" name="segment_ids" value="{{ segment.id }}" form="bulk-source-segments" data-bulk-segment aria-label="{{ segment.id }}">
+        </td>
+        {% endif %}
+        <td>
+          <div class="d-flex align-items-center gap-1">
+            {% if segment.current_artifact_id %}
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-secondary px-1 py-0"
+              data-play-artifact="{{ segment.current_artifact_id }}"
+              data-testid="segment-play"
+              title="{% trans 'Play segment audio' %}"
+              aria-label="{% trans 'Play segment audio' %}"
+              aria-pressed="false"
+            >
+              <i class="bi bi-play-fill" aria-hidden="true"></i>
+            </button>
+            {% endif %}
+            <span>{{ segment.segment_index }}</span>
+          </div>
+        </td>
+        <td>{{ segment.start_seconds }}</td>
+        <td>{{ segment.end_seconds }}</td>
+        <td style="min-width:7.5rem">
+          {% readiness_status readiness.is_ready readiness.failed_gates %}
+        </td>
+        <td>{% status_badge segment.processing_status "processing" %}</td>
+        <td><a href="{% url 'segment-workspace' project.id segment.id %}">{% trans "Workspace" %}</a></td>
+      </tr>
+      {% endwith %}
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="text-muted">{% trans "No segments on this source yet." %}</p>
+{% endif %}

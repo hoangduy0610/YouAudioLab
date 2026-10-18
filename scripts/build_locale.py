@@ -127,6 +127,7 @@ VI = {
     "No segments on this source yet.": "Nguồn này chưa có đoạn.",
     "View all project segments": "Xem mọi đoạn của dự án",
     "Create segment": "Tạo đoạn",
+    "Creating…": "Đang tạo…",
     "Bounds are source-relative seconds. OWNER only. Opens Segment Workspace after create.": "Biên tính theo giây trên nguồn. Chỉ OWNER. Mở Workspace sau khi tạo.",
     "Transcript": "Bản chép",
     "Signed in.": "Đã đăng nhập.",

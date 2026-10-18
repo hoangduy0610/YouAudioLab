@@ -528,6 +528,9 @@ msgstr "Tạo không mật khẩu"
 msgid "Created"
 msgstr "Tạo lúc"
 
+msgid "Creating…"
+msgstr "Đang tạo…"
+
 msgid "Cross-source index for this project (merged from per-source lists)."
 msgstr "Danh mục đoạn trên mọi nguồn của dự án."
 

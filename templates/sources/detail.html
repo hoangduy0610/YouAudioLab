@@ -81,8 +81,9 @@
         <div class="card-body">
           <h2 class="h6">{% trans "Segment editor" %}</h2>
           <p class="small text-muted">{% trans "Set bounds from the player, then create. You stay on this video to mark the next range. Select segments below to extract audio." %}</p>
+          <p class="small mb-2" data-create-status hidden></p>
           {% if created_segment %}
-          <p class="small mb-2" data-testid="created-segment-next">
+          <p class="small mb-2" data-created-segment-next data-testid="created-segment-next">
             {% if at_source_end %}
             {% blocktrans with n=created_segment.segment_index %}Segment #{{ n }} is in the list. No time is left after it on this source.{% endblocktrans %}
             {% else %}
@@ -91,7 +92,7 @@
             <a href="{% url 'segment-workspace' project.id created_segment.id %}">{% trans "Open workspace" %}</a>
           </p>
           {% endif %}
-          <form method="post" data-create-segment-form>
+          <form method="post" data-create-segment-form data-workspace-label="{% trans "Open workspace" %}">
             {% csrf_token %}
             <input type="hidden" name="action" value="create_segment">
             <div class="row g-2 mb-2">
@@ -117,84 +118,16 @@
               <label class="form-label">{% trans "Transcript" %}</label>
               <textarea class="form-control" name="transcript" rows="2"></textarea>
             </div>
-            <button class="btn btn-primary" type="submit">{% trans "Create segment" %}</button>
+            <button class="btn btn-primary" type="submit" data-label-idle="{% trans "Create segment" %}" data-label-busy="{% trans "Creating…" %}">{% trans "Create segment" %}</button>
           </form>
         </div>
       </div>
       {% endif %}
 
       <h2 class="h6">{% trans "Segments" %}</h2>
-      {% if segment_rows and role == "OWNER" and project.status != "ARCHIVED" %}
-      <form method="post" id="bulk-source-segments" class="d-flex flex-wrap align-items-center gap-2 mb-2" data-testid="bulk-actions">
-        {% csrf_token %}
-        {% if created_segment %}
-        <input type="hidden" name="return_created" value="{{ created_segment.id }}">
-        {% endif %}
-        <span class="small text-muted"><span data-bulk-count>0</span> {% trans "selected" %}</span>
-        <button class="btn btn-sm btn-outline-primary" type="submit" name="action" value="bulk_submit_extract" data-testid="bulk-extract-audio">{% trans "Extract audio" %}</button>
-      </form>
-      {% endif %}
-      {% if segment_rows %}
-      <div class="table-responsive">
-        <table class="table table-sm">
-          <thead>
-            <tr>
-              {% if role == "OWNER" and project.status != "ARCHIVED" %}
-              <th style="width:2rem">
-                <input class="form-check-input" type="checkbox" data-bulk-all aria-label="{% trans 'Select visible' %}">
-              </th>
-              {% endif %}
-              <th>#</th>
-              <th>{% trans "Start" %}</th>
-              <th>{% trans "End" %}</th>
-              <th>{% trans "Ready" %}</th>
-              <th>{% trans "Status" %}</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for row in segment_rows %}
-            {% with segment=row.segment readiness=row.readiness %}
-            <tr{% if created_segment and segment.id == created_segment.id %} class="table-success" data-created-segment data-testid="created-segment"{% endif %}>
-              {% if role == "OWNER" and project.status != "ARCHIVED" %}
-              <td>
-                <input class="form-check-input" type="checkbox" name="segment_ids" value="{{ segment.id }}" form="bulk-source-segments" data-bulk-segment aria-label="{{ segment.id }}">
-              </td>
-              {% endif %}
-              <td>
-                <div class="d-flex align-items-center gap-1">
-                  {% if segment.current_artifact_id %}
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-outline-secondary px-1 py-0"
-                    data-play-artifact="{{ segment.current_artifact_id }}"
-                    data-testid="segment-play"
-                    title="{% trans 'Play segment audio' %}"
-                    aria-label="{% trans 'Play segment audio' %}"
-                    aria-pressed="false"
-                  >
-                    <i class="bi bi-play-fill" aria-hidden="true"></i>
-                  </button>
-                  {% endif %}
-                  <span>{{ segment.segment_index }}</span>
-                </div>
-              </td>
-              <td>{{ segment.start_seconds }}</td>
-              <td>{{ segment.end_seconds }}</td>
-              <td style="min-width:7.5rem">
-                {% readiness_status readiness.is_ready readiness.failed_gates %}
-              </td>
-              <td>{% status_badge segment.processing_status "processing" %}</td>
-              <td><a href="{% url 'segment-workspace' project.id segment.id %}">{% trans "Workspace" %}</a></td>
-            </tr>
-            {% endwith %}
-            {% endfor %}
-          </tbody>
-        </table>
+      <div data-source-segment-list>
+        {% include "sources/_segment_list.html" %}
       </div>
-      {% else %}
-      <p class="text-muted">{% trans "No segments on this source yet." %}</p>
-      {% endif %}
       <p class="mb-0"><a href="{% url 'segment-index' project.id %}">{% trans "View all project segments" %}</a></p>
     </div>
   </div>
@@ -203,7 +136,7 @@
 {% endblock %}
 {% block scripts %}
 <script src="https://www.youtube.com/iframe_api"></script>
-<script type="module" src="/static/js/source_workspace.js?v=2"></script>
+<script type="module" src="/static/js/source_workspace.js?v=4"></script>
 <script type="module" src="/static/js/segment_list_audio.js"></script>
 <script>
   const bulkBoxes = () => document.querySelectorAll("[data-bulk-segment]");
@@ -221,5 +154,23 @@
     });
   });
   bulkBoxes().forEach((box) => box.addEventListener("change", syncBulkCount));
+  window.yalBindSourceBulk = function yalBindSourceBulk() {
+    document.querySelectorAll("[data-bulk-all]").forEach((toggle) => {
+      if (toggle.dataset.bulkBound === "1") return;
+      toggle.dataset.bulkBound = "1";
+      toggle.addEventListener("change", () => {
+        toggle.closest("table")?.querySelectorAll("[data-bulk-segment]").forEach((box) => {
+          box.checked = toggle.checked;
+        });
+        syncBulkCount();
+      });
+    });
+    bulkBoxes().forEach((box) => {
+      if (box.dataset.bulkBound === "1") return;
+      box.dataset.bulkBound = "1";
+      box.addEventListener("change", syncBulkCount);
+    });
+    syncBulkCount();
+  };
 </script>
 {% endblock %}

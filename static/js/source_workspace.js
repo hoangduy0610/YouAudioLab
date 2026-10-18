@@ -106,6 +106,86 @@ function setupButtons() {
   document.querySelector("[data-end-input]")?.addEventListener("input", updateDurationDisplay);
   updateDurationDisplay();
   document.querySelector("[data-created-segment]")?.scrollIntoView({ block: "nearest" });
+  setupQuickCreate();
+}
+
+function seekSource(seconds) {
+  if (!ytReady || !ytPlayer || typeof ytPlayer.seekTo !== "function") return;
+  const seek = Number(seconds);
+  if (!Number.isFinite(seek) || seek < 0) return;
+  ytPlayer.seekTo(seek, true);
+}
+
+function setupQuickCreate() {
+  const form = document.querySelector("[data-create-segment-form]");
+  if (!(form instanceof HTMLFormElement) || form.dataset.quickBound === "1") return;
+  form.dataset.quickBound = "1";
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const button = form.querySelector("[type='submit']");
+    const status = document.querySelector("[data-create-status]");
+    const idle = button instanceof HTMLButtonElement ? button.dataset.labelIdle || button.textContent : "";
+    const busy = button instanceof HTMLButtonElement ? button.dataset.labelBusy || idle : "";
+    if (button instanceof HTMLButtonElement) {
+      button.disabled = true;
+      button.textContent = busy;
+    }
+    try {
+      const response = await fetch(form.getAttribute("action") || window.location.href, {
+        method: "POST",
+        body: new FormData(form),
+        headers: { "X-Segment-Create": "1", Accept: "application/json" },
+      });
+      const payload = await response.json();
+      if (!response.ok || !payload.ok) {
+        throw new Error(payload.message || "Could not create the segment.");
+      }
+      const list = document.querySelector("[data-source-segment-list]");
+      if (list && typeof payload.list_html === "string") {
+        list.innerHTML = payload.list_html;
+        window.yalBindSourceBulk?.();
+      }
+      const startInput = form.querySelector("[data-start-input]");
+      const endInput = form.querySelector("[data-end-input]");
+      if (startInput instanceof HTMLInputElement) startInput.value = String(payload.next_start);
+      if (endInput instanceof HTMLInputElement) endInput.value = String(payload.next_end);
+      const transcript = form.querySelector("[name='transcript']");
+      if (transcript instanceof HTMLTextAreaElement) transcript.value = "";
+      updateDurationDisplay();
+      if (payload.seek_to != null) seekSource(payload.seek_to);
+      let note = document.querySelector("[data-created-segment-next]");
+      if (!(note instanceof HTMLElement)) {
+        note = document.createElement("p");
+        note.className = "small mb-2";
+        note.dataset.testid = "created-segment-next";
+        note.setAttribute("data-created-segment-next", "");
+        form.before(note);
+      }
+      note.replaceChildren();
+      note.append(document.createTextNode(`${payload.notice} `));
+      if (payload.workspace_url) {
+        const link = document.createElement("a");
+        link.href = payload.workspace_url;
+        link.textContent = form.dataset.workspaceLabel || "Open workspace";
+        note.append(link);
+      }
+      if (status instanceof HTMLElement) {
+        status.hidden = false;
+        status.textContent = payload.message || "";
+      }
+      document.querySelector("[data-created-segment]")?.scrollIntoView({ block: "nearest" });
+    } catch (error) {
+      if (status instanceof HTMLElement) {
+        status.hidden = false;
+        status.textContent = error instanceof Error ? error.message : "Could not create the segment.";
+      }
+    } finally {
+      if (button instanceof HTMLButtonElement) {
+        button.disabled = false;
+        button.textContent = idle;
+      }
+    }
+  });
 }
 
 window.onYouTubeIframeAPIReady = function onYouTubeIframeAPIReady() {
