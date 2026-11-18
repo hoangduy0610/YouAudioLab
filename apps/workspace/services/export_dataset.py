@@ -1347,6 +1347,22 @@ def _render_xlsx(snapshot: dict) -> bytes:
     return buffer.getvalue()
 
 
+def _require_bytes_match_artifact(artifact: ProcessingArtifact, data: bytes) -> None:
+    """Refuse export when stored bytes no longer match the recorded checksum or size."""
+    recorded = (artifact.checksum or "").strip().lower()
+    actual = hashlib.sha256(data).hexdigest()
+    if not recorded or recorded != actual:
+        raise ValidationError(
+            "Stored audio does not match the recorded checksum",
+            details={"artifact_id": str(artifact.id), "code": "CHECKSUM_MISMATCH"},
+        )
+    if artifact.file_size_bytes is not None and artifact.file_size_bytes != len(data):
+        raise ValidationError(
+            "Stored audio size does not match the recorded size",
+            details={"artifact_id": str(artifact.id), "code": "SIZE_MISMATCH"},
+        )
+
+
 def _render_dataset_zip(snapshot: dict) -> bytes:
     from apps.core.storage import get_storage
 
@@ -1458,6 +1474,7 @@ def _render_dataset_zip(snapshot: dict) -> bytes:
                     if art_row is None or not art_row.storage_key:
                         raise FileNotFoundError
                     data = storage.get(art_row.storage_key)
+                    _require_bytes_match_artifact(art_row, data)
                     archive.writestr(f"audio/{audio_name}", data)
                 except FileNotFoundError:
                     audio_name = ""

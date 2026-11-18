@@ -25,6 +25,10 @@ docs/software/figures/icons/*.*
 !docs/software/eval/*
 docs/software/eval/_machine_work/
 docs/software/eval/_integrity_work/
-tests/*
+tests/test_trollllm.txt
+tests/EvaluationSystem.xlsx
+tests/EvaluationNote.docx
+tests/AfterReviewManual.csv
+tests/OriginalAutoASRLLM.csv
 *.log
 

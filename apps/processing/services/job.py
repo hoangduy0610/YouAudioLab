@@ -515,19 +515,37 @@ class JobService:
                 return job
 
             if not self.storage.exists(storage_key):
-                job.status = ProcessingJob.Status.FAILED
-                job.error_code = "ARTIFACT_MISSING"
-                job.error_message = f"storage_key not found: {storage_key}"
-                job.finished_at = now
-                job.save()
-                segment.processing_status = AudioSegment.ProcessingStatus.FAILED
-                self._clear_segment_current_job_if_matches(segment, job)
-                segment.save()
-                return job
+                return self._fail_publish(
+                    segment,
+                    job,
+                    now,
+                    error_code="ARTIFACT_MISSING",
+                    error_message=f"storage_key not found: {storage_key}",
+                )
 
             data = self.storage.get(storage_key)
-            size = file_size_bytes if file_size_bytes is not None else len(data)
-            digest = checksum or hashlib.sha256(data).hexdigest()
+            actual_size = len(data)
+            digest = hashlib.sha256(data).hexdigest()
+            if file_size_bytes is not None and file_size_bytes != actual_size:
+                return self._fail_publish(
+                    segment,
+                    job,
+                    now,
+                    error_code="SIZE_MISMATCH",
+                    error_message=(
+                        f"file_size_bytes {file_size_bytes} does not match "
+                        f"stored bytes ({actual_size})"
+                    ),
+                )
+            supplied = (checksum or "").strip().lower()
+            if checksum is not None and supplied != digest:
+                return self._fail_publish(
+                    segment,
+                    job,
+                    now,
+                    error_code="CHECKSUM_MISMATCH",
+                    error_message="checksum does not match stored bytes",
+                )
             snap = job.config_snapshot or {}
             artifact = ProcessingArtifact.objects.create(
                 job=job,
@@ -535,7 +553,7 @@ class JobService:
                 format=str(snap.get("output_format", "WAV")),
                 sample_rate_hz=int(snap.get("sample_rate_hz", 16000)),
                 channels=int(snap.get("channels", 1)),
-                file_size_bytes=size,
+                file_size_bytes=actual_size,
                 checksum=digest,
                 verified=True,
             )
@@ -567,6 +585,26 @@ class JobService:
         )
         self.storage.put(storage_key, payload)
         return self.publish(job.id, storage_key=storage_key)
+
+    def _fail_publish(
+        self,
+        segment: AudioSegment,
+        job: ProcessingJob,
+        now: datetime,
+        *,
+        error_code: str,
+        error_message: str,
+    ) -> ProcessingJob:
+        """Reject publication. No artifact row is created and verified stays unset."""
+        job.status = ProcessingJob.Status.FAILED
+        job.error_code = error_code
+        job.error_message = error_message
+        job.finished_at = now
+        job.save()
+        segment.processing_status = AudioSegment.ProcessingStatus.FAILED
+        self._clear_segment_current_job_if_matches(segment, job)
+        segment.save()
+        return job
 
     def _clear_segment_current_job_if_matches(
         self,
