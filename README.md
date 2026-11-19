@@ -264,16 +264,19 @@ folder).
 
 A single-operator stopwatch comparison used the same 19 videos and 60
 pre-defined segment bounds. Source selection and start/end times were given in
-advance so the timed gap is **active preparation**, not content selection.
-Figures describe these two workflows only—not a general usability or
-performance benchmark across all Label Studio setups.
+advance so the timed gap is **active preparation handoffs**, not content
+selection. Figures describe these two workflows only—not a general usability
+or performance benchmark across all Label Studio setups. The reproducible
+baseline record (commands, import method, labeling config, prediction backend,
+timing sheets) is in
+[docs/software/eval/label_studio_baseline.md](docs/software/eval/label_studio_baseline.md).
 
 | Stage | Label Studio-based workflow (evaluated) | YouAudioLab |
 |---|---|---|
-| Active source / audio preparation | External tools; ~**180 s** / video | Integrated URL registration; ~**15 s** / video |
+| Active source / audio preparation | External yt-dlp/FFmpeg + UI import; ~**180 s** / video | Integrated URL registration; ~**15 s** / video |
 | Segment bounds | Manual; comparable effort | Integrated; comparable effort |
 | Extract + annotation-task creation | External cut / import | Automatic after bounds |
-| ASR / LLM suggestions | Custom ML backend | Integrated ASR / LLM |
+| ASR / LLM suggestions | Custom ML backend (record in baseline file) | Integrated ASR / LLM |
 | Human review (60 segments) | 55 min 02 s | 53 min 18 s (Δ 104 s) |
 
 The main efficiency difference was preparation and handoff (~91.7% less active

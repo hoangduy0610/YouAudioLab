@@ -100,4 +100,4 @@ re-reads storage after `JobService.publish` and asserts
 
 Update §3 only with numbers that appear in `results.json` and
 `integrity_results.json`. Do not paste placeholder human minutes. Abstract
-and body must use the same N (20), not a residual larger count.
+and body must use the same N (60), matching the pilot sample.
