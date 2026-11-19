@@ -1,9 +1,9 @@
 # Evaluation / reproduction environment
 
-This file records the host and container image tags used for the SoftwareX
-software-validation pilot and for the recommended Docker Compose stack. Prefer
-these fixed tags over floating `:latest` / unpinned major tags when reproducing.
-Image digests are not claimed here unless recorded separately.
+This file distinguishes the **recorded evaluation host** (pilot numbers in the
+manuscript) from the **reproducible Docker Compose build**. Prefer fixed image
+tags and the repository `uv.lock` over floating `:latest` tags or unpinned
+`pip install` ranges.
 
 ## Host machine (pilot reported in the manuscript)
 
@@ -23,16 +23,44 @@ Image digests are not claimed here unless recorded separately.
 | Docker Engine (host tooling) | 28.5.1 |
 | Docker Compose | v2.40.2-desktop.1 |
 
-Python dependencies for the application are also locked in the repository root
-`uv.lock` (install with `uv sync` or `pip install -e ".[dev]"` from the tagged release).
+Native reproduction of the application dependencies on that host:
 
-## Docker Compose version-pinned images (`docker-compose.yml`)
+```bash
+uv sync --frozen --extra dev
+```
 
-| Service | Image tag |
+(`pip install -e ".[dev]"` resolves dependency *ranges* and is not bitwise-identical
+to the lock.)
+
+## Docker Compose build (reproducible stack)
+
+| Service | Image / build |
 | --- | --- |
 | `db` | `postgres:16.10` |
 | `redis` | `redis:7.4-alpine` |
-| `web` / `worker` | built from `Dockerfile` (`FROM python:3.12.14-slim`, installs FFmpeg via apt, then `pip install ".[dev]"`) |
+| `web` / `worker` | built from `Dockerfile` (`FROM python:3.12.14-slim`, FFmpeg from Debian apt at build time, Python deps via `uv sync --frozen --extra dev` using root `uv.lock`) |
+
+The Docker image:
+
+- copies `uv.lock` and installs with **uv 0.12.17** (`COPY --from=ghcr.io/astral-sh/uv:0.12.17`);
+- does **not** resolve open `pip` ranges at build time;
+- writes the apt FFmpeg build banner into `/app/FFMPEG_BUILD.txt` (and
+  `/opt/youaudiolab/ffmpeg-version.txt`) so a built image records which FFmpeg
+  the Debian repositories supplied for that base image.
+
+That FFmpeg version is **not** the Windows 7.1.1 essentials build used for the
+timed pilot. Cross-environment bitwise identity of WAV bytes is not claimed.
+
+After `docker compose build`, record digests when depositing a release:
+
+```bash
+docker compose build
+docker image inspect youaudiolab_django-web --format '{{index .RepoDigests 0}} {{.Id}}'
+docker compose run --rm --entrypoint ffmpeg web -version
+```
+
+Image digests are not claimed in this file unless recorded separately for a
+specific release build.
 
 Reproduce the stack:
 
@@ -40,14 +68,16 @@ Reproduce the stack:
 docker compose up --build
 ```
 
-Reproduce software-invariant tests (requires Compose Postgres reachable at `DATABASE_URL`):
+Reproduce software-invariant tests (requires Compose Postgres reachable at
+`DATABASE_URL`):
 
 ```bash
-uv run pytest tests/test_jobs_races.py tests/test_asr_stale.py tests/test_i3_export_provenance.py -q
+uv run pytest tests/test_jobs_races.py tests/test_asr_stale.py tests/test_i3_export_provenance.py tests/test_publish_integrity.py tests/test_e2e_workflow.py -q
 ```
 
 ## Archival record
 
-The GitHub release tag `v0.1.0` archives source, Compose/Dockerfile pins, `uv.lock`,
-`docs/software/eval/` scripts, CSV logs, and redistributable fixtures. Archival
-Zenodo deposit of the same release: https://doi.org/10.5281/zenodo.23752831
+The GitHub release tag archives source, Compose/Dockerfile pins, `uv.lock`,
+`docs/software/eval/` scripts, CSV logs, redistributable fixtures, and the
+tracked `tests/` suite. Archival Zenodo deposit:
+https://doi.org/10.5281/zenodo.23752831

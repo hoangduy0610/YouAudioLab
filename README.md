@@ -108,10 +108,11 @@ becomes stale and does not replace the current artifact.
 ## Getting started
 
 **Docker Compose (recommended full stack).** `docker compose up --build` runs the
-application image (`python:3.12.14-slim` + FFmpeg and app dependencies) together
-with fixed tags `postgres:16.10` and `redis:7.4-alpine` on the ports above. See
-`docs/software/eval/ENVIRONMENT.md` for the evaluation environment record. That
-image does not reload when you edit source.
+application image (`python:3.12.14-slim` + apt FFmpeg) with Python dependencies
+installed from the frozen root `uv.lock` (`uv sync --frozen`), together with
+fixed tags `postgres:16.10` and `redis:7.4-alpine` on the ports above. See
+`docs/software/eval/ENVIRONMENT.md` for the evaluation host versus the
+reproducible Compose build. That image does not reload when you edit source.
 
 **Native development.** Install Python 3.12–3.14 and FFmpeg on `PATH`. Use Docker
 only for the bundled Postgres and Redis (or point `DATABASE_URL` / Redis URLs at
@@ -120,9 +121,7 @@ your own services):
 ```powershell
 cd YouAudioLab
 copy .env.example .env
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -e ".[dev]"
+uv sync --frozen --extra dev
 docker compose up -d db redis
 ```
 
