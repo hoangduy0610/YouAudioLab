@@ -12,7 +12,7 @@ a snapshot that keeps the same video out of both train and test.
 The design target is an auditable corpus object: known source bytes and
 metadata, known cuts, revision-checked artifacts, known annotators, and a
 source-video split. The pilot evaluation uses a **Vietnamese** dialogue sample.
-Version 0.1.0 does **not** extract visual features or ship a self-contained
+Version 0.1.1 does **not** extract visual features or ship a self-contained
 video dataset; retained video IDs, descriptions, and source-relative timestamps
 support later audiovisual / multimodal enrichment where the original video can
 lawfully be accessed.
@@ -175,7 +175,7 @@ Figures and the evaluation protocol live under
 
 ## Illustrative evaluation
 
-Version 0.1.0 reports **three** checks that share one pilot sample but use
+Version 0.1.1 reports **three** checks that share one pilot sample but use
 different procedures and (where noted) different models. Logs and the
 environment record are under [docs/software/eval/](docs/software/eval/). Confirm
 the figures there before quoting them; this section is a summary.
@@ -198,8 +198,10 @@ Machine timing used pre-extracted local MP3 clips and faster-whisper `base`
 (Vietnamese, CPU, INT8). The 2.37 min total is summed worker wall-clock for
 MP3-to-16 kHz mono WAV conversion (0.10 min) plus that recogniser (2.27 min).
 Live YouTube retrieval, queue waiting, and human review sit outside the sum.
-Host pins for that run: Windows 11, YouAudioLab 0.1.0, Python 3.12.14,
-FFmpeg 7.1.1 ([docs/software/eval/ENVIRONMENT.md](docs/software/eval/ENVIRONMENT.md)).
+Host pins for that run: Windows 11, YouAudioLab 0.1.0 (pilot build), Python
+3.12.14, FFmpeg 7.1.1
+([docs/software/eval/ENVIRONMENT.md](docs/software/eval/ENVIRONMENT.md)).
+The current distribution is **0.1.1**.
 
 Each row names where that figure was measured. Timing, checksum, and the
 FFmpeg repeat use the 60 clips. Stale publication, blind labelling, the
@@ -553,6 +555,9 @@ Further notes: [architecture](docs/architecture.md),
 Source repository: [https://github.com/ndung768/YouAudioLab](https://github.com/ndung768/YouAudioLab)
 
 Release:
+[v0.1.1](https://github.com/ndung768/YouAudioLab/releases/tag/v0.1.1)
+
+Initial-submission archive:
 [v0.1.0](https://github.com/ndung768/YouAudioLab/releases/tag/v0.1.0)
 
 Archival DOI:

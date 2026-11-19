@@ -1,6 +1,6 @@
 [project]
 name = "youaudiolab-django"
-version = "0.1.0"
+version = "0.1.1"
 description = "YouAudioLab Django parallel implementation (Django + DRF + Bootstrap 5)"
 readme = "README.md"
 license = "Apache-2.0"
