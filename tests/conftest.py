@@ -6,9 +6,20 @@ import pytest
 from django.db import connection
 
 from apps.core.storage import FakeStorage, set_storage_for_tests
+from apps.processing.media import pcm_wav_bytes
 
 
 requires_postgres = pytest.mark.postgres
+
+
+def wav_for_segment(segment, *, duration_seconds: float | None = None) -> bytes:
+    """Silent PCM WAV matching the segment cut (or an explicit shorter/longer duration)."""
+    if duration_seconds is None:
+        duration_seconds = max(
+            float(segment.end_seconds) - float(segment.start_seconds),
+            0.05,
+        )
+    return pcm_wav_bytes(duration_seconds=duration_seconds)
 
 
 @pytest.fixture(autouse=True)

@@ -162,7 +162,10 @@ def test_segment_index_play_button_when_artifact_exists(client, user, project, s
     )
     jobs.mark_running(job.id)
     storage_key = f"projects/{job.project_id}/segments/{job.segment_id}/jobs/{job.id}/audio.wav"
-    jobs.storage.put(storage_key, b"RIFF....WAVEfmt ")
+    from tests.conftest import wav_for_segment
+
+    payload = wav_for_segment(segment)
+    jobs.storage.put(storage_key, payload)
     jobs.publish(job.id, storage_key=storage_key)
 
     session = client.session

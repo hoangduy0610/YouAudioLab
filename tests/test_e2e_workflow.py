@@ -55,10 +55,11 @@ def test_url_to_verified_export_with_reviewed_transcript(project, user, ready_so
     assert ready_source.youtube_video_id
 
     segments = SegmentService()
+    # Fixture clip_01.wav is 0.5 s; keep the cut inside the source bytes.
     segment = segments.create(
         source_id=ready_source.id,
         start_seconds=0.0,
-        end_seconds=1.0,
+        end_seconds=0.5,
         actor_user_id=user.id,
         transcript="",
     )
@@ -77,7 +78,7 @@ def test_url_to_verified_export_with_reviewed_transcript(project, user, ready_so
             src=FIXTURE,
             dest=dest,
             start_seconds=0.0,
-            end_seconds=1.0,
+            end_seconds=0.5,
             config_snapshot={
                 "output_format": "WAV",
                 "encoding": "PCM",

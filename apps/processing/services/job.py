@@ -18,6 +18,7 @@ from apps.core.errors import (
     ValidationError,
 )
 from apps.core.storage import StoragePort
+from apps.processing.media import audio_incomplete_reason, pcm_wav_bytes
 from apps.processing.models import ProcessingArtifact, ProcessingJob
 from apps.workspace.models import AudioSegment, ProjectSettings, VideoSource
 from apps.workspace.services.membership import MembershipService
@@ -547,10 +548,28 @@ class JobService:
                     error_message="checksum does not match stored bytes",
                 )
             snap = job.config_snapshot or {}
+            output_format = str(snap.get("output_format", "WAV"))
+            expected_duration = max(float(job.end_seconds) - float(job.start_seconds), 0.0)
+            incomplete = audio_incomplete_reason(
+                data,
+                expected_duration_seconds=expected_duration,
+                output_format=output_format,
+            )
+            if incomplete is not None:
+                return self._fail_publish(
+                    segment,
+                    job,
+                    now,
+                    error_code=incomplete,
+                    error_message=(
+                        "stored audio is empty, unreadable, or shorter than the "
+                        f"job cut ({expected_duration:.3f}s)"
+                    ),
+                )
             artifact = ProcessingArtifact.objects.create(
                 job=job,
                 storage_key=storage_key,
-                format=str(snap.get("output_format", "WAV")),
+                format=output_format,
                 sample_rate_hz=int(snap.get("sample_rate_hz", 16000)),
                 channels=int(snap.get("channels", 1)),
                 file_size_bytes=actual_size,
@@ -574,7 +593,7 @@ class JobService:
         self,
         job_id: uuid.UUID,
         *,
-        payload: bytes = b"FAKE_WAV_BYTES",
+        payload: bytes | None = None,
     ) -> ProcessingJob:
         job = self.mark_running(job_id)
         if job.status == ProcessingJob.Status.CANCELLED:
@@ -583,6 +602,14 @@ class JobService:
             f"projects/{job.project_id}/segments/{job.segment_id}/"
             f"jobs/{job.id}/audio.wav"
         )
+        if payload is None:
+            duration = max(float(job.end_seconds) - float(job.start_seconds), 0.05)
+            snap = job.config_snapshot or {}
+            payload = pcm_wav_bytes(
+                duration_seconds=duration,
+                sample_rate_hz=int(snap.get("sample_rate_hz", 16000)),
+                channels=int(snap.get("channels", 1)),
+            )
         self.storage.put(storage_key, payload)
         return self.publish(job.id, storage_key=storage_key)
 

@@ -19,7 +19,7 @@ from apps.workspace.services import (
     MembershipService,
     SegmentService,
 )
-from tests.conftest import requires_postgres
+from tests.conftest import requires_postgres, wav_for_segment
 
 
 @requires_postgres
@@ -57,7 +57,7 @@ def test_i3_end_to_end_export_provenance(project, user, annotator, ready_source)
         actor_user_id=user.id,
     )
     jobs.mark_running(job.id)
-    payload = b"RIFF" + b"\x00" * 120 + b"WAVE"
+    payload = wav_for_segment(segment)
     recorded = hashlib.sha256(payload).hexdigest()
     storage_key = (
         f"projects/{job.project_id}/segments/{job.segment_id}/jobs/{job.id}/audio.wav"

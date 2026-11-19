@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import hashlib
+import io
 import os
+import struct
 import subprocess
+import wave
 from pathlib import Path
 from typing import Any
 
@@ -285,3 +288,60 @@ def sha256_file(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def pcm_wav_bytes(
+    *,
+    duration_seconds: float,
+    sample_rate_hz: int = 16000,
+    channels: int = 1,
+    sample_width: int = 2,
+) -> bytes:
+    """Build a silent PCM WAV for tests and completeness checks."""
+    frames = max(1, int(round(max(duration_seconds, 0.0) * sample_rate_hz)))
+    buf = io.BytesIO()
+    with wave.open(buf, "wb") as handle:
+        handle.setnchannels(channels)
+        handle.setsampwidth(sample_width)
+        handle.setframerate(sample_rate_hz)
+        handle.writeframes(b"\x00" * (frames * channels * sample_width))
+    return buf.getvalue()
+
+
+def wav_duration_seconds(data: bytes) -> float:
+    """Return PCM WAV duration in seconds, or raise wave.Error if unreadable."""
+    with wave.open(io.BytesIO(data), "rb") as handle:
+        rate = handle.getframerate()
+        frames = handle.getnframes()
+    if rate <= 0:
+        raise wave.Error("invalid sample rate")
+    return frames / float(rate)
+
+
+def audio_incomplete_reason(
+    data: bytes,
+    *,
+    expected_duration_seconds: float,
+    output_format: str = "WAV",
+) -> str | None:
+    """Return a machine code when published audio is empty, unreadable, or too short.
+
+    Completeness is checked against the job's cut length with a small tolerance for
+    encoder boundary rounding. Non-WAV formats are not duration-checked here.
+    """
+    if not data:
+        return "AUDIO_INCOMPLETE"
+    if str(output_format or "WAV").upper() != "WAV":
+        return None
+    try:
+        actual = wav_duration_seconds(data)
+    except (wave.Error, EOFError, struct.error, ValueError):
+        return "AUDIO_INCOMPLETE"
+    if actual <= 0:
+        return "AUDIO_INCOMPLETE"
+    expected = max(float(expected_duration_seconds), 0.0)
+    # Allow 250ms or 10% shortfall, whichever is larger.
+    slack = max(0.25, 0.10 * expected)
+    if actual + 1e-6 < expected - slack:
+        return "AUDIO_INCOMPLETE"
+    return None

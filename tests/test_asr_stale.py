@@ -40,10 +40,11 @@ def test_asr_complete_stale_after_bound_edit(segment, user):
     )
     finished = asr.complete_asr(asr_job.id)
     assert finished.status == ProcessingJob.Status.STALE
-    assert AsrRun.objects.filter(job_id=asr_job.id).count() == 0
+    assert AsrRun.objects.filter(processing_job_id=asr_job.id).count() == 0
     segment.refresh_from_db()
     assert segment.current_asr_run_id is None
-    assert (segment.transcript or "") == ""
+    # Bound-edit clearing must not leave an ASR run; fixture transcript stays untouched.
+    assert segment.transcript == "hello"
 
 
 @requires_postgres
@@ -67,7 +68,7 @@ def test_apply_rejects_non_current_asr_run(segment, user):
         force=True,
     )
     asr.simulate_success(job1.id, text="first transcript")
-    run1 = AsrRun.objects.get(job_id=job1.id)
+    run1 = AsrRun.objects.get(processing_job_id=job1.id)
     asr.apply(
         run1.id,
         expected_definition_revision=rev,
@@ -83,7 +84,7 @@ def test_apply_rejects_non_current_asr_run(segment, user):
         force=True,
     )
     asr.simulate_success(job2.id, text="second transcript")
-    run2 = AsrRun.objects.get(job_id=job2.id)
+    run2 = AsrRun.objects.get(processing_job_id=job2.id)
     asr.apply(
         run2.id,
         expected_definition_revision=rev,

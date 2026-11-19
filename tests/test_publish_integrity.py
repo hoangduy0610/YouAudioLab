@@ -8,10 +8,11 @@ import pytest
 
 from apps.core.errors import ValidationError
 from apps.core.storage import get_storage
+from apps.processing.media import pcm_wav_bytes
 from apps.processing.models import ProcessingArtifact, ProcessingJob
 from apps.processing.services.job import JobService
 from apps.workspace.services import ExportService
-from tests.conftest import requires_postgres
+from tests.conftest import requires_postgres, wav_for_segment
 
 _NON_WAV = b"not-a-wav"
 
@@ -34,11 +35,12 @@ def _running_job(segment, user):
 @pytest.mark.django_db
 def test_publish_rejects_checksum_that_does_not_match_stored_bytes(segment, user):
     jobs, job, storage_key = _running_job(segment, user)
-    jobs.storage.put(storage_key, _NON_WAV)
+    payload = wav_for_segment(segment)
+    jobs.storage.put(storage_key, payload)
     published = jobs.publish(
         job.id,
         storage_key=storage_key,
-        file_size_bytes=len(_NON_WAV),
+        file_size_bytes=len(payload),
         checksum="0" * 64,
     )
     assert published.status == ProcessingJob.Status.FAILED
@@ -52,7 +54,7 @@ def test_publish_rejects_checksum_that_does_not_match_stored_bytes(segment, user
 @pytest.mark.django_db
 def test_publish_rejects_size_that_does_not_match_stored_bytes(segment, user):
     jobs, job, storage_key = _running_job(segment, user)
-    payload = b"RIFF" + b"\x00" * 32
+    payload = wav_for_segment(segment)
     jobs.storage.put(storage_key, payload)
     published = jobs.publish(
         job.id,
@@ -96,9 +98,48 @@ def test_publish_rejects_non_wav_bytes_with_false_checksum_and_size(segment, use
 
 @requires_postgres
 @pytest.mark.django_db
+def test_publish_rejects_unreadable_wav_container(segment, user):
+    jobs, job, storage_key = _running_job(segment, user)
+    payload = _NON_WAV
+    jobs.storage.put(storage_key, payload)
+    published = jobs.publish(
+        job.id,
+        storage_key=storage_key,
+        file_size_bytes=len(payload),
+        checksum=hashlib.sha256(payload).hexdigest(),
+    )
+    assert published.status == ProcessingJob.Status.FAILED
+    assert published.error_code == "AUDIO_INCOMPLETE"
+    assert ProcessingArtifact.objects.filter(job_id=job.id).count() == 0
+
+
+@requires_postgres
+@pytest.mark.django_db
+def test_publish_rejects_audio_shorter_than_job_cut(segment, user):
+    """Incomplete cut: readable WAV whose duration is far below the job bounds."""
+    jobs, job, storage_key = _running_job(segment, user)
+    expected = float(job.end_seconds) - float(job.start_seconds)
+    assert expected >= 1.0
+    payload = pcm_wav_bytes(duration_seconds=0.1)
+    jobs.storage.put(storage_key, payload)
+    published = jobs.publish(
+        job.id,
+        storage_key=storage_key,
+        file_size_bytes=len(payload),
+        checksum=hashlib.sha256(payload).hexdigest(),
+    )
+    assert published.status == ProcessingJob.Status.FAILED
+    assert published.error_code == "AUDIO_INCOMPLETE"
+    assert ProcessingArtifact.objects.filter(job_id=job.id).count() == 0
+    segment.refresh_from_db()
+    assert segment.current_artifact_id is None
+
+
+@requires_postgres
+@pytest.mark.django_db
 def test_export_rejects_audio_changed_after_publish(project, user, segment):
     jobs, job, storage_key = _running_job(segment, user)
-    payload = b"RIFF" + b"\x00" * 64 + b"WAVE"
+    payload = wav_for_segment(segment)
     digest = hashlib.sha256(payload).hexdigest()
     jobs.storage.put(storage_key, payload)
     published = jobs.publish(
@@ -111,7 +152,7 @@ def test_export_rejects_audio_changed_after_publish(project, user, segment):
     assert published.artifact.verified is True
 
     changed = bytearray(payload)
-    changed[0] ^= 0xFF
+    changed[-1] ^= 0xFF
     jobs.storage.put(storage_key, bytes(changed))
     snapshot = ExportService().build_snapshot(project.id, actor_user_id=user.id)
     with pytest.raises(ValidationError) as exc:

@@ -26,7 +26,7 @@ from apps.workspace.services.readiness import (
     STATUS_NOT_READY,
     STATUS_READY,
 )
-from tests.conftest import requires_postgres
+from tests.conftest import requires_postgres, wav_for_segment
 
 
 def _publish_artifact(segment, user):
@@ -38,7 +38,8 @@ def _publish_artifact(segment, user):
     )
     jobs.mark_running(job.id)
     storage_key = f"projects/{job.project_id}/segments/{job.segment_id}/jobs/{job.id}/audio.wav"
-    jobs.storage.put(storage_key, b"RIFF....WAVEfmt ")
+    payload = wav_for_segment(segment)
+    jobs.storage.put(storage_key, payload)
     jobs.publish(job.id, storage_key=storage_key)
     segment.refresh_from_db()
     return segment

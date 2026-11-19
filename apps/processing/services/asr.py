@@ -351,13 +351,9 @@ class AsrService:
                 job.status = ProcessingJob.Status.RUNNING
                 job.started_at = now
                 job.save(update_fields=["status", "started_at"])
-                if job.cancel_requested_at is not None:
-                    job.status = ProcessingJob.Status.CANCELLED
-                    job.finished_at = now
-                    job.save(update_fields=["status", "finished_at"])
-                    self._clear_asr_job(segment, job)
-                    return job
 
+            # Revision mismatch is STALE even when cancel was also requested by a
+            # bound edit; cancel alone applies only when the revision still matches.
             if segment.deleted_at is not None or segment.definition_revision != job.expected_revision:
                 job.status = ProcessingJob.Status.STALE
                 job.finished_at = now

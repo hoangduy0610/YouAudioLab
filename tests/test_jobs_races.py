@@ -10,7 +10,7 @@ from apps.core.storage import get_storage
 from apps.processing.models import ProcessingJob
 from apps.processing.services.job import JobService
 from apps.workspace.services import SegmentService
-from tests.conftest import requires_postgres
+from tests.conftest import requires_postgres, wav_for_segment
 
 
 @requires_postgres
@@ -153,7 +153,7 @@ def test_retry_after_success_and_after_stale(segment, user):
 def test_publish_checksum_matches_reread_bytes(segment, user):
     """I2-A: persisted artifact.checksum equals SHA-256 of re-read storage bytes."""
     jobs = JobService(get_storage())
-    payload = b"RIFF....WAVEfmt " + b"\x00" * 64
+    payload = wav_for_segment(segment)
     recorded = hashlib.sha256(payload).hexdigest()
     job = jobs.submit(
         segment_id=segment.id,
@@ -200,7 +200,7 @@ def test_publish_bound_edit_transactional_race_preserves_i1(segment, user):
     )
     jobs.mark_running(job.id)
     storage_key = f"projects/{job.project_id}/segments/{job.segment_id}/jobs/{job.id}/audio.wav"
-    jobs.storage.put(storage_key, b"race-wav")
+    jobs.storage.put(storage_key, wav_for_segment(segment))
 
     barrier = threading.Barrier(2)
     errors: list[BaseException] = []
@@ -288,7 +288,7 @@ def test_select_for_update_blocks_concurrent_publisher_until_edit_commits(segmen
     )
     jobs.mark_running(job.id)
     storage_key = f"projects/{job.project_id}/segments/{job.segment_id}/jobs/{job.id}/audio.wav"
-    jobs.storage.put(storage_key, b"blocked-wav")
+    jobs.storage.put(storage_key, wav_for_segment(segment))
 
     holder_locked = threading.Event()
     release_holder = threading.Event()

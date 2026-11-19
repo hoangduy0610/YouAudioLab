@@ -516,9 +516,11 @@ Further notes: [architecture](docs/architecture.md),
 - `content_hash` fingerprints a concrete DB snapshot (entity IDs and row
   timestamps included), not a UUID-free semantic dataset identity.
 - Publish stores a checksum only when that checksum and the file size match
-  the stored bytes. Dataset export recomputes the checksum and refuses the
-  package if those bytes have changed. A checksum does not stop a later
-  overwrite of the file on disk; the next export rejects the changed file.
+  the stored bytes, and only when a WAV artifact is readable and not far
+  shorter than the job cut. Dataset export recomputes the checksum and
+  refuses the package if those bytes have changed. A checksum does not stop
+  a later overwrite of the file on disk; the next export rejects the changed
+  file.
 - In-transcript labels are character spans on the accepted transcript (a word
   or a dragged phrase), not a BIO tag on every token. Agreement and gold still
   apply to the whole segment. Doccano export stays segment classification;
