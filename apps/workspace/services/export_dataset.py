@@ -345,10 +345,14 @@ def _assign_splits(
 
 
 def _strip_storage_keys(snapshot: dict) -> None:
+    """Drop internal object-store paths from portable research exports."""
     for segment in snapshot.get("segments") or []:
         artifact = segment.get("current_artifact")
         if isinstance(artifact, dict):
             artifact.pop("storage_key", None)
+    for source in snapshot.get("sources") or []:
+        if isinstance(source, dict):
+            source.pop("source_media_storage_key", None)
 
 
 def _content_hash(snapshot: dict) -> str:
@@ -790,11 +794,6 @@ class ExportService:
                     "source_status": row.source_status,
                     "source_media_checksum": (
                         row.media_cache.checksum
-                        if getattr(row, "media_cache", None) is not None
-                        else None
-                    ),
-                    "source_media_storage_key": (
-                        row.media_cache.storage_key
                         if getattr(row, "media_cache", None) is not None
                         else None
                     ),

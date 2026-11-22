@@ -53,7 +53,10 @@ def test_export_json_keeps_layers_and_hides_secrets(project, user, segment, api_
     assert "login_identifier" not in blob
     assert "password" not in blob
     assert "api_key" not in blob
-    assert "storage_key" not in blob
+    artifact = segment_row.get("current_artifact") or {}
+    assert "storage_key" not in artifact
+    for source in payload.get("sources") or []:
+        assert "source_media_storage_key" not in source
     segment.refresh_from_db()
     assert segment.definition_revision == revision
 

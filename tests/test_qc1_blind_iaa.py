@@ -370,6 +370,8 @@ def test_license_consent_and_settings_ui(client, user, project):
         f"/projects/{project.id}/settings/",
         {
             "action": "save_settings",
+            # Form always posts name; empty name raises ValidationError and aborts save.
+            "name": project.name,
             "output_format": "WAV",
             "encoding": "PCM",
             "sample_rate_hz": "16000",
