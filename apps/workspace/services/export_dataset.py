@@ -1466,17 +1466,29 @@ def _render_dataset_zip(snapshot: dict) -> bytes:
             if artifact and artifact.get("verified") and artifact.get("artifact_id"):
                 ext = (artifact.get("format") or "wav").lower()
                 audio_name = f"segment_{yt}_{segment['segment_index']:06d}.{ext}"
+                art_row = ProcessingArtifact.objects.filter(
+                    pk=artifact["artifact_id"]
+                ).first()
+                if art_row is None or not art_row.storage_key:
+                    raise ValidationError(
+                        "Stored audio artifact is missing",
+                        details={
+                            "artifact_id": str(artifact["artifact_id"]),
+                            "code": "ARTIFACT_MISSING",
+                        },
+                    )
                 try:
-                    art_row = ProcessingArtifact.objects.filter(
-                        pk=artifact["artifact_id"]
-                    ).first()
-                    if art_row is None or not art_row.storage_key:
-                        raise FileNotFoundError
                     data = storage.get(art_row.storage_key)
-                    _require_bytes_match_artifact(art_row, data)
-                    archive.writestr(f"audio/{audio_name}", data)
-                except FileNotFoundError:
-                    audio_name = ""
+                except FileNotFoundError as exc:
+                    raise ValidationError(
+                        "Stored audio artifact is missing",
+                        details={
+                            "artifact_id": str(art_row.id),
+                            "code": "ARTIFACT_MISSING",
+                        },
+                    ) from exc
+                _require_bytes_match_artifact(art_row, data)
+                archive.writestr(f"audio/{audio_name}", data)
                 sample_rate = artifact.get("sample_rate_hz") or ""
                 channels = artifact.get("channels") or ""
                 fmt = artifact.get("format") or ""

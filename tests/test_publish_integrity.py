@@ -158,3 +158,26 @@ def test_export_rejects_audio_changed_after_publish(project, user, segment):
     with pytest.raises(ValidationError) as exc:
         ExportService().render(snapshot, "dataset_zip")
     assert exc.value.details["code"] == "CHECKSUM_MISMATCH"
+
+
+@requires_postgres
+@pytest.mark.django_db
+def test_export_rejects_missing_audio_after_publish(project, user, segment):
+    jobs, job, storage_key = _running_job(segment, user)
+    payload = wav_for_segment(segment)
+    digest = hashlib.sha256(payload).hexdigest()
+    jobs.storage.put(storage_key, payload)
+    published = jobs.publish(
+        job.id,
+        storage_key=storage_key,
+        file_size_bytes=len(payload),
+        checksum=digest,
+    )
+    assert published.status == ProcessingJob.Status.SUCCEEDED
+    assert published.artifact.verified is True
+
+    jobs.storage.delete(storage_key)
+    snapshot = ExportService().build_snapshot(project.id, actor_user_id=user.id)
+    with pytest.raises(ValidationError) as exc:
+        ExportService().render(snapshot, "dataset_zip")
+    assert exc.value.details["code"] == "ARTIFACT_MISSING"
