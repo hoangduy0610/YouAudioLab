@@ -1,8 +1,9 @@
 """Local acceptance: URL import → FFmpeg cut → verified publish → reviewed text → export.
 
-Live YouTube download and queue wait are outside this test (and outside the
-timed pilot). The path still exercises URL acceptance, segment bounds,
-checksummed publish, transcript review, annotation, and ZIP re-verification.
+Uses redistributable fixture WAV bytes (no live YouTube retrieval). Live download
+is covered by the opt-in ``tests/test_e2e_live_youtube.py``
+(``YOUAUDIOLAB_LIVE_YOUTUBE=1``). Queue wait / Celery worker scheduling remain
+outside both acceptance tests.
 """
 
 from __future__ import annotations

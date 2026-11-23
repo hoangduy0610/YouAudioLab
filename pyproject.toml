@@ -44,6 +44,7 @@ python_files = ["test_*.py"]
 addopts = "-q"
 markers = [
     "postgres: tests that require PostgreSQL features (partial unique, advisory locks)",
+    "live_youtube: optional live YouTube download e2e (set YOUAUDIOLAB_LIVE_YOUTUBE=1)",
 ]
 
 [tool.ruff]

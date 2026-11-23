@@ -14,3 +14,12 @@ themselves are **not redistributed**. Reviewers can still reproduce:
 - ASR stale completion and late-apply rejection
 
 with the packaged fixtures and the automated test suite, without live download.
+
+Optional live retrieval (not part of the default release suite):
+
+```bash
+YOUAUDIOLAB_LIVE_YOUTUBE=1 uv run pytest tests/test_e2e_live_youtube.py -q
+```
+
+See `docs/software/eval/ENVIRONMENT.md` for the Creative Commons spoken
+TEDx YouTube URL, cut bounds, and expected outputs.

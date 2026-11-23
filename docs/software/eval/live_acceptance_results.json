@@ -1,0 +1,46 @@
+{
+  "suite": "live_acceptance",
+  "not_part_of_offline_regression_suite": true,
+  "script": "tests/test_e2e_live_youtube.py",
+  "protocol": "docs/software/eval/live_acceptance.md",
+  "ran_at_utc": "2026-11-23T14:45:54.137197+00:00",
+  "host": {
+    "system": "Windows",
+    "release": "11",
+    "machine": "AMD64",
+    "python": "3.12.14"
+  },
+  "source": {
+    "youtube_url": "https://www.youtube.com/watch?v=Ag1AKIl_2GM",
+    "youtube_video_id": "Ag1AKIl_2GM",
+    "youtube_license": "Creative Commons Attribution license (reuse allowed)",
+    "title": "Free software, free society: Richard Stallman at TEDxGeneva 2014",
+    "channel_name": "TEDx Talks",
+    "duration_seconds": 819.0
+  },
+  "cut": {
+    "start_seconds": 60.0,
+    "end_seconds": 61.0
+  },
+  "validation": {
+    "url_registration_and_live_download": "Success",
+    "extraction_job": "Completed",
+    "segment_revision": "Matches expected revision",
+    "wav_checksum_and_size": "Match recorded metadata",
+    "reviewed_transcript": "Present in exported metadata",
+    "exported_zip_audio": "Matches recorded SHA-256",
+    "source_metadata_and_timestamps": "Preserved in export"
+  },
+  "actual": {
+    "publish_status": "SUCCEEDED",
+    "artifact_verified": true,
+    "artifact_checksum": "500eade0ed4f82cfc49890fa0d5066f14d532cc20f47a86ff8b3073e1202fc7a",
+    "artifact_file_size_bytes": 32078,
+    "transcript": "live e2e reviewed transcript",
+    "export_youtube_video_id": "Ag1AKIl_2GM",
+    "export_start_seconds": 60.0,
+    "export_end_seconds": 61.0,
+    "zip_audio_sha256": "500eade0ed4f82cfc49890fa0d5066f14d532cc20f47a86ff8b3073e1202fc7a",
+    "zip_audio_matches_artifact": true
+  }
+}

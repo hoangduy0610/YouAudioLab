@@ -75,6 +75,22 @@ Reproduce software-invariant tests (requires Compose Postgres reachable at
 uv run pytest tests/test_jobs_races.py tests/test_asr_stale.py tests/test_i3_export_provenance.py tests/test_publish_integrity.py tests/test_e2e_workflow.py -q
 ```
 
+### Optional live YouTube acceptance (network; not offline regression)
+
+`tests/test_e2e_workflow.py` uses packaged fixture WAV only. The **live
+acceptance** path (URL submit → live download → cut → reviewed transcript →
+ZIP) is documented in [`live_acceptance.md`](live_acceptance.md) with expected
+criteria and recorded results in [`live_acceptance_results.json`](live_acceptance_results.json).
+Do **not** describe that live run as part of the offline Panel B / release
+`pytest` list above.
+
+```bash
+# requires network, yt-dlp, ffmpeg on PATH, and healthy Postgres
+# PowerShell:
+$env:YOUAUDIOLAB_LIVE_YOUTUBE="1"
+uv run pytest tests/test_e2e_live_youtube.py -v
+```
+
 ## Archival record
 
 The GitHub release tag archives source, Compose/Dockerfile pins, `uv.lock`,
