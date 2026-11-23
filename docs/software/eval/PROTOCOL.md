@@ -39,40 +39,6 @@ Do **not** change the sample mid-experiment.
 | Tool / human | Reviewing and accepting/editing the ASR candidate in the workspace | Labelling and export |
 
 
-## Full-workflow completion time (Manuscript Table 4)
-
-A separate exploratory assessment measured complete dataset
-preparation using the same 60 segments from 19 source videos.
-
-Two conditions were evaluated by one annotator:
-
-- Manual workflow: Project creation, source and segment
-  preparation, manual transcription, labeling, review,
-  and dataset export.
-- AI-assisted workflow: Project creation, source and segment
-  preparation, AI-generated transcription and label
-  suggestions, human review/correction, and dataset export.
-
-The manual workflow was completed first, followed by the
-AI-assisted workflow. Segment order was changed, and
-first-pass annotations were hidden during the second pass.
-
-Completion time was measured using a stopwatch, excluding
-breaks.
-
-Observed totals:
-- Manual workflow: 9,953 seconds.
-- AI-assisted workflow: 4,905 seconds.
-- Difference: 5,048 seconds (50.72%).
-
-These measurements are separate from the transcription-only
-human timing conditions defined above and from the machine
-execution measurements reported in Table 3.
-
-The full-workflow records are maintained in
-`manually_assited_comparison/full_workflow_timing.csv`.
-
-
 ## Manual / tool-human (real stopwatch only)
 
 ```bash
