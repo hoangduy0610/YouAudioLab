@@ -179,7 +179,9 @@ def test_f6_members_no_self_revoke_and_settings_readonly(client, user, annotator
     assert b"Read-only: only project owners can change settings." in settings.content
     assert b"Save settings" not in settings.content
     assert b"Archive project" not in settings.content
-    assert b"Output format" in settings.content
+    # Read-only view still shows the protocol values (audio processing card).
+    assert b"Audio processing" in settings.content
+    assert b"Sample rate" in settings.content
 
 
 @requires_postgres
