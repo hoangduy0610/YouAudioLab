@@ -16,6 +16,7 @@ from apps.core.storage import get_storage
 from apps.processing.media import (
     MediaPipelineError,
     SourceDownloadLock,
+    WorkAborted,
     audio_file_readable,
     cut_segment_audio,
     download_source_audio,
@@ -70,11 +71,26 @@ def fetch_source_metadata(self, source_id: str) -> dict[str, str]:
         return {"source_id": source_id, "status": "METADATA_FAILED"}
 
 
+def _discard_unpublished(storage, key: str | None) -> None:
+    if key is None:
+        return
+    try:
+        storage.delete(key)
+    except Exception:  # noqa: BLE001
+        logger.warning("could not remove unpublished artifact bytes %s", key, exc_info=True)
+
+
 @shared_task(name="youaudiolab.extract_segment_audio", bind=True, max_retries=0)
 def extract_segment_audio(self, job_id: str) -> dict[str, str]:
     jid = uuid.UUID(job_id)
     storage = get_storage()
     jobs = JobService(storage)
+    written_key: str | None = None
+
+    def obsolete() -> bool:
+        # Cancelled, or the segment bounds moved on: stop instead of finishing work
+        # that publish would discard.
+        return jobs.is_obsolete(jid)
 
     try:
         job = jobs.mark_running(jid)
@@ -90,7 +106,7 @@ def extract_segment_audio(self, job_id: str) -> dict[str, str]:
         cache_dir = Path(settings.STORAGE_ROOT) / "cache" / "sources" / str(source.id)
         cache_dir.mkdir(parents=True, exist_ok=True)
 
-        with SourceDownloadLock(cache_dir / ".download.lock"):
+        with SourceDownloadLock(cache_dir / ".download.lock", should_abort=obsolete):
             media_cache = SourceMediaCache.objects.filter(source_id=source.id).first()
             src_path: Path | None = None
             if media_cache is not None:
@@ -105,12 +121,15 @@ def extract_segment_audio(self, job_id: str) -> dict[str, str]:
                     candidate.unlink(missing_ok=True)
 
             if src_path is None:
+                if obsolete():
+                    raise WorkAborted("job obsolete before download")
                 try:
                     downloaded = download_source_audio(
                         youtube_url=source.youtube_url,
                         video_id=source.youtube_video_id,
                         cache_dir=cache_dir,
                         cookies_file=settings.YTDLP_COOKIES_FILE,
+                        should_abort=obsolete,
                     )
                 except MediaPipelineError as exc:
                     jobs.fail(jid, error_code=exc.code, error_message=exc.message)
@@ -199,6 +218,9 @@ def extract_segment_audio(self, job_id: str) -> dict[str, str]:
             f"jobs/{job.id}/audio.wav"
         )
 
+        if obsolete():
+            raise WorkAborted("job obsolete before cut")
+
         try:
             with tempfile.TemporaryDirectory(prefix="yal-cut-") as tmp:
                 tmp_out = Path(tmp) / "segment.wav"
@@ -213,6 +235,7 @@ def extract_segment_audio(self, job_id: str) -> dict[str, str]:
                 )
                 data = tmp_out.read_bytes()
                 storage.put(artifact_key, data)
+                written_key = artifact_key
                 checksum = sha256_file(tmp_out)
         except MediaPipelineError as exc:
             jobs.fail(jid, error_code=exc.code, error_message=exc.message)
@@ -224,9 +247,23 @@ def extract_segment_audio(self, job_id: str) -> dict[str, str]:
             file_size_bytes=len(data),
             checksum=checksum,
         )
+        if result.status != "SUCCEEDED":
+            # Publish refused (STALE / CANCELLED / failed verification): the WAV has no
+            # artifact row, so nothing would ever reference or delete it.
+            _discard_unpublished(storage, written_key)
         return {"job_id": job_id, "status": result.status}
+    except WorkAborted:
+        _discard_unpublished(storage, written_key)
+        logger.info("extract_segment_audio stopped early for %s (cancelled/obsolete)", job_id)
+        try:
+            final = jobs.finish_if_obsolete(jid)
+            return {"job_id": job_id, "status": final.status}
+        except Exception as exc:  # noqa: BLE001
+            logger.exception("Failed to finalize aborted job %s", job_id)
+            return {"job_id": job_id, "status": "FAILED", "error": str(exc)[:200]}
     except Exception as exc:  # noqa: BLE001
         logger.exception("extract_segment_audio failed for %s", job_id)
+        _discard_unpublished(storage, written_key)
         try:
             jobs.fail(
                 jid,
