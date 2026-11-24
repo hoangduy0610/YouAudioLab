@@ -145,12 +145,16 @@ therefore `RUNNING`, when the test acts.
 | `cancel` | The owner cancels the `RUNNING` extract job (no bounds change). After the worker stops, the owner retries it. | Cancel returned the job still `RUNNING` with `cancel_requested_at` set; the worker stopped within 20 s, with no cache row and no WAV left in storage; the job ended `CANCELLED` with no artifact row, segment back to `PENDING`, revision unchanged; the retry is attempt 2 with `retry_of` the cancelled job and succeeded with a verified artifact. |
 | `multiworker` | Two worker processes (`--pool=solo --prefetch-multiplier=1 -O fair`) consume one queue. Four segments of the `vi` clip (10 s cuts) are extracted at once, then four ASR jobs (`tiny`) are queued at once. | All 8 jobs succeeded; the source was downloaded once (one `SourceMediaCache` row; all four jobs stamped the same source checksum); four distinct verified 16 kHz mono 10 s artifacts; extract jobs overlapped in time; each `AsrRun` belongs to its own segment and artifact and is the segment's current run; ASR run time measurable from the database; every job id appears in exactly one worker log (none executed twice) and both workers executed at least one job; no job left `QUEUED` or `RUNNING`. |
 
-Recorded results (this host, latest run in `live_acceptance_results.json`): the `stale`
-job ended `STALE` 1.6 s after the edit (job run 1.8 s) and the resubmit succeeded after a
-fresh download (54 s); the `cancel` job ended `CANCELLED` 1.7 s after the request (job run
-1.9 s) and the retry succeeded (72 s); neither left a cache row or a WAV in storage.
-`multiworker` split the 8 jobs 3 / 5 across the two workers with 2 extract jobs running
-concurrently and one download.
+Recorded results (this host, single run on 2026-11-24 about 03:46–03:49 UTC, the entries
+in `live_acceptance_results.json`): the `stale` job ended `STALE` 1.3 s after the edit
+(job run 1.5 s) and the resubmit succeeded after a fresh download (30 s wall, 28.6 s run);
+the `cancel` job ended `CANCELLED` 1.3 s after the request (job run 1.5 s) and the retry
+succeeded after a fresh download (54 s wall, 52.9 s run); neither left a cache row or a
+WAV in storage. `multiworker` split the 8 jobs 5 / 3 across the two workers (which worker
+took which job varies between runs) with 2 extract jobs running concurrently and one
+download. These are wall-clock figures from one run. Download-bound times vary between
+runs on this host (the earlier recorded run took 54 s and 72 s for the same two
+resubmits), so treat them as indicative, not as a fixed performance measure.
 
 Defects the scenarios surfaced, both fixed:
 
