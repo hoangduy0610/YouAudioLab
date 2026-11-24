@@ -231,14 +231,16 @@ def _write_case_results(case_key: str, record: dict) -> None:
 
 
 def _job_timing(job: ProcessingJob, wall_seconds: float) -> dict:
-    # queue wait = worker picked the job up (DB started_at - queued_at). Wall time is
-    # measured by the test from enqueue to observed terminal status (poll step 1.5 s);
-    # the ASR job's own finished_at is not used because it shares started_at's clock read.
+    # All durations except the wall time come from the database: queue wait = worker
+    # picked the job up (started_at - queued_at); run = started_at -> finished_at.
+    # Wall time is measured by the test from enqueue to the observed terminal status
+    # (poll step 1.5 s) and serves as an independent upper bound for the DB figures.
     return {
         "job_id": str(job.id),
         "job_type": job.job_type,
         "status": job.status,
         "queue_wait_seconds": round((job.started_at - job.queued_at).total_seconds(), 3),
+        "run_seconds_db": round((job.finished_at - job.started_at).total_seconds(), 3),
         "wall_seconds_enqueue_to_done": round(wall_seconds, 1),
     }
 
@@ -478,6 +480,14 @@ def test_live_youtube_celery_worker_full_flow(case, project, user, settings, tmp
             and run.artifact_checksum == recorded
             and run.is_stale_result is False
             and segment.current_asr_run_id == run.id
+        )
+
+        asr_timing = jobs_timing[-1]
+        checks["asr_run_time_measurable_from_db"] = (
+            asr_job.finished_at > asr_job.started_at
+            and asr_timing["run_seconds_db"] > 0
+            and asr_timing["run_seconds_db"] <= asr_timing["wall_seconds_enqueue_to_done"]
+            and run.completed_at == asr_job.finished_at
         )
 
         # Owner applies the machine candidate; this is the only transcript write.
