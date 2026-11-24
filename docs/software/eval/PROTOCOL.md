@@ -38,6 +38,7 @@ Do **not** change the sample mid-experiment.
 | Tool / machine | Extract + recognition job wall time | Live YouTube download if the source is already cached |
 | Tool / human | Reviewing and accepting/editing the ASR candidate in the workspace | Labelling and export |
 
+
 ## Manual / tool-human (real stopwatch only)
 
 ```bash
