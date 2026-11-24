@@ -392,16 +392,20 @@ class AsrService:
             except Exception as exc:  # noqa: BLE001
                 return self._fail_asr(job, segment, "ASR_ENGINE_ERROR", str(exc)[:2000])
 
+            # Sample the clock again after inference: ``now`` above is the start
+            # instant, so reusing it would make ``finished_at - started_at`` zero
+            # and the run time unmeasurable from the database.
+            finished_at = max(datetime.now(timezone.utc), job.started_at or now)
             run = self._persist_run(
                 job=job,
                 segment=segment,
                 snap=snap,
                 engine_result=engine_result,
                 is_stale=False,
-                completed_at=now,
+                completed_at=finished_at,
             )
             job.status = ProcessingJob.Status.SUCCEEDED
-            job.finished_at = now
+            job.finished_at = finished_at
             job.error_code = None
             job.error_message = None
             job.save()

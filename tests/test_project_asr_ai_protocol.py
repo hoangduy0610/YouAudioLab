@@ -55,6 +55,6 @@ def test_project_settings_page_shows_asr_protocol(client, user, project):
     session.save()
     page = client.get(f"/projects/{project.id}/settings/")
     assert page.status_code == 200
-    assert b"ASR protocol" in page.content
-    assert b"AI assist protocol" in page.content
+    assert b"ASR (this project)" in page.content
+    assert b"AI assist (this project)" in page.content
     assert b'name="asr_provider"' in page.content

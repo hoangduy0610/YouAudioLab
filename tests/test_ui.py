@@ -13,8 +13,10 @@ def test_identity_and_project_pages(client, user):
     session.save()
     response = client.get("/projects/")
     assert response.status_code == 200
-    assert b"Projects" in response.content
-    assert b"No projects yet" in response.content or b"Create project" in response.content
+    assert b"My Projects" in response.content
+    assert b"New Project" in response.content
+    # Empty state for a user who owns nothing yet.
+    assert b"any projects yet" in response.content
 
 
 @requires_postgres
@@ -133,14 +135,36 @@ def test_owner_can_rename_project(client, user, project):
 
 @requires_postgres
 @pytest.mark.django_db
-def test_overview_has_no_archive_button(client, user, project):
+def test_archive_is_owner_only_danger_zone(client, user, annotator, project):
+    from apps.workspace.services import MembershipService
+
+    MembershipService().add_member(
+        project_id=project.id,
+        user_id=annotator.id,
+        role="ANNOTATOR",
+        actor_user_id=user.id,
+    )
+
     session = client.session
     session["identity_user_id"] = str(user.id)
     session.save()
     overview = client.get(f"/projects/{project.id}/")
     assert overview.status_code == 200
-    assert b"Archive project" not in overview.content
-    assert b"Import YouTube URL" in overview.content
+    assert b"Danger zone" in overview.content
+    assert b"Archive project" in overview.content
+    assert b"Add YouTube source" in overview.content
     settings = client.get(f"/projects/{project.id}/settings/")
     assert settings.status_code == 200
     assert b"Archive project" in settings.content
+
+    # An annotator never sees the archive or import controls, on the overview or settings.
+    session = client.session
+    session["identity_user_id"] = str(annotator.id)
+    session.save()
+    member_overview = client.get(f"/projects/{project.id}/")
+    assert member_overview.status_code == 200
+    assert b"Danger zone" not in member_overview.content
+    assert b"Archive project" not in member_overview.content
+    assert b"Add YouTube source" not in member_overview.content
+    member_settings = client.get(f"/projects/{project.id}/settings/")
+    assert b"Archive project" not in member_settings.content

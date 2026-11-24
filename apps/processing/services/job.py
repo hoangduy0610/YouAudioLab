@@ -475,6 +475,64 @@ class JobService:
             segment.save()
             return job
 
+    def _finalize_if_obsolete(
+        self, segment: AudioSegment, job: ProcessingJob, now: datetime
+    ) -> bool:
+        """End ``job`` as STALE or CANCELLED when it must not publish; caller holds the locks.
+
+        A revision mismatch is STALE even when cancel was also requested (a bound edit
+        does both); cancel alone applies only while the revision still matches.
+        """
+        if (
+            segment.deleted_at is not None
+            or segment.definition_revision != job.expected_revision
+        ):
+            job.status = ProcessingJob.Status.STALE
+            job.finished_at = now
+            job.save(update_fields=["status", "finished_at"])
+            self._clear_segment_current_job_if_matches(segment, job)
+            return True
+
+        if job.cancel_requested_at is not None:
+            job.status = ProcessingJob.Status.CANCELLED
+            job.finished_at = now
+            job.save(update_fields=["status", "finished_at"])
+            self._clear_segment_current_job_if_matches(segment, job)
+            if segment.processing_status == AudioSegment.ProcessingStatus.PROCESSING:
+                segment.processing_status = AudioSegment.ProcessingStatus.PENDING
+                segment.save(update_fields=["processing_status", "updated_at"])
+            return True
+        return False
+
+    def is_obsolete(self, job_id: uuid.UUID) -> bool:
+        """Cheap read-only check workers poll mid-work: cancelled, or revision moved on."""
+        row = (
+            ProcessingJob.objects.filter(pk=job_id)
+            .values(
+                "status",
+                "cancel_requested_at",
+                "expected_revision",
+                "segment__definition_revision",
+                "segment__deleted_at",
+            )
+            .first()
+        )
+        if row is None or row["status"] in _TERMINAL:
+            return True
+        return (
+            row["cancel_requested_at"] is not None
+            or row["segment__deleted_at"] is not None
+            or row["segment__definition_revision"] != row["expected_revision"]
+        )
+
+    def finish_if_obsolete(self, job_id: uuid.UUID) -> ProcessingJob:
+        """Worker stopped early: record STALE/CANCELLED. No-op if already terminal."""
+        with transaction.atomic():
+            segment, job = self._lock_segment_then_job(job_id)
+            if job.status not in _TERMINAL:
+                self._finalize_if_obsolete(segment, job, datetime.now(timezone.utc))
+            return job
+
     def publish(
         self,
         job_id: uuid.UUID,
@@ -495,24 +553,7 @@ class JobService:
 
             now = datetime.now(timezone.utc)
 
-            if (
-                segment.deleted_at is not None
-                or segment.definition_revision != job.expected_revision
-            ):
-                job.status = ProcessingJob.Status.STALE
-                job.finished_at = now
-                job.save(update_fields=["status", "finished_at"])
-                self._clear_segment_current_job_if_matches(segment, job)
-                return job
-
-            if job.cancel_requested_at is not None:
-                job.status = ProcessingJob.Status.CANCELLED
-                job.finished_at = now
-                job.save(update_fields=["status", "finished_at"])
-                self._clear_segment_current_job_if_matches(segment, job)
-                if segment.processing_status == AudioSegment.ProcessingStatus.PROCESSING:
-                    segment.processing_status = AudioSegment.ProcessingStatus.PENDING
-                    segment.save(update_fields=["processing_status", "updated_at"])
+            if self._finalize_if_obsolete(segment, job, now):
                 return job
 
             if not self.storage.exists(storage_key):

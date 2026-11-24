@@ -9,6 +9,7 @@ Table 3 Panel B / release `pytest` commands without network, broker, or worker.
 | --- | --- | --- | --- |
 | Offline fixture e2e | `tests/test_e2e_workflow.py` | No | Yes |
 | Live full flow | `tests/test_e2e_live_youtube.py` | Yes (`YOUAUDIOLAB_LIVE_YOUTUBE=1`; Redis + Celery worker + yt-dlp + ASR) | No (opt-in) |
+| Live worker scenarios (stale, cancel, two workers) | `tests/test_live_worker_scenarios.py` (support: `tests/live_worker_support.py`) | Yes, same requirements; two worker processes in one scenario | No (opt-in) |
 
 ## 1. What the test runs
 
@@ -43,8 +44,9 @@ Details:
   consume these jobs. The test skips with a message if the broker is unreachable.
 - **Worker:** `python -m celery -A config.celery worker -Q <queue> --pool=solo`, one
   process, one task at a time. It uses the test database and a temporary
-  `STORAGE_ROOT` shared with the test (real `LocalDiskStorage`). Multi-worker
-  scheduling, concurrency, retries, and failure injection are **not** exercised.
+  `STORAGE_ROOT` shared with the test (real `LocalDiskStorage`). The happy-path test
+  below uses one worker; stale, cancel and two-worker behaviour are covered separately
+  in §6.
 - **ASR:** the worker runs the project's local engine (`faster-whisper`, CPU int8) on
   the published 15 s WAV. Two cases cover both local model families: `tiny` loads
   Vietnamese PhoWhisper, `tiny.en` loads the stock English-only Whisper model (it
@@ -63,8 +65,11 @@ Prerequisites: network, `ffmpeg` on PATH, PostgreSQL at `DATABASE_URL`, Redis at
 ```bash
 # PowerShell
 $env:YOUAUDIOLAB_LIVE_YOUTUBE="1"
-uv run pytest tests/test_e2e_live_youtube.py -v
+uv run pytest tests/test_e2e_live_youtube.py tests/test_live_worker_scenarios.py -v
 ```
+
+The first file is the happy path (§3–§5); the second holds the worker scenarios (§6).
+Each file can be run on its own.
 
 ## 3. Source and cut (recorded configuration)
 
@@ -99,6 +104,7 @@ results JSON is written only when all pass.
 | `source_bytes_stamped_in_config_snapshot` | `config_snapshot.source_storage_key/source_checksum/source_file_size_bytes` equal the `SourceMediaCache` row and the SHA-256 and size of the cached file on disk |
 | `artifact_verified_and_bytes_match` | Artifact `verified`, stored size, and SHA-256 of stored bytes equal the recorded values |
 | `wav_is_16k_mono_with_cut_duration` | WAV header: 16 kHz, mono, duration within 0.5 s of the 15 s cut |
+| `asr_run_time_measurable_from_db` | ASR job `finished_at > started_at`, the DB run time is positive and not larger than the test's own wall time, and `AsrRun.completed_at` equals the job's `finished_at` |
 | `asr_run_recorded_by_worker` | `AsrRun` exists for the ASR job: engine `faster-whisper`, provider `local`, the case's model, `model_version` and language, non-empty text, tied to the same artifact id and checksum, not stale, and is the segment's current run |
 | `transcript_applied_from_asr_run` | After the owner applies the run, the segment transcript equals the run text |
 | `export_transcript_and_artifact` | Export row has the transcript, video id, start/end, verified artifact checksum, and the ASR run |
@@ -113,20 +119,74 @@ Machine-readable log (written only when the live test passes):
 
 For each case under `runs` it records the queue name, worker node, per-job queue wait
 and wall time, the source media checksum, the ASR engine/model/text, the artifact
-checksum and WAV properties, and the `checks` map above. Timing note: `queue_wait_seconds` is the database
-`started_at − queued_at`; `wall_seconds_enqueue_to_done` is measured by the test from
-enqueue to observed completion (1.5 s polling). The ASR job's own `finished_at` is not
-used, because the service records it from the same clock read as `started_at`.
+checksum and WAV properties, and the `checks` map above. Timing note: `queue_wait_seconds`
+is the database `started_at − queued_at` and `run_seconds_db` is `finished_at − started_at`
+for every job, including the ASR job (the service samples `finished_at` after inference
+returns; offline regression: `tests/test_asr_job_timing.py`).
+`wall_seconds_enqueue_to_done` is measured by the test from enqueue to observed completion
+(1.5 s polling) and is an independent upper bound for the database figures.
 
 Re-run the command in §2 to refresh the file after dependency or host changes. Keep
 this document and the JSON together under `docs/software/eval/` so reviewers can see
 script, source, checks, and actual results in one place.
 
-## 6. Scope limits
+## 6. Worker scenarios
 
-- One short clip per language, one worker process, one run per host. This is a wiring
-  and provenance check, not a performance, accuracy, or load evaluation.
+`tests/test_live_worker_scenarios.py` runs three scenarios against real worker
+processes on a dedicated per-run queue. Each writes its own entry under `scenarios` in
+[`live_acceptance_results.json`](live_acceptance_results.json) (`stale`, `cancel`,
+`multiworker`) only when every check passes. Stale and cancel use the `en` clip with a
+fresh source (no media cache), so the first extract job is still downloading, and
+therefore `RUNNING`, when the test acts.
+
+| Scenario | What the test does | Checks (all computed from observed state) |
+| --- | --- | --- |
+| `stale` | While the extract job is `RUNNING`, the owner edits the segment bounds `[60, 75] → [65, 80]` (revision 1 → 2). After the worker stops, the owner resubmits for revision 2. | The edit happened between the job's `started_at` and `finished_at`; the bound edit set `cancel_requested_at` but the job was still `RUNNING` right after; the worker stopped within 20 s of the edit, with no `SourceMediaCache` row (download aborted) and no WAV left in storage; the job ended `STALE` with no artifact row, no current artifact or job on the segment, and the edited bounds intact; the resubmitted job downloaded afresh and succeeded for revision 2 with a verified 16 kHz mono WAV of the new 15 s cut (one `SourceMediaCache` row, same checksum). |
+| `cancel` | The owner cancels the `RUNNING` extract job (no bounds change). After the worker stops, the owner retries it. | Cancel returned the job still `RUNNING` with `cancel_requested_at` set; the worker stopped within 20 s, with no cache row and no WAV left in storage; the job ended `CANCELLED` with no artifact row, segment back to `PENDING`, revision unchanged; the retry is attempt 2 with `retry_of` the cancelled job and succeeded with a verified artifact. |
+| `multiworker` | Two worker processes (`--pool=solo --prefetch-multiplier=1 -O fair`) consume one queue. Four segments of the `vi` clip (10 s cuts) are extracted at once, then four ASR jobs (`tiny`) are queued at once. | All 8 jobs succeeded; the source was downloaded once (one `SourceMediaCache` row; all four jobs stamped the same source checksum); four distinct verified 16 kHz mono 10 s artifacts; extract jobs overlapped in time; each `AsrRun` belongs to its own segment and artifact and is the segment's current run; ASR run time measurable from the database; every job id appears in exactly one worker log (none executed twice) and both workers executed at least one job; no job left `QUEUED` or `RUNNING`. |
+
+Recorded results (this host, single run on 2026-11-24 about 03:46–03:49 UTC, the entries
+in `live_acceptance_results.json`): the `stale` job ended `STALE` 1.3 s after the edit
+(job run 1.5 s) and the resubmit succeeded after a fresh download (30 s wall, 28.6 s run);
+the `cancel` job ended `CANCELLED` 1.3 s after the request (job run 1.5 s) and the retry
+succeeded after a fresh download (54 s wall, 52.9 s run); neither left a cache row or a
+WAV in storage. `multiworker` split the 8 jobs 5 / 3 across the two workers (which worker
+took which job varies between runs) with 2 extract jobs running concurrently and one
+download. These are wall-clock figures from one run. Download-bound times vary between
+runs on this host (the earlier recorded run took 54 s and 72 s for the same two
+resubmits), so treat them as indicative, not as a fixed performance measure.
+
+Defects the scenarios surfaced, both fixed:
+
+- **Windows download lock (fixed).** With two workers, the second extract job failed
+  `WORKER_ERROR: [Errno 36] Resource deadlock avoided` after about 9 s, because
+  `SourceDownloadLock` used `msvcrt.LK_LOCK`, which gives up after 10 one-second
+  attempts, while the first worker was still downloading. The lock now polls a
+  non-blocking lock with a timeout (`apps/processing/media.py`); offline regression:
+  `tests/test_source_download_lock.py`. The failing run is what exposed it; the passing
+  `multiworker` entry is the post-fix run.
+- **Orphan bytes after stale/cancel (fixed).** The worker writes the cut WAV to storage
+  before publish. When publish refused (`STALE`, `CANCELLED` or failed verification) no
+  artifact row existed, but the WAV stayed in storage (`orphan_wav_left_in_storage: true`
+  in the earlier runs). It was unreachable from the database, so exports were
+  unaffected, but nothing ever deleted it. The worker now deletes unpublished bytes.
+- **Cancel did not stop work (fixed).** Cancelling or bound-editing a `RUNNING` extract
+  job only recorded a request; the worker still finished the 40–49 s download and the
+  cut, and publish discarded the result. The worker now checks `JobService.is_obsolete`
+  while waiting for the download lock, before and during the download (yt-dlp progress
+  hook, about once a second) and before the cut, then ends the job through
+  `JobService.finish_if_obsolete`. Offline regression:
+  `tests/test_extract_cancel_and_cleanup.py`. Scope: the extract job only; an ASR job
+  already holds the segment row lock during inference, so edits and cancels wait for it
+  (about 1–2 s for `tiny`).
+
+## 7. Scope limits
+
+- One short clip per language for the happy path and one source per scenario, one run
+  per host. This is a wiring, provenance and concurrency-correctness check, not a
+  performance, accuracy, or load evaluation.
+- Concurrency is two worker processes and four segments. Higher worker counts,
+  prefork/threaded pools, a worker crash mid-job, and broker restarts are not covered.
 - Only the `tiny` / `tiny.en` sizes are exercised; `base`, `small` and `medium` (and their
   `.en` variants) share the same code path but are not run here.
-- Not covered: multi-worker contention, retry/cancel while running, ASR accuracy,
-  OpenAI recogniser, other platforms. Those are outside this test.
+- ASR accuracy is not scored. Not covered either: OpenAI recogniser, other platforms.

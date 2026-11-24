@@ -15,6 +15,12 @@ Redistributed: `sample_segments.csv` (N=60, seed 42; portable `audio_relpath`).
 Local MP3s are **not** in the repo; point scripts at them with
 `--audio-root` or `YOUAUDIOLAB_AUDIO_ROOT`.
 
+[`sample_audio_manifest.csv`](sample_audio_manifest.csv) lists, for each of the 60
+segments, the MP3 file name, its size in bytes and its SHA-256. It contains no audio.
+Use it to confirm that a local copy is byte-identical to the one used in the pilot:
+compare each file's `sha256` and `size_bytes` with the manifest row for its
+`segment_id`. Any mismatch means the file differs from the pilot input.
+
 To regenerate the same sample from a private local manifest:
 
 ```bash
