@@ -18,10 +18,10 @@ with the packaged fixtures and the automated test suite, without live download.
 Optional live retrieval (not part of the default release suite):
 
 ```bash
-YOUAUDIOLAB_LIVE_YOUTUBE=1 uv run pytest tests/test_e2e_live_youtube.py -q
+YOUAUDIOLAB_LIVE_YOUTUBE=1 uv run pytest tests/test_e2e_live_youtube.py tests/test_live_worker_scenarios.py -q
 ```
 
-That test also needs Redis and starts its own Celery worker. See
+These tests also need Redis and start their own Celery worker(s). See
 `docs/software/eval/live_acceptance.md` for the two Creative Commons YouTube clips
 (spoken Vietnamese with PhoWhisper `tiny`, spoken English with Whisper `tiny.en`),
 cut bounds, checks, and recorded results.

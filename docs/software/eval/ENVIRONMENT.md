@@ -81,7 +81,9 @@ uv run pytest tests/test_jobs_races.py tests/test_asr_stale.py tests/test_i3_exp
 full-flow acceptance** path (URL submit → Redis queue → Celery worker: yt-dlp
 download, FFmpeg cut, verified publish, ASR → owner apply → ZIP) is documented in
 [`live_acceptance.md`](live_acceptance.md) with the checks and recorded results in
-[`live_acceptance_results.json`](live_acceptance_results.json).
+[`live_acceptance_results.json`](live_acceptance_results.json). The same document covers
+the live worker scenarios (stale edit and cancel while `RUNNING`, two workers on one
+queue) in `tests/test_live_worker_scenarios.py`.
 Do **not** describe that live run as part of the offline Panel B / release
 `pytest` list above.
 
@@ -90,7 +92,7 @@ Do **not** describe that live run as part of the offline Panel B / release
 # (docker compose up -d db redis); the test starts its own Celery worker process
 # PowerShell:
 $env:YOUAUDIOLAB_LIVE_YOUTUBE="1"
-uv run pytest tests/test_e2e_live_youtube.py -v
+uv run pytest tests/test_e2e_live_youtube.py tests/test_live_worker_scenarios.py -v
 ```
 
 ## Archival record

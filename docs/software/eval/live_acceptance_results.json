@@ -5,7 +5,7 @@
   "protocol": "docs/software/eval/live_acceptance.md",
   "runs": {
     "en": {
-      "ran_at_utc": "2026-11-24T01:37:46.558189+00:00",
+      "ran_at_utc": "2026-11-24T01:51:22.713447+00:00",
       "host": {
         "system": "Windows",
         "release": "11",
@@ -14,23 +14,25 @@
       },
       "celery": {
         "broker": "redis://localhost:6381/0",
-        "queue": "yal-live-e2e-e8332437",
-        "worker_node": "yal-e2e-e8332437@localhost",
+        "queue": "yal-live-e2e-7bc25329",
+        "worker_node": "yal-e2e-7bc25329@localhost",
         "worker_pool": "solo",
         "jobs": [
           {
-            "job_id": "5c33236a-3b6c-4924-b8df-7b3688668826",
+            "job_id": "0aad73d9-8a45-483c-bf96-a9a67d82dd93",
             "job_type": "EXTRACT_SEGMENT_AUDIO",
             "status": "SUCCEEDED",
-            "queue_wait_seconds": 0.029,
-            "wall_seconds_enqueue_to_done": 85.7
+            "queue_wait_seconds": 0.022,
+            "run_seconds_db": 28.381,
+            "wall_seconds_enqueue_to_done": 28.5
           },
           {
-            "job_id": "1a37efe9-cd89-43d7-94b2-799ab5e19464",
+            "job_id": "ed7dd95d-faa8-40d0-8088-73a383a64250",
             "job_type": "TRANSCRIBE_SEGMENT_AUDIO",
             "status": "SUCCEEDED",
-            "queue_wait_seconds": 0.038,
-            "wall_seconds_enqueue_to_done": 3.0
+            "queue_wait_seconds": 0.022,
+            "run_seconds_db": 1.461,
+            "wall_seconds_enqueue_to_done": 1.5
           }
         ]
       },
@@ -74,6 +76,7 @@
         "artifact_verified_and_bytes_match": true,
         "wav_is_16k_mono_with_cut_duration": true,
         "asr_run_recorded_by_worker": true,
+        "asr_run_time_measurable_from_db": true,
         "transcript_applied_from_asr_run": true,
         "export_transcript_and_artifact": true,
         "export_source_media_checksum": true,
@@ -81,7 +84,7 @@
       }
     },
     "vi": {
-      "ran_at_utc": "2026-11-24T01:36:09.552297+00:00",
+      "ran_at_utc": "2026-11-24T01:50:44.492901+00:00",
       "host": {
         "system": "Windows",
         "release": "11",
@@ -90,23 +93,25 @@
       },
       "celery": {
         "broker": "redis://localhost:6381/0",
-        "queue": "yal-live-e2e-ea1a0e46",
-        "worker_node": "yal-e2e-ea1a0e46@localhost",
+        "queue": "yal-live-e2e-eb8cc7c1",
+        "worker_node": "yal-e2e-eb8cc7c1@localhost",
         "worker_pool": "solo",
         "jobs": [
           {
-            "job_id": "d8a1b87c-d823-4c96-9967-49acbfa3e3d6",
+            "job_id": "c667cafe-b5a7-4525-9840-cda7b129240a",
             "job_type": "EXTRACT_SEGMENT_AUDIO",
             "status": "SUCCEEDED",
             "queue_wait_seconds": 0.029,
-            "wall_seconds_enqueue_to_done": 37.5
+            "run_seconds_db": 35.55,
+            "wall_seconds_enqueue_to_done": 36.1
           },
           {
-            "job_id": "2bc65330-6442-4e92-a699-3cbfaaf8afe4",
+            "job_id": "d92a2b57-a65c-491f-b9d7-ac8693919d3b",
             "job_type": "TRANSCRIBE_SEGMENT_AUDIO",
             "status": "SUCCEEDED",
-            "queue_wait_seconds": 0.042,
-            "wall_seconds_enqueue_to_done": 3.0
+            "queue_wait_seconds": 0.037,
+            "run_seconds_db": 1.06,
+            "wall_seconds_enqueue_to_done": 1.5
           }
         ]
       },
@@ -132,7 +137,7 @@
         "language_detected": "vi",
         "device": "cpu",
         "compute_type": "int8",
-        "text": "cho chữ tượng thanh đề xuất cải tiến chữ của nguyễn trừng tổ giải thích về chủ nôn tự tạo và nhược điểm của chữ hán nông thơi chúng mình cùng thêm vào định nghĩa của chữ biểu ý chữ biểu âm chữ nho để bạn dễ theo dõi hơn nếu quan tâm bạn có thể."
+        "text": "cho chữ tượng thanh đề xuất cải tiến chữ của nguyễn trừng tổ giải thích về chủ nôn tự tạo và nhược điểm của chữ hán nông thơi chúng mình cũng thêm vào định nghĩa của chữ biểu ý chữ biểu âm chữ nho để bạn dễ theo dõi hơn nếu quan tâm bạn có thể."
       },
       "artifact": {
         "checksum": "f4cc59ed3e836e96c9c56d93264de371c93b8620185fa2aaa9564c336b101946",
@@ -150,10 +155,285 @@
         "artifact_verified_and_bytes_match": true,
         "wav_is_16k_mono_with_cut_duration": true,
         "asr_run_recorded_by_worker": true,
+        "asr_run_time_measurable_from_db": true,
         "transcript_applied_from_asr_run": true,
         "export_transcript_and_artifact": true,
         "export_source_media_checksum": true,
         "zip_audio_sha256_matches_artifact": true
+      }
+    }
+  },
+  "scenarios": {
+    "cancel": {
+      "ran_at_utc": "2026-11-24T02:19:10.037087+00:00",
+      "host": {
+        "system": "Windows",
+        "release": "11",
+        "machine": "AMD64",
+        "python": "3.12.14"
+      },
+      "celery": {
+        "broker": "redis://localhost:6381/0",
+        "queue": "yal-live-scn-5380c3aa",
+        "workers": [
+          "yal-scn-5380c3aa-1@localhost"
+        ],
+        "worker_pool": "solo"
+      },
+      "source": {
+        "youtube_video_id": "Ag1AKIl_2GM",
+        "youtube_url": "https://www.youtube.com/watch?v=Ag1AKIl_2GM"
+      },
+      "timeline_utc": {
+        "cancelled_job_started_at": "2026-11-24T02:18:11.151383+00:00",
+        "cancel_requested": "2026-11-24T02:18:11.300756+00:00",
+        "cancelled_job_finished_at": "2026-11-24T02:18:13.133092+00:00",
+        "retry_job_started_at": "2026-11-24T02:18:14.444521+00:00",
+        "retry_job_finished_at": "2026-11-24T02:19:09.809304+00:00"
+      },
+      "cancelled_job": {
+        "job_id": "3ee7767d-0245-4ddf-9af6-5050447ffd97",
+        "status": "CANCELLED",
+        "run_seconds_db": 1.982,
+        "wall_seconds_enqueue_to_done": 3.0,
+        "stopped_seconds_after_cancel": 1.811,
+        "media_cache_row_after_abort": false,
+        "orphan_wav_left_in_storage": false
+      },
+      "retry_job": {
+        "job_id": "3e5f520c-26d8-45f3-9044-b2d5a5273e4a",
+        "status": "SUCCEEDED",
+        "attempt_n": 2,
+        "retry_of": "3ee7767d-0245-4ddf-9af6-5050447ffd97",
+        "run_seconds_db": 55.365,
+        "wall_seconds_enqueue_to_done": 55.6,
+        "artifact_checksum": "8425d32ade42c05dcd65fa1a4318732d9f6f0a64a5f368c1ae9ddd0468687a05"
+      },
+      "checks": {
+        "cancel_happened_while_running": true,
+        "worker_stopped_promptly_after_cancel": true,
+        "download_aborted_no_cache_row": true,
+        "no_orphan_wav_in_storage": true,
+        "job_ended_cancelled": true,
+        "no_artifact_row_for_cancelled_job": true,
+        "segment_has_no_current_artifact": true,
+        "segment_current_job_cleared": true,
+        "segment_back_to_pending": true,
+        "segment_revision_unchanged": true,
+        "retry_succeeded": true,
+        "retry_artifact_verified_and_correct": true
+      }
+    },
+    "multiworker": {
+      "ran_at_utc": "2026-11-24T02:20:36.976145+00:00",
+      "host": {
+        "system": "Windows",
+        "release": "11",
+        "machine": "AMD64",
+        "python": "3.12.14"
+      },
+      "celery": {
+        "broker": "redis://localhost:6381/0",
+        "queue": "yal-live-scn-c0ef498e",
+        "workers": [
+          "yal-scn-c0ef498e-1@localhost",
+          "yal-scn-c0ef498e-2@localhost"
+        ],
+        "worker_pool": "solo",
+        "prefetch_multiplier": 1,
+        "jobs_per_worker": {
+          "yal-scn-c0ef498e-1@localhost": 4,
+          "yal-scn-c0ef498e-2@localhost": 4
+        },
+        "max_concurrent_extract_jobs": 2
+      },
+      "source": {
+        "youtube_video_id": "NjInU61XvtU",
+        "youtube_url": "https://www.youtube.com/watch?v=NjInU61XvtU",
+        "source_media_checksum": "1b82a69dc2bafb7335fe3b87eec58a63368e429920336cda0decb3f6d98a360c"
+      },
+      "cuts": [
+        [
+          60.0,
+          70.0
+        ],
+        [
+          70.0,
+          80.0
+        ],
+        [
+          80.0,
+          90.0
+        ],
+        [
+          90.0,
+          100.0
+        ]
+      ],
+      "asr": {
+        "model": "tiny",
+        "model_version": "PhoWhisper"
+      },
+      "extract_jobs": [
+        {
+          "job_id": "9d09a285-9c16-4070-a0da-69f00547b8db",
+          "job_type": "EXTRACT_SEGMENT_AUDIO",
+          "status": "SUCCEEDED",
+          "worker": "yal-scn-c0ef498e-1@localhost",
+          "queue_wait_seconds": 0.221,
+          "run_seconds_db": 67.955,
+          "wall_seconds_enqueue_to_done": 69.2
+        },
+        {
+          "job_id": "c446cab4-0135-4fb7-a47f-dee8a59f001a",
+          "job_type": "EXTRACT_SEGMENT_AUDIO",
+          "status": "SUCCEEDED",
+          "worker": "yal-scn-c0ef498e-2@localhost",
+          "queue_wait_seconds": 0.186,
+          "run_seconds_db": 67.593,
+          "wall_seconds_enqueue_to_done": 0.0
+        },
+        {
+          "job_id": "282d8041-e49f-4c18-ad6f-d9eb15b05287",
+          "job_type": "EXTRACT_SEGMENT_AUDIO",
+          "status": "SUCCEEDED",
+          "worker": "yal-scn-c0ef498e-2@localhost",
+          "queue_wait_seconds": 67.819,
+          "run_seconds_db": 0.767,
+          "wall_seconds_enqueue_to_done": 0.0
+        },
+        {
+          "job_id": "e0c6f7ec-0f73-41e9-913c-c1d346ce2ee8",
+          "job_type": "EXTRACT_SEGMENT_AUDIO",
+          "status": "SUCCEEDED",
+          "worker": "yal-scn-c0ef498e-1@localhost",
+          "queue_wait_seconds": 68.167,
+          "run_seconds_db": 0.258,
+          "wall_seconds_enqueue_to_done": 0.0
+        }
+      ],
+      "asr_jobs": [
+        {
+          "job_id": "7754e33c-b8af-4575-a081-f02d14024b98",
+          "job_type": "TRANSCRIBE_SEGMENT_AUDIO",
+          "status": "SUCCEEDED",
+          "worker": "yal-scn-c0ef498e-2@localhost",
+          "queue_wait_seconds": 0.158,
+          "run_seconds_db": 7.546,
+          "wall_seconds_enqueue_to_done": 9.0
+        },
+        {
+          "job_id": "a005f4b2-2625-4274-b79c-a1df6df90854",
+          "job_type": "TRANSCRIBE_SEGMENT_AUDIO",
+          "status": "SUCCEEDED",
+          "worker": "yal-scn-c0ef498e-1@localhost",
+          "queue_wait_seconds": 7.675,
+          "run_seconds_db": 1.666,
+          "wall_seconds_enqueue_to_done": 1.5
+        },
+        {
+          "job_id": "2e658451-0782-4c2c-85f8-04f5a1d029e4",
+          "job_type": "TRANSCRIBE_SEGMENT_AUDIO",
+          "status": "SUCCEEDED",
+          "worker": "yal-scn-c0ef498e-2@localhost",
+          "queue_wait_seconds": 9.312,
+          "run_seconds_db": 0.499,
+          "wall_seconds_enqueue_to_done": 0.0
+        },
+        {
+          "job_id": "6a216de0-8593-4e40-8683-23962b7a1654",
+          "job_type": "TRANSCRIBE_SEGMENT_AUDIO",
+          "status": "SUCCEEDED",
+          "worker": "yal-scn-c0ef498e-1@localhost",
+          "queue_wait_seconds": 9.785,
+          "run_seconds_db": 0.691,
+          "wall_seconds_enqueue_to_done": 0.0
+        }
+      ],
+      "checks": {
+        "all_extract_jobs_succeeded": true,
+        "source_downloaded_once": true,
+        "artifacts_distinct_and_verified": true,
+        "wavs_are_16k_mono_10s": true,
+        "extract_jobs_overlapped_in_time": true,
+        "all_asr_jobs_succeeded": true,
+        "each_asr_run_matches_its_own_segment_and_artifact": true,
+        "asr_run_time_measurable_from_db": true,
+        "every_job_executed_exactly_once": true,
+        "both_workers_executed_jobs": true,
+        "no_job_left_unfinished": true
+      }
+    },
+    "stale": {
+      "ran_at_utc": "2026-11-24T02:17:58.000488+00:00",
+      "host": {
+        "system": "Windows",
+        "release": "11",
+        "machine": "AMD64",
+        "python": "3.12.14"
+      },
+      "celery": {
+        "broker": "redis://localhost:6381/0",
+        "queue": "yal-live-scn-81bb48b0",
+        "workers": [
+          "yal-scn-81bb48b0-1@localhost"
+        ],
+        "worker_pool": "solo"
+      },
+      "source": {
+        "youtube_video_id": "Ag1AKIl_2GM",
+        "youtube_url": "https://www.youtube.com/watch?v=Ag1AKIl_2GM"
+      },
+      "timeline_utc": {
+        "stale_job_started_at": "2026-11-24T02:16:57.575964+00:00",
+        "bounds_edit_started": "2026-11-24T02:16:57.727329+00:00",
+        "bounds_edit_done": "2026-11-24T02:16:57.766561+00:00",
+        "stale_job_finished_at": "2026-11-24T02:16:59.547275+00:00",
+        "resubmit_job_started_at": "2026-11-24T02:17:00.880377+00:00",
+        "resubmit_job_finished_at": "2026-11-24T02:17:57.561248+00:00"
+      },
+      "bounds": {
+        "before": [
+          60.0,
+          75.0
+        ],
+        "after": [
+          65.0,
+          80.0
+        ]
+      },
+      "stale_job": {
+        "job_id": "1f2ec696-f5af-4574-8b81-e93fe235816b",
+        "status": "STALE",
+        "expected_revision": 1,
+        "run_seconds_db": 1.971,
+        "wall_seconds_enqueue_to_done": 3.0,
+        "stopped_seconds_after_edit": 1.781,
+        "media_cache_row_after_abort": false,
+        "orphan_wav_left_in_storage": false
+      },
+      "resubmit_job": {
+        "job_id": "05e099f6-7f75-4b6f-9b7b-6978a1888c12",
+        "status": "SUCCEEDED",
+        "expected_revision": 2,
+        "run_seconds_db": 56.681,
+        "wall_seconds_enqueue_to_done": 57.1,
+        "artifact_checksum": "5e9fbe5d9b33ff32fb61a8bf7c10dc942f3c5bfbdb0b604ec478b04488cc2bd1"
+      },
+      "checks": {
+        "edit_happened_while_running": true,
+        "worker_stopped_promptly_after_edit": true,
+        "download_aborted_no_cache_row": true,
+        "no_orphan_wav_in_storage": true,
+        "job_ended_stale": true,
+        "no_artifact_row_for_stale_job": true,
+        "segment_has_no_current_artifact": true,
+        "segment_current_job_cleared": true,
+        "segment_not_marked_completed": true,
+        "segment_bounds_are_the_edited_ones": true,
+        "resubmit_succeeded_for_new_revision": true,
+        "resubmit_artifact_verified_and_correct": true,
+        "resubmit_downloaded_and_cached_the_source": true
       }
     }
   }
