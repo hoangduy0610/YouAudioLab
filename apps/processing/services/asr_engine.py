@@ -173,13 +173,15 @@ class FasterWhisperEngine:
 
         model, model_id = self._load_model(config)
         version = "PhoWhisper" if config.model_size in _PHOWHISPER_FOLDERS else "faster-whisper"
-        with tempfile.NamedTemporaryFile(suffix=".wav", delete=True) as tmp:
-            tmp.write(audio_bytes)
-            tmp.flush()
+        # A closed file in a temp dir (not an open NamedTemporaryFile): Windows cannot
+        # reopen a still-open temp file by name, so the decoder would hit PermissionError.
+        with tempfile.TemporaryDirectory(prefix="yal-asr-") as tmp_dir:
+            wav_path = Path(tmp_dir) / "audio.wav"
+            wav_path.write_bytes(audio_bytes)
             lang = None if config.language_requested == "auto" else config.language_requested
             decode = config.decode_params or {}
             segments_iter, info = model.transcribe(
-                tmp.name,
+                str(wav_path),
                 language=lang,
                 task=config.task,
                 beam_size=int(decode.get("beam_size", 5)),
