@@ -237,9 +237,9 @@ Cohen’s κ treats each whole-segment label set as one nominal category (separa
 from the platform’s per-label binary κ on Progress). Exact transcript agreement
 uses lowercasing, punctuation removal, and whitespace normalisation; a match
 requires the full normalised transcript to be identical. Word-level alignment
-and WER were **not** evaluated. With chance agreement pₑ = 0.2194, κ sits above
-the raw exact-match rate because chance agreement on these set-categories is
-low.
+was also evaluated; the accompanying [ASR error evaluation notebook](docs/software/eval/manually_assited_comparison/asr_error_evaluation.ipynb)
+reports WER and CER. With chance agreement pₑ = 0.2194, κ sits above the raw
+exact-match rate because chance agreement on these set-categories is low.
 
 | Metric | Result |
 |---|---|
