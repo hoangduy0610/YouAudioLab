@@ -28,14 +28,11 @@ from apps.workspace.services import (
 )
 from tests.conftest import requires_postgres
 
-FIXTURE = (
-    Path(__file__).resolve().parents[1]
-    / "docs"
-    / "software"
-    / "eval"
-    / "fixtures"
-    / "clip_01.wav"
+FIXTURE_DIR = (
+    Path(__file__).resolve().parents[1] / "docs" / "software" / "eval" / "fixtures"
 )
+# Two distinct 0.5 s synthetic clips; the acceptance path runs once per clip.
+FIXTURE_NAMES = ["clip_01.wav", "clip_02.wav"]
 
 
 def _ffmpeg_available() -> bool:
@@ -44,9 +41,13 @@ def _ffmpeg_available() -> bool:
 
 @requires_postgres
 @pytest.mark.django_db
-def test_url_to_verified_export_with_reviewed_transcript(project, user, ready_source):
-    if not FIXTURE.is_file():
-        pytest.skip(f"missing fixture: {FIXTURE}")
+@pytest.mark.parametrize("fixture_name", FIXTURE_NAMES)
+def test_url_to_verified_export_with_reviewed_transcript(
+    fixture_name, project, user, ready_source
+):
+    fixture = FIXTURE_DIR / fixture_name
+    if not fixture.is_file():
+        pytest.skip(f"missing fixture: {fixture}")
     if not _ffmpeg_available():
         pytest.skip("ffmpeg not on PATH")
 
@@ -55,7 +56,7 @@ def test_url_to_verified_export_with_reviewed_transcript(project, user, ready_so
     assert ready_source.youtube_video_id
 
     segments = SegmentService()
-    # Fixture clip_01.wav is 0.5 s; keep the cut inside the source bytes.
+    # Each fixture clip is 0.5 s; keep the cut inside the source bytes.
     segment = segments.create(
         source_id=ready_source.id,
         start_seconds=0.0,
@@ -75,7 +76,7 @@ def test_url_to_verified_export_with_reviewed_transcript(project, user, ready_so
     with tempfile.TemporaryDirectory(prefix="yal-e2e-") as tmp:
         dest = Path(tmp) / "segment.wav"
         cut_segment_audio(
-            src=FIXTURE,
+            src=fixture,
             dest=dest,
             start_seconds=0.0,
             end_seconds=0.5,
