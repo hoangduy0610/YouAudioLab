@@ -165,7 +165,7 @@
   },
   "scenarios": {
     "cancel": {
-      "ran_at_utc": "2026-11-24T02:19:10.037087+00:00",
+      "ran_at_utc": "2026-11-24T02:38:42.911403+00:00",
       "host": {
         "system": "Windows",
         "release": "11",
@@ -174,9 +174,9 @@
       },
       "celery": {
         "broker": "redis://localhost:6381/0",
-        "queue": "yal-live-scn-5380c3aa",
+        "queue": "yal-live-scn-0f7f5eff",
         "workers": [
-          "yal-scn-5380c3aa-1@localhost"
+          "yal-scn-0f7f5eff-1@localhost"
         ],
         "worker_pool": "solo"
       },
@@ -185,28 +185,28 @@
         "youtube_url": "https://www.youtube.com/watch?v=Ag1AKIl_2GM"
       },
       "timeline_utc": {
-        "cancelled_job_started_at": "2026-11-24T02:18:11.151383+00:00",
-        "cancel_requested": "2026-11-24T02:18:11.300756+00:00",
-        "cancelled_job_finished_at": "2026-11-24T02:18:13.133092+00:00",
-        "retry_job_started_at": "2026-11-24T02:18:14.444521+00:00",
-        "retry_job_finished_at": "2026-11-24T02:19:09.809304+00:00"
+        "cancelled_job_started_at": "2026-11-24T02:37:27.425291+00:00",
+        "cancel_requested": "2026-11-24T02:37:27.595348+00:00",
+        "cancelled_job_finished_at": "2026-11-24T02:37:29.355287+00:00",
+        "retry_job_started_at": "2026-11-24T02:37:30.705026+00:00",
+        "retry_job_finished_at": "2026-11-24T02:38:42.321663+00:00"
       },
       "cancelled_job": {
-        "job_id": "3ee7767d-0245-4ddf-9af6-5050447ffd97",
+        "job_id": "290a46b9-2c55-4c03-94b6-634134c5e975",
         "status": "CANCELLED",
-        "run_seconds_db": 1.982,
+        "run_seconds_db": 1.93,
         "wall_seconds_enqueue_to_done": 3.0,
-        "stopped_seconds_after_cancel": 1.811,
+        "stopped_seconds_after_cancel": 1.74,
         "media_cache_row_after_abort": false,
         "orphan_wav_left_in_storage": false
       },
       "retry_job": {
-        "job_id": "3e5f520c-26d8-45f3-9044-b2d5a5273e4a",
+        "job_id": "85efeefd-7dcf-4798-9121-818e7aae4204",
         "status": "SUCCEEDED",
         "attempt_n": 2,
-        "retry_of": "3ee7767d-0245-4ddf-9af6-5050447ffd97",
-        "run_seconds_db": 55.365,
-        "wall_seconds_enqueue_to_done": 55.6,
+        "retry_of": "290a46b9-2c55-4c03-94b6-634134c5e975",
+        "run_seconds_db": 71.617,
+        "wall_seconds_enqueue_to_done": 72.2,
         "artifact_checksum": "8425d32ade42c05dcd65fa1a4318732d9f6f0a64a5f368c1ae9ddd0468687a05"
       },
       "checks": {
@@ -225,7 +225,7 @@
       }
     },
     "multiworker": {
-      "ran_at_utc": "2026-11-24T02:20:36.976145+00:00",
+      "ran_at_utc": "2026-11-24T02:40:05.248177+00:00",
       "host": {
         "system": "Windows",
         "release": "11",
@@ -234,16 +234,16 @@
       },
       "celery": {
         "broker": "redis://localhost:6381/0",
-        "queue": "yal-live-scn-c0ef498e",
+        "queue": "yal-live-scn-dbfee7dd",
         "workers": [
-          "yal-scn-c0ef498e-1@localhost",
-          "yal-scn-c0ef498e-2@localhost"
+          "yal-scn-dbfee7dd-1@localhost",
+          "yal-scn-dbfee7dd-2@localhost"
         ],
         "worker_pool": "solo",
         "prefetch_multiplier": 1,
         "jobs_per_worker": {
-          "yal-scn-c0ef498e-1@localhost": 4,
-          "yal-scn-c0ef498e-2@localhost": 4
+          "yal-scn-dbfee7dd-1@localhost": 3,
+          "yal-scn-dbfee7dd-2@localhost": 5
         },
         "max_concurrent_extract_jobs": 2
       },
@@ -276,78 +276,78 @@
       },
       "extract_jobs": [
         {
-          "job_id": "9d09a285-9c16-4070-a0da-69f00547b8db",
+          "job_id": "2ef8acc3-45a9-47c6-9cfc-6bf885df8f38",
           "job_type": "EXTRACT_SEGMENT_AUDIO",
           "status": "SUCCEEDED",
-          "worker": "yal-scn-c0ef498e-1@localhost",
-          "queue_wait_seconds": 0.221,
-          "run_seconds_db": 67.955,
-          "wall_seconds_enqueue_to_done": 69.2
+          "worker": "yal-scn-dbfee7dd-2@localhost",
+          "queue_wait_seconds": 0.092,
+          "run_seconds_db": 67.225,
+          "wall_seconds_enqueue_to_done": 67.7
         },
         {
-          "job_id": "c446cab4-0135-4fb7-a47f-dee8a59f001a",
+          "job_id": "cea47a22-2e54-443f-9362-f738b777d905",
           "job_type": "EXTRACT_SEGMENT_AUDIO",
           "status": "SUCCEEDED",
-          "worker": "yal-scn-c0ef498e-2@localhost",
-          "queue_wait_seconds": 0.186,
-          "run_seconds_db": 67.593,
+          "worker": "yal-scn-dbfee7dd-1@localhost",
+          "queue_wait_seconds": 0.083,
+          "run_seconds_db": 67.933,
+          "wall_seconds_enqueue_to_done": 1.5
+        },
+        {
+          "job_id": "314e2e54-74d5-43f6-b225-9701326a8025",
+          "job_type": "EXTRACT_SEGMENT_AUDIO",
+          "status": "SUCCEEDED",
+          "worker": "yal-scn-dbfee7dd-2@localhost",
+          "queue_wait_seconds": 67.35,
+          "run_seconds_db": 0.24,
           "wall_seconds_enqueue_to_done": 0.0
         },
         {
-          "job_id": "282d8041-e49f-4c18-ad6f-d9eb15b05287",
+          "job_id": "e10feb68-51cb-42fd-a812-c02e25c7ece3",
           "job_type": "EXTRACT_SEGMENT_AUDIO",
           "status": "SUCCEEDED",
-          "worker": "yal-scn-c0ef498e-2@localhost",
-          "queue_wait_seconds": 67.819,
-          "run_seconds_db": 0.767,
-          "wall_seconds_enqueue_to_done": 0.0
-        },
-        {
-          "job_id": "e0c6f7ec-0f73-41e9-913c-c1d346ce2ee8",
-          "job_type": "EXTRACT_SEGMENT_AUDIO",
-          "status": "SUCCEEDED",
-          "worker": "yal-scn-c0ef498e-1@localhost",
-          "queue_wait_seconds": 68.167,
-          "run_seconds_db": 0.258,
+          "worker": "yal-scn-dbfee7dd-2@localhost",
+          "queue_wait_seconds": 67.638,
+          "run_seconds_db": 0.933,
           "wall_seconds_enqueue_to_done": 0.0
         }
       ],
       "asr_jobs": [
         {
-          "job_id": "7754e33c-b8af-4575-a081-f02d14024b98",
+          "job_id": "b48654e7-de01-4b09-9c09-1ad2fcf3ab9f",
           "job_type": "TRANSCRIBE_SEGMENT_AUDIO",
           "status": "SUCCEEDED",
-          "worker": "yal-scn-c0ef498e-2@localhost",
+          "worker": "yal-scn-dbfee7dd-2@localhost",
           "queue_wait_seconds": 0.158,
-          "run_seconds_db": 7.546,
-          "wall_seconds_enqueue_to_done": 9.0
+          "run_seconds_db": 1.678,
+          "wall_seconds_enqueue_to_done": 3.0
         },
         {
-          "job_id": "a005f4b2-2625-4274-b79c-a1df6df90854",
+          "job_id": "a0856d7d-312a-4489-a1a5-4551286ea44d",
           "job_type": "TRANSCRIBE_SEGMENT_AUDIO",
           "status": "SUCCEEDED",
-          "worker": "yal-scn-c0ef498e-1@localhost",
-          "queue_wait_seconds": 7.675,
-          "run_seconds_db": 1.666,
+          "worker": "yal-scn-dbfee7dd-1@localhost",
+          "queue_wait_seconds": 1.804,
+          "run_seconds_db": 1.675,
           "wall_seconds_enqueue_to_done": 1.5
         },
         {
-          "job_id": "2e658451-0782-4c2c-85f8-04f5a1d029e4",
+          "job_id": "529b8eb1-8e64-47f3-8227-9e4e96b6792e",
           "job_type": "TRANSCRIBE_SEGMENT_AUDIO",
           "status": "SUCCEEDED",
-          "worker": "yal-scn-c0ef498e-2@localhost",
-          "queue_wait_seconds": 9.312,
-          "run_seconds_db": 0.499,
+          "worker": "yal-scn-dbfee7dd-2@localhost",
+          "queue_wait_seconds": 3.458,
+          "run_seconds_db": 0.466,
           "wall_seconds_enqueue_to_done": 0.0
         },
         {
-          "job_id": "6a216de0-8593-4e40-8683-23962b7a1654",
+          "job_id": "019694ee-35e4-4c74-84e6-c540f1ec8ca4",
           "job_type": "TRANSCRIBE_SEGMENT_AUDIO",
           "status": "SUCCEEDED",
-          "worker": "yal-scn-c0ef498e-1@localhost",
-          "queue_wait_seconds": 9.785,
-          "run_seconds_db": 0.691,
-          "wall_seconds_enqueue_to_done": 0.0
+          "worker": "yal-scn-dbfee7dd-1@localhost",
+          "queue_wait_seconds": 3.898,
+          "run_seconds_db": 0.669,
+          "wall_seconds_enqueue_to_done": 1.5
         }
       ],
       "checks": {
@@ -365,7 +365,7 @@
       }
     },
     "stale": {
-      "ran_at_utc": "2026-11-24T02:17:58.000488+00:00",
+      "ran_at_utc": "2026-11-24T02:37:20.494880+00:00",
       "host": {
         "system": "Windows",
         "release": "11",
@@ -374,9 +374,9 @@
       },
       "celery": {
         "broker": "redis://localhost:6381/0",
-        "queue": "yal-live-scn-81bb48b0",
+        "queue": "yal-live-scn-62a0460b",
         "workers": [
-          "yal-scn-81bb48b0-1@localhost"
+          "yal-scn-62a0460b-1@localhost"
         ],
         "worker_pool": "solo"
       },
@@ -385,12 +385,12 @@
         "youtube_url": "https://www.youtube.com/watch?v=Ag1AKIl_2GM"
       },
       "timeline_utc": {
-        "stale_job_started_at": "2026-11-24T02:16:57.575964+00:00",
-        "bounds_edit_started": "2026-11-24T02:16:57.727329+00:00",
-        "bounds_edit_done": "2026-11-24T02:16:57.766561+00:00",
-        "stale_job_finished_at": "2026-11-24T02:16:59.547275+00:00",
-        "resubmit_job_started_at": "2026-11-24T02:17:00.880377+00:00",
-        "resubmit_job_finished_at": "2026-11-24T02:17:57.561248+00:00"
+        "stale_job_started_at": "2026-11-24T02:36:21.540549+00:00",
+        "bounds_edit_started": "2026-11-24T02:36:21.716474+00:00",
+        "bounds_edit_done": "2026-11-24T02:36:21.743600+00:00",
+        "stale_job_finished_at": "2026-11-24T02:36:23.330889+00:00",
+        "resubmit_job_started_at": "2026-11-24T02:36:24.862799+00:00",
+        "resubmit_job_finished_at": "2026-11-24T02:37:19.034760+00:00"
       },
       "bounds": {
         "before": [
@@ -403,21 +403,21 @@
         ]
       },
       "stale_job": {
-        "job_id": "1f2ec696-f5af-4574-8b81-e93fe235816b",
+        "job_id": "0012ef32-ba29-4e32-8af7-191b8a05a041",
         "status": "STALE",
         "expected_revision": 1,
-        "run_seconds_db": 1.971,
+        "run_seconds_db": 1.79,
         "wall_seconds_enqueue_to_done": 3.0,
-        "stopped_seconds_after_edit": 1.781,
+        "stopped_seconds_after_edit": 1.587,
         "media_cache_row_after_abort": false,
         "orphan_wav_left_in_storage": false
       },
       "resubmit_job": {
-        "job_id": "05e099f6-7f75-4b6f-9b7b-6978a1888c12",
+        "job_id": "0f73fbb0-a142-475c-bdb2-73687a585075",
         "status": "SUCCEEDED",
         "expected_revision": 2,
-        "run_seconds_db": 56.681,
-        "wall_seconds_enqueue_to_done": 57.1,
+        "run_seconds_db": 54.172,
+        "wall_seconds_enqueue_to_done": 55.7,
         "artifact_checksum": "5e9fbe5d9b33ff32fb61a8bf7c10dc942f3c5bfbdb0b604ec478b04488cc2bd1"
       },
       "checks": {
