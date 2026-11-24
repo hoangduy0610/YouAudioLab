@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n yal_badges %}
+{% load i18n yal_badges yal_asr %}
 {% block title %}{% blocktrans with n=segment.segment_index %}Segment #{{ n }}{% endblocktrans %} — {{ project.name }}{% endblock %}
 {% block content %}
 <div
@@ -140,7 +140,7 @@
           <p class="small text-muted mb-0 text-end" data-testid="asr-resolved">
             {% trans "ASR:" %}
             <strong>{{ asr_display.provider }}</strong> /
-            {% if asr_display.provider == "local" and asr_display.engine != "fake" %}PhoWhisper {{ asr_display.model }}{% else %}{{ asr_display.model }}{% endif %}
+            {% if asr_display.provider == "local" and asr_display.engine != "fake" %}{{ asr_display.model|asr_model_label }}{% else %}{{ asr_display.model }}{% endif %}
             <span class="text-muted">({{ asr_display.source }})</span>
             {% if asr_display.engine == "fake" %}
             <span class="badge text-bg-secondary">{% trans "fake" %}</span>
@@ -236,7 +236,7 @@
               <div>
                 <span class="badge text-bg-dark">{% trans "ASR draft" %}</span>
                 <span class="small text-muted ms-1">
-                  {{ asr_latest_run.provider }} / {% if asr_latest_run.model_version == "PhoWhisper" %}PhoWhisper-{{ asr_latest_run.model }}{% else %}{{ asr_latest_run.model }}{% endif %} · {{ asr_latest_run.language_requested }}
+                  {{ asr_latest_run.provider }} / {% if asr_latest_run.model_version == "PhoWhisper" %}PhoWhisper-{{ asr_latest_run.model }}{% elif asr_latest_run.provider == "local" and asr_latest_run.engine == "faster-whisper" %}Whisper-{{ asr_latest_run.model }}{% else %}{{ asr_latest_run.model }}{% endif %} · {{ asr_latest_run.language_requested }}
                 </span>
               </div>
               {% if role == "OWNER" and project.status != "ARCHIVED" and not asr_latest_run.is_stale_result and asr_latest_run.segment_revision == segment.definition_revision and asr_latest_run.artifact_id == segment.current_artifact_id %}

@@ -1,9 +1,8 @@
 """Local acceptance: URL import → FFmpeg cut → verified publish → reviewed text → export.
 
-Uses redistributable fixture WAV bytes (no live YouTube retrieval). Live download
-is covered by the opt-in ``tests/test_e2e_live_youtube.py``
-(``YOUAUDIOLAB_LIVE_YOUTUBE=1``). Queue wait / Celery worker scheduling remain
-outside both acceptance tests.
+Uses redistributable fixture WAV bytes (no live YouTube retrieval, no broker, no
+worker). The live download, Celery queue, worker, and ASR path is covered by the
+opt-in ``tests/test_e2e_live_youtube.py`` (``YOUAUDIOLAB_LIVE_YOUTUBE=1``).
 """
 
 from __future__ import annotations

@@ -21,5 +21,7 @@ Optional live retrieval (not part of the default release suite):
 YOUAUDIOLAB_LIVE_YOUTUBE=1 uv run pytest tests/test_e2e_live_youtube.py -q
 ```
 
-See `docs/software/eval/ENVIRONMENT.md` for the Creative Commons spoken
-TEDx YouTube URL, cut bounds, and expected outputs.
+That test also needs Redis and starts its own Celery worker. See
+`docs/software/eval/live_acceptance.md` for the two Creative Commons YouTube clips
+(spoken Vietnamese with PhoWhisper `tiny`, spoken English with Whisper `tiny.en`),
+cut bounds, checks, and recorded results.

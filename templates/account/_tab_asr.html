@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n yal_asr %}
 <div data-testid="asr-preferences-page" data-settings-asr>
   <p class="small mb-3">
     {% trans "Choose system defaults or your own provider. Custom fields apply only when Custom is selected." %}
@@ -80,7 +80,7 @@
           <select class="form-select" name="local_model" id="asr_local_model">
             <option value="" {% if not asr_prefs.local_model %}selected{% endif %}>{% trans "Use system defaults" %} ({{ asr_defaults.local_model }})</option>
             {% for m in local_asr_models %}
-            <option value="{{ m }}" {% if asr_prefs.local_model == m %}selected{% endif %}>PhoWhisper {{ m }}</option>
+            <option value="{{ m }}" {% if asr_prefs.local_model == m %}selected{% endif %}>{{ m|asr_model_label }}</option>
             {% endfor %}
           </select>
         </div>

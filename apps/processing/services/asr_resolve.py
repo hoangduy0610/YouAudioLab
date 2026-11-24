@@ -42,15 +42,36 @@ def _local_engine_name() -> str:
     return "faster-whisper"
 
 
-# CPU int8 on the YouAudioLab host. These sizes load PhoWhisper.
-_LOCAL_MODEL_CHOICES = frozenset({"tiny", "base", "small", "medium"})
+# CPU int8 on the YouAudioLab host. Two local model families:
+#   * bare sizes (tiny/base/small/medium) load VinAI PhoWhisper (Vietnamese);
+#   * ".en" sizes load the stock English-only Whisper models (Systran CTranslate2).
+PHOWHISPER_LOCAL_MODELS = ("tiny", "base", "small", "medium")
+WHISPER_EN_LOCAL_MODELS = ("tiny.en", "base.en", "small.en", "medium.en")
+_LOCAL_MODEL_CHOICES = frozenset(PHOWHISPER_LOCAL_MODELS + WHISPER_EN_LOCAL_MODELS)
+DEFAULT_LOCAL_ALLOWLIST = ",".join(PHOWHISPER_LOCAL_MODELS + WHISPER_EN_LOCAL_MODELS)
+# English-only models accept these language requests (faster-whisper ignores "auto").
+_EN_ONLY_LANGUAGES = frozenset({"en", "auto"})
+
+
+def is_english_only_local_model(model: str | None) -> bool:
+    return (model or "").strip() in WHISPER_EN_LOCAL_MODELS
+
+
+def local_model_label(model: str | None) -> str:
+    """Human label for a local model name (used by templates)."""
+    name = (model or "").strip()
+    if name in WHISPER_EN_LOCAL_MODELS:
+        return f"Whisper {name} (English)"
+    if name in PHOWHISPER_LOCAL_MODELS:
+        return f"PhoWhisper {name}"
+    return name
 
 
 def _allowlist_local() -> set[str]:
     configured = {
         s.strip()
         for s in (
-            getattr(settings, "ASR_MODEL_ALLOWLIST", "tiny,base,small,medium") or ""
+            getattr(settings, "ASR_MODEL_ALLOWLIST", DEFAULT_LOCAL_ALLOWLIST) or ""
         ).split(",")
         if s.strip()
     }
@@ -222,6 +243,22 @@ def resolve_asr_config(
                     ]
                 },
             )
+        if is_english_only_local_model(local_model):
+            base_language = (language_requested or "").strip().lower().split("-")[0]
+            if base_language not in _EN_ONLY_LANGUAGES:
+                raise ValidationError(
+                    "English-only local model requires language 'en'",
+                    details={
+                        "fields": [
+                            {
+                                "field": "language",
+                                "code": "INCOMPATIBLE",
+                                "model": local_model,
+                                "allowed": sorted(_EN_ONLY_LANGUAGES),
+                            }
+                        ]
+                    },
+                )
         engine = _local_engine_name()
         return ResolvedAsrConfig(
             provider="local",

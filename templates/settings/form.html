@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n yal_badges %}
+{% load i18n yal_badges yal_asr %}
 {% block title %}{% trans "Project settings" %} — {{ project.name }}{% endblock %}
 {% block content %}
 <div data-testid="project-settings-page">
@@ -231,7 +231,7 @@
               {% if local_asr_enabled %}
               <optgroup label="{% trans "Local (server)" %}">
                 {% for m in local_asr_models %}
-                <option value="{{ m }}" {% if settings.asr_model == m %}selected{% endif %}>PhoWhisper {{ m }}</option>
+                <option value="{{ m }}" {% if settings.asr_model == m %}selected{% endif %}>{{ m|asr_model_label }}</option>
                 {% endfor %}
               </optgroup>
               {% endif %}

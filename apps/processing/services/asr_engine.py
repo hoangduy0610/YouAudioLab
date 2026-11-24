@@ -72,6 +72,8 @@ class FakeAsrEngine:
 # VinAI PhoWhisper converted with ct2-transformers-converter.
 # faster-whisper only loads a CTranslate2 folder that contains model.bin at its root,
 # so each size is fetched from its subfolder rather than the transformers checkpoints.
+# Any model name NOT in this table (the English-only "tiny.en" … "medium.en") is passed
+# to faster-whisper unchanged and loads the stock Systran Whisper model.
 _PHOWHISPER_REPO = "quocphu/PhoWhisper-ct2-FasterWhisper"
 _PHOWHISPER_FOLDERS = {
     "tiny": "PhoWhisper-tiny-ct2-fasterWhisper",

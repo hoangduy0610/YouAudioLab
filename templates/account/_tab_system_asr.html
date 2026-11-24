@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n yal_asr %}
 <div data-testid="system-asr-page" data-settings-system-asr>
   <p class="small mb-3">
     {% trans "Admin defaults applied when a user chooses “Use system defaults” on the ASR tab (Gate W7.3)." %}
@@ -87,7 +87,7 @@
           <label class="form-label" for="sys_local_model">{% trans "Local model" %}</label>
           <select class="form-select" name="local_model" id="sys_local_model">
             {% for m in local_asr_models %}
-            <option value="{{ m }}" {% if asr_defaults.local_model == m %}selected{% endif %}>PhoWhisper {{ m }}</option>
+            <option value="{{ m }}" {% if asr_defaults.local_model == m %}selected{% endif %}>{{ m|asr_model_label }}</option>
             {% endfor %}
           </select>
         </div>
